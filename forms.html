@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budhi Lite | Forms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-mark">B</span><span>Budhi Lite</span></a>
+    <nav class="nav">
+      <span class="tag" data-session-user></span>
+      <a href="./dashboard.html" data-i18n="dashboard">Dashboard</a>
+      <a href="./results.html" data-i18n="results">Results</a>
+      <a href="./results.html#match" data-i18n="match">Match</a>
+      <button class="btn" data-clear-key data-i18n="clearApiKeyShort">Clear key</button>
+      <button class="btn" data-logout data-i18n="logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page form-page">
+    <section class="hero slim-hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">✦ Self-Profile · Phase 1</div>
+          <h1 data-i18n="formTitle">Profile Snapshot Form</h1>
+          <p data-i18n="formSubtitle">Answer the short teaser questionnaire to generate the first Budhi Lite report.</p>
+        </div>
+      </div>
+    </section>
+
+    <form id="profileForm" class="form-wizard" autocomplete="off">
+      <section class="wizard-card">
+        <div class="wizard-head">
+          <div>
+            <p class="section-label" data-i18n="questionProgressLabel">Question progress</p>
+            <h2 id="questionCounter">—</h2>
+          </div>
+          <span class="tiny-pill" id="answerStatus" data-i18n="answerToContinue">Answer to continue</span>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="questions" class="question-stage"></div>
+
+        <div class="wizard-actions">
+          <button class="btn ghost" type="button" id="prevQuestion" data-i18n="back">Back</button>
+          <p id="formStatus" class="status-line"></p>
+          <button class="btn primary" type="button" id="nextQuestion" data-i18n="next">Next</button>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/users.js"></script>
+  <script src="./js/session.js"></script>
+  <script src="./js/supabase_client.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/formula_phase1_lite.js"></script>
+  <script src="./js/forms_controller.js"></script>
+</body>
+</html>

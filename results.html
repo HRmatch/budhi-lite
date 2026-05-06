@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budhi Lite | Results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-mark">B</span><span>Budhi Lite</span></a>
+    <nav class="nav">
+      <span class="tag" data-session-user></span>
+      <a href="./dashboard.html" data-i18n="dashboard">Dashboard</a>
+      <a href="./forms.html" data-i18n="forms">Forms</a>
+      <a href="./results.html#match" data-i18n="match">Match</a>
+      <button class="btn" data-clear-key data-i18n="clearApiKeyShort">Clear key</button>
+      <button class="btn" data-logout data-i18n="logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="card compact-card">
+      <div class="tabs">
+        <button class="tab active" data-tab="individual" data-i18n="individual">Individual results</button>
+        <button class="tab" data-tab="match" data-i18n="match">Match</button>
+      </div>
+      <div class="key-state" id="keyState"></div>
+    </section>
+
+    <section data-panel="individual" id="individualRoot"></section>
+
+    <section data-panel="match" class="hidden">
+      <div class="card" style="margin-top:1.4rem">
+        <div class="grid equal-two" style="margin-top:0">
+          <div class="field">
+            <label for="partnerSelect" data-i18n="selectPartner">Select partner</label>
+            <select id="partnerSelect"></select>
+            <p class="small" data-i18n="partnerNote">Demo profiles are stored locally in this browser. Submit the form to overwrite the current user's profile.</p>
+          </div>
+          <div class="field align-end">
+            <label>&nbsp;</label>
+            <button id="generateMatch" class="btn primary" data-i18n="generateMatch">Generate Match Lite</button>
+          </div>
+        </div>
+      </div>
+      <div id="matchRoot"></div>
+    </section>
+
+    <div class="ai-modal" id="aiDetailsModal" aria-hidden="true">
+      <div class="ai-modal-panel" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+        <header class="ai-modal-header">
+          <div>
+            <p class="ai-modal-kicker">Budhi Lite AI</p>
+            <h2 class="ai-modal-title" id="aiModalTitle">AI Details</h2>
+          </div>
+          <button class="ai-modal-close" type="button" aria-label="Close AI details">×</button>
+        </header>
+        <div class="ai-modal-body">
+          <section class="ai-modal-section">
+            <h3 data-i18n="description">Description</h3>
+            <p id="aiModalDescription"></p>
+          </section>
+          <section class="ai-modal-section">
+            <h3 data-i18n="strengths">Strengths</h3>
+            <ul id="aiModalStrengths"></ul>
+          </section>
+          <section class="ai-modal-section">
+            <h3 data-i18n="challenges">Challenges</h3>
+            <ul id="aiModalChallenges"></ul>
+          </section>
+          <p class="modal-footnote" id="aiModalFootnote"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/users.js"></script>
+  <script src="./js/session.js"></script>
+  <script src="./js/supabase_client.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/formula_phase1_lite.js"></script>
+  <script src="./js/match_lite_formula.js"></script>
+  <script src="./js/openai_client_browser.js"></script>
+  <script src="./js/results_controller.js"></script>
+</body>
+</html>

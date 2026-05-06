@@ -1,0 +1,870 @@
+{
+  "id": "phase1_snapshot",
+  "questions": [
+    {
+      "id": "Qt4",
+      "type": "single_choice",
+      "text": {
+        "en": "Which of the following statements best describes your current moment?",
+        "pt": "Qual das seguintes afirmações descreve melhor o seu momento atual?",
+        "es": "¿Cuál de las siguientes afirmaciones describe mejor su momento actual?",
+        "fr": "Lequel des énoncés suivants décrit le mieux votre moment actuel ?",
+        "de": "Welche der folgenden Aussagen beschreibt Ihren aktuellen Moment am besten?"
+      },
+      "options": [
+        {
+          "value": 11,
+          "label": {
+            "en": "GO – Proactive",
+            "pt": "GO – Proativo",
+            "es": "GO – Proactivo",
+            "fr": "GO – Proactif",
+            "de": "GO – Proaktiv"
+          },
+          "redirect": null
+        },
+        {
+          "value": 22,
+          "label": {
+            "en": "WAIT – Reflective",
+            "pt": "WAIT – Reflexivo",
+            "es": "WAIT – Reflexivo",
+            "fr": "WAIT – Réfléchi",
+            "de": "WAIT – Reflektierend"
+          },
+          "redirect": null
+        },
+        {
+          "value": 33,
+          "label": {
+            "en": "WAIT and GO – Adaptive",
+            "pt": "WAIT and GO – Adaptativo",
+            "es": "WAIT and GO – Adaptativo",
+            "fr": "WAIT and GO – Adaptatif",
+            "de": "WAIT and GO – Adaptiv"
+          },
+          "redirect": null
+        },
+        {
+          "value": 44,
+          "label": {
+            "en": "WAIT or GO – Balanced",
+            "pt": "WAIT or GO – Equilibrado",
+            "es": "WAIT or GO – Equilibrado",
+            "fr": "WAIT or GO – Équilibré",
+            "de": "WAIT or GO – Ausgewogen"
+          },
+          "redirect": null
+        }
+      ],
+      "std_next_question": "Qt5"
+    },
+    {
+      "id": "Qt5",
+      "type": "single_choice",
+      "text": {
+        "en": "Think about your goals and choose the option that best describes how you want to act to reach them.",
+        "pt": "Pense nos seus objetivos e escolha a opção que melhor descreve como você deseja agir para alcançá-los.",
+        "es": "Piense en sus objetivos y elija la opción que mejor describa cómo desea actuar para alcanzarlos.",
+        "fr": "Pensez à vos objectifs et choisissez l'option qui décrit le mieux comment vous souhaitez agir pour les atteindre.",
+        "de": "Denken Sie an Ihre Ziele und wählen Sie die Option, die am besten beschreibt, wie Sie handeln möchten, um diese zu erreichen."
+      },
+      "options": [
+        {
+          "value": 11,
+          "label": {
+            "en": "Offensive, taking initiative and acts decisively.",
+            "pt": "Ofensiva, toma a iniciativa e age decisivamente.",
+            "es": "Ofensiva, toma la iniciativa y actúa con decisión.",
+            "fr": "Offensive, prend l'initiative et agit de manière décisive.",
+            "de": "Offensiv, ergreift die Initiative und handelt entschlossen."
+          },
+          "redirect": null
+        },
+        {
+          "value": 22,
+          "label": {
+            "en": "Defensive, observes and waits for the right moment.",
+            "pt": "Defensiva, observa e espera o momento certo.",
+            "es": "Defensiva, observa y espera el momento adecuado.",
+            "fr": "Défensive, observe et attend le bon moment.",
+            "de": "Defensiv, beobachtet und wartet auf den richtigen Moment."
+          },
+          "redirect": null
+        },
+        {
+          "value": 33,
+          "label": {
+            "en": "Counter-Offensive, adapts strategically.",
+            "pt": "Contra-Ofensiva, adapta-se estrategicamente.",
+            "es": "Contraofensiva, se adapta estratégicamente.",
+            "fr": "Contre-offensive, s'adapte stratégiquement.",
+            "de": "Gegenoffensive, passt sich strategisch an."
+          },
+          "redirect": null
+        },
+        {
+          "value": 44,
+          "label": {
+            "en": "All-Rounder, waits and acts with balance.",
+            "pt": "Versátil, espera e age com equilíbrio.",
+            "es": "Versátil, espera y actúa con equilibrio.",
+            "fr": "Polyvalente, attend et agit avec équilibre.",
+            "de": "Allrounder, wartet ab und handelt ausgewogen."
+          },
+          "redirect": null
+        }
+      ],
+      "std_next_question": "Qt6"
+    },
+    {
+      "id": "Qt6",
+      "type": "multi_choice",
+      "max_select": 5,
+      "text": {
+        "en": "Select 5 values that align most with you.",
+        "pt": "Selecione 5 valores que mais se alinham com você.",
+        "es": "Seleccione 5 valores que más se alineen con usted.",
+        "fr": "Sélectionnez 5 valeurs qui vous correspondent le mieux.",
+        "de": "Wählen Sie 5 Werte, die am besten zu Ihnen passen."
+      },
+      "options": [
+        {
+          "value": "Honesty",
+          "label": {
+            "en": "Honesty",
+            "pt": "Honestidade",
+            "es": "Honestidad",
+            "fr": "Honnêteté",
+            "de": "Ehrlichkeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Respect",
+          "label": {
+            "en": "Respect",
+            "pt": "Respeito",
+            "es": "Respeto",
+            "fr": "Respect",
+            "de": "Respekt"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Empathy",
+          "label": {
+            "en": "Empathy",
+            "pt": "Empatia",
+            "es": "Empatía",
+            "fr": "Empathie",
+            "de": "Empathie"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Responsibility",
+          "label": {
+            "en": "Responsibility",
+            "pt": "Responsabilidade",
+            "es": "Responsabilidad",
+            "fr": "Responsabilité",
+            "de": "Verantwortung"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Perseverance",
+          "label": {
+            "en": "Perseverance",
+            "pt": "Perseverança",
+            "es": "Perseverancia",
+            "fr": "Persévérance",
+            "de": "Ausdauer"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Courage",
+          "label": {
+            "en": "Courage",
+            "pt": "Coragem",
+            "es": "Coraje",
+            "fr": "Courage",
+            "de": "Mut"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Gratitude",
+          "label": {
+            "en": "Gratitude",
+            "pt": "Gratidão",
+            "es": "Gratitud",
+            "fr": "Gratitude",
+            "de": "Dankbarkeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Autonomy",
+          "label": {
+            "en": "Autonomy",
+            "pt": "Autonomia",
+            "es": "Autonomía",
+            "fr": "Autonomie",
+            "de": "Autonomie"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Compassion",
+          "label": {
+            "en": "Compassion",
+            "pt": "Compaixão",
+            "es": "Compasión",
+            "fr": "Compassion",
+            "de": "Mitgefühl"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Integrity",
+          "label": {
+            "en": "Integrity",
+            "pt": "Integridade",
+            "es": "Integridad",
+            "fr": "Intégrité",
+            "de": "Integrität"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Solidarity",
+          "label": {
+            "en": "Solidarity",
+            "pt": "Solidariedade",
+            "es": "Solidaridad",
+            "fr": "Solidarité",
+            "de": "Solidarität"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Justice",
+          "label": {
+            "en": "Justice",
+            "pt": "Justiça",
+            "es": "Justicia",
+            "fr": "Justice",
+            "de": "Gerechtigkeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Freedom",
+          "label": {
+            "en": "Freedom",
+            "pt": "Liberdade",
+            "es": "Libertad",
+            "fr": "Liberté",
+            "de": "Freiheit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Tolerance",
+          "label": {
+            "en": "Tolerance",
+            "pt": "Tolerância",
+            "es": "Tolerancia",
+            "fr": "Tolérance",
+            "de": "Toleranz"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Joy",
+          "label": {
+            "en": "Joy",
+            "pt": "Alegria",
+            "es": "Alegría",
+            "fr": "Joie",
+            "de": "Freude"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Discipline",
+          "label": {
+            "en": "Discipline",
+            "pt": "Disciplina",
+            "es": "Disciplina",
+            "fr": "Discipline",
+            "de": "Disziplin"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Trust",
+          "label": {
+            "en": "Trust",
+            "pt": "Confiança",
+            "es": "Confianza",
+            "fr": "Confiance",
+            "de": "Vertrauen"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Humility",
+          "label": {
+            "en": "Humility",
+            "pt": "Humildade",
+            "es": "Humildad",
+            "fr": "Humilité",
+            "de": "Demut"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Wisdom",
+          "label": {
+            "en": "Wisdom",
+            "pt": "Sabedoria",
+            "es": "Sabiduría",
+            "fr": "Sagesse",
+            "de": "Weisheit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Transparency",
+          "label": {
+            "en": "Transparency",
+            "pt": "Transparência",
+            "es": "Transparencia",
+            "fr": "Transparence",
+            "de": "Transparenz"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Creativity",
+          "label": {
+            "en": "Creativity",
+            "pt": "Criatividade",
+            "es": "Creatividad",
+            "fr": "Créativité",
+            "de": "Kreativität"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Resilience",
+          "label": {
+            "en": "Resilience",
+            "pt": "Resiliência",
+            "es": "Resiliencia",
+            "fr": "Résilience",
+            "de": "Resilienz"
+          },
+          "redirect": null
+        }
+      ],
+      "std_next_question": "Qt7"
+    },
+    {
+      "id": "Qt7",
+      "type": "multi_choice",
+      "max_select": 5,
+      "text": {
+        "en": "Select 5 pillars of life that you are most relying on today.",
+        "pt": "Selecione 5 pilares da vida nos quais você mais se apoia hoje.",
+        "es": "Seleccione 5 pilares de la vida en los que más se apoya hoy.",
+        "fr": "Sélectionnez 5 piliers de la vie sur lesquels vous vous appuyez le plus aujourd'hui.",
+        "de": "Wählen Sie 5 Lebenssäulen, auf die Sie sich heute am meisten stützen."
+      },
+      "options": [
+        {
+          "value": "Work",
+          "label": {
+            "en": "Work",
+            "pt": "Trabalho",
+            "es": "Trabajo",
+            "fr": "Travail",
+            "de": "Arbeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Love",
+          "label": {
+            "en": "Love",
+            "pt": "Amor",
+            "es": "Amor",
+            "fr": "Amour",
+            "de": "Liebe"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Family",
+          "label": {
+            "en": "Family",
+            "pt": "Família",
+            "es": "Familia",
+            "fr": "Famille",
+            "de": "Familie"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Friendships",
+          "label": {
+            "en": "Friendships",
+            "pt": "Amizades",
+            "es": "Amistades",
+            "fr": "Amitiés",
+            "de": "Freundschaften"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Health",
+          "label": {
+            "en": "Health",
+            "pt": "Saúde",
+            "es": "Salud",
+            "fr": "Santé",
+            "de": "Gesundheit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Money",
+          "label": {
+            "en": "Money",
+            "pt": "Dinheiro",
+            "es": "Dinero",
+            "fr": "Argent",
+            "de": "Geld"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Purpose",
+          "label": {
+            "en": "Purpose",
+            "pt": "Propósito",
+            "es": "Propósito",
+            "fr": "Raison d'être",
+            "de": "Bestimmung"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Social Contribution",
+          "label": {
+            "en": "Social Contribution",
+            "pt": "Contribuição Social",
+            "es": "Contribución Social",
+            "fr": "Contribution Sociale",
+            "de": "Sozialer Beitrag"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Self-Knowledge",
+          "label": {
+            "en": "Self-Knowledge",
+            "pt": "Autoconhecimento",
+            "es": "Autoconocimiento",
+            "fr": "Connaissance de soi",
+            "de": "Selbsterkenntnis"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Recognition",
+          "label": {
+            "en": "Recognition",
+            "pt": "Reconhecimento",
+            "es": "Reconocimiento",
+            "fr": "Reconnaissance",
+            "de": "Anerkennung"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Sustainability",
+          "label": {
+            "en": "Sustainability",
+            "pt": "Sustentabilidade",
+            "es": "Sostenibilidad",
+            "fr": "Durabilité",
+            "de": "Nachhaltigkeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Entrepreneurship",
+          "label": {
+            "en": "Entrepreneurship",
+            "pt": "Empreendedorismo",
+            "es": "Emprendimiento",
+            "fr": "Entrepreneuriat",
+            "de": "Unternehmertum"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Volunteering",
+          "label": {
+            "en": "Volunteering",
+            "pt": "Voluntariado",
+            "es": "Voluntariado",
+            "fr": "Bénévolat",
+            "de": "Ehrenamt"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Ethics",
+          "label": {
+            "en": "Ethics",
+            "pt": "Ética",
+            "es": "Ética",
+            "fr": "Éthique",
+            "de": "Ethik"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Spirituality",
+          "label": {
+            "en": "Spirituality",
+            "pt": "Espiritualidade",
+            "es": "Espiritualidad",
+            "fr": "Spiritualité",
+            "de": "Spiritualität"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Leisure",
+          "label": {
+            "en": "Leisure",
+            "pt": "Lazer",
+            "es": "Ocio",
+            "fr": "Loisirs",
+            "de": "Freizeit"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Education",
+          "label": {
+            "en": "Education",
+            "pt": "Educação",
+            "es": "Educación",
+            "fr": "Éducation",
+            "de": "Bildung"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Resilience",
+          "label": {
+            "en": "Resilience",
+            "pt": "Resiliência",
+            "es": "Resiliencia",
+            "fr": "Résilience",
+            "de": "Resilienz"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Dreams",
+          "label": {
+            "en": "Dreams",
+            "pt": "Sonhos",
+            "es": "Sueños",
+            "fr": "Rêves",
+            "de": "Träume"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Hobbies",
+          "label": {
+            "en": "Hobbies",
+            "pt": "Hobbies",
+            "es": "Pasatiempos",
+            "fr": "Hobbies",
+            "de": "Hobbys"
+          },
+          "redirect": null
+        }
+      ],
+      "std_next_question": "Qt8"
+    },
+    {
+      "id": "Qt8",
+      "type": "single_choice",
+      "layout": "columns",
+      "text": {
+        "en": "Among the options below, select the worldview or perspective that best guides your life journey today. Take your time to choose the one that best fits your current life.",
+        "pt": "Entre as opções abaixo, selecione a visão de mundo ou perspectiva que melhor guia sua jornada de vida hoje. Leve o tempo que precisar para escolher aquela que melhor se encaixa na sua vida atual.",
+        "es": "Entre las siguientes opciones, seleccione la visión del mundo o perspectiva que mejor guíe su viaje de vida hoy. Tómese su tiempo para elegir la que mejor se adapte a su vida actual.",
+        "fr": "Parmi les options ci-dessous, sélectionnez la vision du monde ou la perspective qui guide le mieux votre parcours de vie aujourd'hui. Prenez le temps de choisir celle qui correspond le mieux à votre vie actuelle.",
+        "de": "Wählen Sie unter den folgenden Optionen die Weltanschauung oder Perspektive aus, die Ihre heutige Lebensreise am besten leitet. Nehmen Sie sich Zeit, um diejenige auszuwählen, die am besten zu Ihrem aktuellen Leben passt."
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Materialistic",
+            "pt": "Materialista",
+            "es": "Materialista",
+            "fr": "Matérialiste",
+            "de": "Materialistisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Warrior",
+            "pt": "Guerreiro",
+            "es": "Guerrero",
+            "fr": "Guerrier",
+            "de": "Krieger"
+          },
+          "redirect": null
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "Survivor",
+            "pt": "Sobrevivente",
+            "es": "Sobreviviente",
+            "fr": "Survivant",
+            "de": "Überlebender"
+          },
+          "redirect": null
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Spiritual",
+            "pt": "Espiritual",
+            "es": "Espiritual",
+            "fr": "Spirituel",
+            "de": "Spirituell"
+          },
+          "redirect": null
+        },
+        {
+          "value": 5,
+          "label": {
+            "en": "Sensual",
+            "pt": "Sensual",
+            "es": "Sensual",
+            "fr": "Sensuel",
+            "de": "Sinnlich"
+          },
+          "redirect": null
+        },
+        {
+          "value": 6,
+          "label": {
+            "en": "Erotic",
+            "pt": "Erótico",
+            "es": "Erótico",
+            "fr": "Érotique",
+            "de": "Erotisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 7,
+          "label": {
+            "en": "Pragmatic",
+            "pt": "Pragmático",
+            "es": "Pragmático",
+            "fr": "Pragmatique",
+            "de": "Pragmatisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 8,
+          "label": {
+            "en": "Holistic",
+            "pt": "Holístico",
+            "es": "Holístico",
+            "fr": "Holistique",
+            "de": "Ganzheitlich"
+          },
+          "redirect": null
+        },
+        {
+          "value": 9,
+          "label": {
+            "en": "Idealistic",
+            "pt": "Idealista",
+            "es": "Idealista",
+            "fr": "Idéaliste",
+            "de": "Idealistisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 10,
+          "label": {
+            "en": "Aesthetic",
+            "pt": "Estético",
+            "es": "Estético",
+            "fr": "Esthétique",
+            "de": "Ästhetisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 11,
+          "label": {
+            "en": "Skeptical",
+            "pt": "Cético",
+            "es": "Escéptico",
+            "fr": "Sceptique",
+            "de": "Skeptisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 12,
+          "label": {
+            "en": "Humanistic",
+            "pt": "Humanista",
+            "es": "Humanista",
+            "fr": "Humaniste",
+            "de": "Humanistisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 13,
+          "label": {
+            "en": "Anthropological",
+            "pt": "Antropológico",
+            "es": "Antropológico",
+            "fr": "Anthropologique",
+            "de": "Anthropologisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 14,
+          "label": {
+            "en": "Rational",
+            "pt": "Racional",
+            "es": "Racional",
+            "fr": "Rationnel",
+            "de": "Rational"
+          },
+          "redirect": null
+        },
+        {
+          "value": 15,
+          "label": {
+            "en": "Romantic",
+            "pt": "Romântico",
+            "es": "Romántico",
+            "fr": "Romantique",
+            "de": "Romantisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 16,
+          "label": {
+            "en": "Utopian",
+            "pt": "Utópico",
+            "es": "Utópico",
+            "fr": "Utopiste",
+            "de": "Utopisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 17,
+          "label": {
+            "en": "Realistic",
+            "pt": "Realista",
+            "es": "Realista",
+            "fr": "Réaliste",
+            "de": "Realistisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 18,
+          "label": {
+            "en": "Egocentric",
+            "pt": "Egocêntrico",
+            "es": "Egocéntrico",
+            "fr": "Égocentrique",
+            "de": "Egozentrisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 19,
+          "label": {
+            "en": "Altruistic",
+            "pt": "Altruísta",
+            "es": "Altruista",
+            "fr": "Altruiste",
+            "de": "Altruistisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 20,
+          "label": {
+            "en": "Forward-Looking",
+            "pt": "Visionário",
+            "es": "Visionario",
+            "fr": "Visionnaire",
+            "de": "Visionär"
+          },
+          "redirect": null
+        },
+        {
+          "value": 21,
+          "label": {
+            "en": "Empathetic",
+            "pt": "Empático",
+            "es": "Empático",
+            "fr": "Empathique",
+            "de": "Empathisch"
+          },
+          "redirect": null
+        },
+        {
+          "value": 22,
+          "label": {
+            "en": "Futuristic",
+            "pt": "Futurista",
+            "es": "Futurista",
+            "fr": "Futuriste",
+            "de": "Futuristisch"
+          },
+          "redirect": null
+        }
+      ],
+      "std_next_question": "finalize"
+    }
+  ]
+}

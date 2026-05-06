@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budhi Lite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark">B</span>
+      <span>Budhi Lite</span>
+    </a>
+    <nav class="nav">
+      <a href="./index.html" data-i18n="home">Home</a>
+      <a href="./forms.html" data-i18n="forms">Forms</a>
+      <a href="./results.html" data-i18n="results">Results</a>
+    </nav>
+  </header>
+
+  <section class="landing-hero">
+    <span class="eyebrow" data-i18n="eyebrowTeaser">✦ Budhi Lite · Teaser V1</span>
+
+    <h1 class="hero-title">
+      <span data-i18n="homeTitle">Discover your first profile layer.</span>
+    </h1>
+
+    <p class="hero-sub" data-i18n="homeSubtitle">
+      A standalone teaser for Self-Profile and Match Lite. Complete a short form and generate individual and compatibility reports — no backend required.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" id="openModal" data-i18n="enterExperience">Begin experience</button>
+      <a href="./forms.html" class="btn-ghost" data-i18n="forms">View forms</a>
+    </div>
+
+    <div class="scroll-hint">
+      <span data-i18n="explore">Explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <section class="flow-section">
+    <p class="section-label" data-i18n="howItWorks">How it works</p>
+    <h2 class="flow-heading" data-i18n="flowHeading">Three steps to your profile snapshot.</h2>
+
+    <div class="flow-grid">
+      <article class="flow-card">
+        <div class="flow-number">01</div>
+        <div class="flow-dot blue"></div>
+        <h3 class="flow-title" data-i18n="flowOneTitle">Self-Profile Snapshot</h3>
+        <p class="flow-desc" data-i18n="flowOneText">Decision Style, Values, Life Pillars and Worldview — answered in minutes.</p>
+      </article>
+
+      <article class="flow-card">
+        <div class="flow-number">02</div>
+        <div class="flow-dot teal"></div>
+        <h3 class="flow-title" data-i18n="flowTwoTitle">Individual Report</h3>
+        <p class="flow-desc" data-i18n="flowTwoText">A visual first-layer profile with AI-generated details on each dimension.</p>
+      </article>
+
+      <article class="flow-card">
+        <div class="flow-number">03</div>
+        <div class="flow-dot green"></div>
+        <h3 class="flow-title" data-i18n="flowThreeTitle">Match Lite</h3>
+        <p class="flow-desc" data-i18n="flowThreeText">A compatibility teaser between two completed profiles.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <div class="note-card">
+      <span class="note-icon">⚿</span>
+      <div>
+        <p class="note-title" data-i18n="securityTitle">Security note</p>
+        <p class="note-body" data-i18n="securityBody">This GitHub Pages version lets each user provide their own OpenAI API key. Your key is stored only in session memory — it is never committed to code or sent to a Budhi server. For a production version, use a backend with environment variables.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span data-i18n="footerTeaser">Budhi Lite is a teaser experience. Complete Self-Profile and character-level reports available in the full version.</span>
+    <span style="opacity:0.6;">GitHub Pages ready · No backend</span>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modalTitle" data-i18n="start">Enter Budhi Lite</h2>
+          <p class="modal-subtitle" data-i18n="noBackendNeeded">No backend required · API key session only</p>
+        </div>
+        <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      </div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="language" data-i18n="language">Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top:1.15rem">
+          <label for="username" data-i18n="username">User</label>
+          <select id="username"></select>
+        </div>
+
+        <div class="field" style="margin-top:1.15rem">
+          <label for="password" data-i18n="password">Password</label>
+          <input id="password" type="password" placeholder="budhi-lite" autocomplete="current-password" />
+          <p class="field-note" data-i18n="demoPasswordNote">Demo password: budhi-lite · Admin: budhi-admin</p>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="field api-field">
+          <div class="api-label-row">
+            <label for="apiKey" data-i18n="apiKey">OpenAI API key</label>
+            <span class="tiny-pill" data-i18n="optionalButNeededAI">Optional · needed for AI</span>
+          </div>
+          <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+          <p class="field-note" data-i18n="apiKeySessionNote">Stored temporarily in sessionStorage. Not saved in GitHub, not committed to code, not sent to a Budhi server.</p>
+        </div>
+
+        <div class="field" style="margin-top:1.15rem">
+          <label for="model">OpenAI model</label>
+          <input id="model" type="text" value="gpt-4o-mini" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-primary" type="submit" data-i18n="login">Enter</button>
+          <button class="btn-ghost" id="clearApiKey" type="button" data-i18n="clearApiKey">Clear key</button>
+        </div>
+
+        <p id="loginStatus" class="status-line" style="margin-top:0.8rem"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/users.js"></script>
+  <script src="./js/session.js"></script>
+  <script src="./js/supabase_client.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/formula_phase1_lite.js"></script>
+  <script src="./js/home.js"></script>
+</body>
+</html>

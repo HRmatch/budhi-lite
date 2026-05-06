@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budhi Lite | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-mark">B</span><span>Budhi Lite</span></a>
+    <nav class="nav">
+      <span class="tag" data-session-user></span>
+      <a href="./dashboard.html" data-i18n="dashboard">Dashboard</a>
+      <a href="./forms.html" data-i18n="forms">Forms</a>
+      <a href="./results.html" data-i18n="results">Results</a>
+      <a href="./results.html#match" data-i18n="match">Match</a>
+      <button class="btn" data-clear-key data-i18n="clearApiKeyShort">Clear key</button>
+      <button class="btn" data-logout data-i18n="logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero dashboard-hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">✦ Budhi Lite</div>
+          <h1 data-i18n="dashboardTitle">Your logged area</h1>
+          <p data-i18n="dashboardSubtitle">Start a new Profile Snapshot, review individual results, or generate a Match Lite with another completed profile.</p>
+        </div>
+        <aside class="hero-badge-card">
+          <span class="badge-title" data-i18n="sessionStatus">Session</span>
+          <strong id="dashboardUserName">—</strong>
+          <span id="dashboardKeyState">—</span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="dashboard-card primary-card">
+        <div class="dashboard-card-top">
+          <span class="dashboard-icon teal">◇</span>
+          <span class="tiny-pill" data-i18n="firstStep">First step</span>
+        </div>
+        <h2 data-i18n="dashboardFormTitle">Answer the Snapshot Form</h2>
+        <p data-i18n="dashboardFormText">Complete one question at a time and generate the deterministic first-layer profile.</p>
+        <a class="btn primary" href="./forms.html" data-i18n="openForm">Open form</a>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="dashboard-card-top">
+          <span class="dashboard-icon blue">◎</span>
+          <span class="tiny-pill" id="profileStatusPill">—</span>
+        </div>
+        <h2 data-i18n="dashboardResultsTitle">Individual Results</h2>
+        <p data-i18n="dashboardResultsText">View the user’s report and click the four main cards for AI details.</p>
+        <a class="btn ghost" href="./results.html" data-i18n="openResults">Open results</a>
+      </article>
+
+      <article class="dashboard-card">
+        <div class="dashboard-card-top">
+          <span class="dashboard-icon green">↔</span>
+          <span class="tiny-pill" data-i18n="requiresProfiles">Requires profiles</span>
+        </div>
+        <h2 data-i18n="dashboardMatchTitle">Match Lite</h2>
+        <p data-i18n="dashboardMatchText">Compare the current user with another completed profile saved online.</p>
+        <a class="btn ghost" href="./results.html#match" data-i18n="openMatch">Open match</a>
+      </article>
+    </section>
+
+    <section class="note-section dashboard-note-section">
+      <div class="note-card">
+        <span class="note-icon">⚿</span>
+        <div>
+          <p class="note-title" data-i18n="dashboardNoteTitle">Session-based teaser</p>
+          <p class="note-body" data-i18n="dashboardNoteBody">Profiles and matches are saved online in Supabase. The OpenAI API key, when provided, stays only in sessionStorage and is not saved with the profile.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/users.js"></script>
+  <script src="./js/session.js"></script>
+  <script src="./js/supabase_client.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>
