@@ -1156,3 +1156,114 @@ select option { background: #fff; color: var(--text-main); }
   .wizard-actions { grid-template-columns: 1fr; }
   .wizard-actions .status-line { order: -1; text-align: left; }
 }
+
+
+/* ────────────────────────────────
+   Personalized AI reports
+──────────────────────────────── */
+.report-trigger-card {
+  margin-top: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.personalized-report-root {
+  margin-top: 1.4rem;
+}
+
+.personalized-report {
+  border-color: var(--border-mid);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,251,251,0.96)),
+    var(--bg-card);
+}
+
+.report-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.report-header h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 2.45rem);
+  font-weight: 300;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+.report-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+
+.report-section,
+.report-list-card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.report-section h3,
+.report-list-card h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--blue-deep);
+  margin-bottom: 0.65rem;
+}
+
+.report-section p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.72;
+  margin-bottom: 0.9rem;
+}
+
+.report-section ul,
+.report-list-card ul {
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.62;
+}
+
+.report-section li + li,
+.report-list-card li + li {
+  margin-top: 0.45rem;
+}
+
+.report-lists {
+  margin-top: 1rem;
+}
+
+.report-closing {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 860px) {
+  .report-trigger-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .report-trigger-card .btn {
+    width: 100%;
+  }
+
+  .report-section-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-header {
+    flex-direction: column;
+  }
+}
