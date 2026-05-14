@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budhi Lite | Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-mark">B</span><span>Budhi Lite</span></a>
+    <nav class="nav">
+      <span class="tag" data-session-user></span>
+      <a href="./dashboard.html" data-i18n="dashboard">Dashboard</a>
+      <a href="./forms.html" data-i18n="forms">Forms</a>
+      <a href="./results.html" data-i18n="results">Results</a>
+      <a href="./results.html#match" data-i18n="match">Match</a>
+      <button class="btn" data-clear-key data-i18n="clearApiKeyShort">Clear key</button>
+      <button class="btn" data-logout data-i18n="logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page report-page">
+    <section id="reportRoot">
+      <div class="card report-loading-card">
+        <span class="loader"></span>
+        <p class="summary-text" data-i18n="generatingReport">Generating personalized report...</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/users.js"></script>
+  <script src="./js/session.js"></script>
+  <script src="./js/supabase_client.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/formula_phase1_lite.js"></script>
+  <script src="./js/match_lite_formula.js"></script>
+  <script src="./js/report_agent_browser.js"></script>
+  <script src="./js/report_controller.js"></script>
+</body>
+</html>
