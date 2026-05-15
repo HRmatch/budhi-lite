@@ -130,65 +130,51 @@ function buildFallbackSection(cardKey, cardResolved, ctx) {
         : cardResolved.description,
   };
 
+  const ctxValsArr = ctx?.selected_values  || [];
+  const ctxPilsArr = ctx?.selected_pillars || [];
   const strengthsByKey = {
     values: [
-      vals
-        ? `The values ${vals} give ${name} a reliable internal compass that can anchor judgment and reduce the cognitive load of high-stakes decisions, especially when external guidance is absent.`
-        : `The selected values give ${name} a reliable internal compass for high-stakes decisions.`,
-      `Having named values creates a concrete shared vocabulary that partners, collaborators, and close relationships can use to understand what ${name} genuinely protects — reducing the risk of unspoken mismatches.`,
-      `This values set establishes the moral and relational baseline for the Match Lite comparison, enabling a concrete and specific compatibility reading rather than a generic one.`,
+      vals ? `Value clusters like ${ctxValsArr.slice(0,2).join(' and ') || vals} create a concrete moral filter that reduces noise in high-stakes decisions.` : `Named values create a concrete moral filter that reduces noise in high-stakes decisions.`,
+      `A visible value set gives partners and collaborators a reliable map of what ${name} genuinely protects.`,
+      `Named values enable a concrete Match Lite comparison rather than a generic compatibility reading.`,
     ],
     pillars: [
-      pils
-        ? `The pillars ${pils} show exactly where ${name} is making consistent investments of attention and energy, making it easier to identify what must be protected during periods of transition or high demand.`
-        : `The selected pillars clearly show where consistent investments of attention are being made.`,
-      `Knowing the current pillar structure helps ${name} evaluate new commitments against what is already load-bearing — a practical filter for avoiding overextension.`,
-      `Pillar data is one of the most actionable first-layer results: it can be directly compared in Match Lite to reveal whether a partner's current life structure supports, complements, or competes with ${name}'s own.`,
+      pils ? `Current pillars show where ${name} directs consistent energy — a practical map for protecting what is load-bearing.` : `Current pillars show where consistent energy is being directed.`,
+      `Knowing the pillar structure helps ${name} evaluate new commitments against what is already under load.`,
+      `Pillar data generates a direct structural comparison in Match Lite — aligned pillars signal compatible life demands.`,
     ],
     decision: [
-      dec
-        ? `A ${dec} style gives ${name} a recognizable behavioral rhythm that, once understood by those around them, can reduce friction and increase the quality of collaborative decisions.`
-        : `This decision style gives ${name} a recognizable rhythm that others can learn to work with.`,
-      `Understanding this style allows ${name} to identify contexts where their natural tempo is a clear advantage and situations where a deliberate adjustment — more speed, more deliberation — would produce better outcomes.`,
-      `Decision style is one of the most directly actionable dimensions in Match Lite: the pair's style contrast reveals whether coordination is likely to feel natural or whether explicit protocols for shared decision-making would be useful.`,
+      dec ? `A ${dec} style creates a recognizable rhythm that others can learn to coordinate with rather than work against.` : `This decision style creates a recognizable rhythm that others can coordinate with.`,
+      `Understanding this pattern helps identify contexts where the natural tempo is an asset and where adjustment adds value.`,
+      `Decision style is one of the most actionable Match Lite dimensions — rhythm pairing shapes day-to-day coordination.`,
     ],
     worldview: [
-      wv
-        ? `A ${wv} worldview gives ${name} a coherent interpretive framework that organizes values, motivations, and relational expectations into a consistent narrative — adding depth to all other first-layer dimensions.`
-        : `This worldview gives ${name} a coherent interpretive framework that adds depth to all other dimensions.`,
-      `Naming this perspective helps ${name} recognize when they are in genuine dialogue with a different interpretive framework, rather than mistaking worldview differences for personal disagreement or incompatibility.`,
-      `In Match Lite, worldview is one of the deepest compatibility layers: pairs who share or genuinely complement each other's worldview tend to find meaning-making and long-term alignment more natural.`,
+      wv ? `A ${wv} perspective adds interpretive coherence that makes values and decisions read as a consistent profile.` : `This worldview adds interpretive coherence across values and decisions.`,
+      `Naming this perspective helps recognize when a different worldview is in dialogue rather than in opposition.`,
+      `Worldview alignment is one of the deepest compatibility levers — shared perspectives support lasting relational resonance.`,
     ],
   };
 
   const challengesByKey = {
     values: [
-      vals
-        ? `Values like ${vals} can function as invisible expectations — standards the person applies to others without having made them explicit, which generates friction when those others operate from different frameworks.`
-        : `Named values can function as invisible expectations that generate friction when not made explicit.`,
-      `The labels used to describe values — even familiar ones — often carry different personal meanings; what ${name} means by any one of these values may not align precisely with how others interpret the same word.`,
-      `The full Self-Profile will reveal how these values interact with character-level patterns, adding nuance that goes beyond what any first-layer reading can capture.`,
+      `Value labels carry personal meanings — what ${name} intends by any one of them may differ from how others interpret the same word.`,
+      `Values function as implicit expectations; friction arises when those standards are not made explicit with others.`,
+      `The full Self-Profile will reveal how these values interact with character patterns not visible in this first layer.`,
     ],
     pillars: [
-      pils
-        ? `A strong concentration in ${pils} can create areas of under-investment elsewhere that only become visible under stress, during transition, or when a relationship demands engagement in a deprioritized area.`
-        : `Strong concentration in current pillars may reveal under-investment in other areas that becomes visible under stress.`,
-      `Pillars describe the current configuration of life structure, not a permanent identity — they shift as circumstances, priorities, and relationships evolve, so this reading should be revisited periodically.`,
-      `The full Self-Profile will distinguish between pillars that reflect genuine strengths and those that reflect situational adaptations or compensatory habits — a distinction with significant implications for long-term sustainability.`,
+      pils ? `Concentration in ${ctxPilsArr[0] || 'current pillars'} may mask under-investment elsewhere — gaps that surface under stress or transition.` : `Strong pillar concentration may mask under-investment in other areas.`,
+      `Pillars describe today's structure — they shift as relationships and circumstances evolve, requiring periodic recalibration.`,
+      `The full Self-Profile will distinguish genuine strengths from situational or compensatory patterns.`,
     ],
     decision: [
-      dec
-        ? `A ${dec} style may create visible friction in contexts that require a fundamentally different tempo — particularly when working closely with people whose natural decision rhythm diverges significantly.`
-        : `This decision style may create friction in contexts that require a different tempo.`,
-      `Decision style shifts under stress, in emotionally charged situations, and in unfamiliar environments — this first-layer result captures the current surface pattern, not the full behavioral range.`,
-      `The full Self-Profile will connect this style to character-level patterns, clarifying how deep-seated the preference is and under what conditions it is most likely to express or suppress itself.`,
+      dec ? `A ${dec} style can create friction with people whose natural tempo differs — especially under time pressure.` : `This decision style can create friction with people whose natural tempo differs.`,
+      `Decision patterns shift under stress and in emotionally charged situations — this result captures the current surface layer.`,
+      `The full Self-Profile will clarify whether this style is a stable trait or a situational adaptation.`,
     ],
     worldview: [
-      wv
-        ? `A ${wv} perspective may generate systematic blind spots when engaging with situations, people, or arguments that operate from fundamentally different interpretive assumptions.`
-        : `This worldview may generate blind spots when engaging with fundamentally different perspectives.`,
-      `Worldview labels are broad categories, not precise identities — they should be treated as starting points for self-reflection rather than fixed classifications that exhaustively describe a person.`,
-      `The full Self-Profile will connect this worldview to character-level drivers, showing how it shapes not just interpretation but also motivation, relational style, and the situations where ${name} feels most and least at home.`,
+      wv ? `A ${wv} perspective may generate blind spots when engaging with fundamentally different interpretive frameworks.` : `This worldview may generate blind spots with fundamentally different perspectives.`,
+      `Worldview labels are broad anchors — useful starting points, not precise identities.`,
+      `The full Self-Profile will reveal how this perspective connects to deeper motivational and relational patterns.`,
     ],
   };
 
@@ -215,7 +201,8 @@ function fallbackProfileReport(profile) {
   const displayName = profile?.display_name || profile?.username || 'User';
   const ctx         = extractProfileContext(profile);
   const cards       = profile?.results_app?.cards || [];
-  const vals        = ctx?.selected_values?.length  ? ctx.selected_values.join(', ')  : '';
+  const ctxValsArr  = ctx?.selected_values  || [];
+  const vals        = ctxValsArr.length ? ctxValsArr.join(', ') : '';
   const pils        = ctx?.selected_pillars?.length ? ctx.selected_pillars.join(', ') : '';
   const dec         = ctx?.decision_style || '';
   const wv          = ctx?.worldview || '';
@@ -246,24 +233,14 @@ function fallbackProfileReport(profile) {
     subtitle: 'Individual first-layer profile report',
     description: descParts,
     strengths: [
-      vals
-        ? `The values ${vals} give ${displayName} a stable moral compass that can anchor high-stakes decisions and serve as a shared vocabulary in close relationships.`
-        : `The selected values give ${displayName} a stable moral compass for decisions and relationships.`,
-      pils
-        ? `Active life pillars ${pils} create a visible structure of current priorities, making it easier to protect what matters most and to evaluate new commitments realistically.`
-        : `The selected life pillars create a visible structure of current priorities.`,
-      dec
-        ? `A ${dec} decision style gives ${displayName} a recognizable behavioral rhythm that others can learn to understand — reducing friction and increasing the quality of collaborative decisions.`
-        : `The decision style result gives ${displayName} a recognizable behavioral rhythm.`,
+      vals ? `Named values like ${ctxValsArr[0] || vals} create a moral filter that reduces noise in high-stakes decisions.` : `Named values create a concrete moral filter for high-stakes decisions.`,
+      pils ? `Active pillars make it easy to see where ${displayName} is investing consistently — a map for protecting load-bearing areas.` : `Active life pillars make consistent investments visible and easier to protect.`,
+      dec  ? `A ${dec} style creates a recognizable rhythm that others can coordinate with.` : `The decision style result creates a recognizable behavioral rhythm.`,
     ],
     challenges: [
-      vals
-        ? `Values like ${vals} can function as implicit expectations that others may not share, creating silent friction when left unspoken in relationships or collaborations.`
-        : `Named values can create implicit expectations that require explicit communication with others.`,
-      pils
-        ? `A strong concentration in ${pils} may indicate areas of under-investment elsewhere that become visible only under stress or transition.`
-        : `Current life pillars may indicate areas of under-investment that become visible under stress.`,
-      `This first-layer reading captures the current configuration — life events, stress, and context can shift these patterns, and the full Self-Profile will add the character layer that explains why they express as they do.`,
+      vals ? `Values function as implicit expectations — friction arises when others don't share the same standards without being told.` : `Named values can create implicit expectations that require explicit communication.`,
+      pils ? `Concentration in current pillars may reveal under-investment elsewhere — gaps that surface under stress.` : `Current pillar concentration may reveal under-investment that becomes visible under stress.`,
+      `This first-layer reading captures the current configuration — the full Self-Profile will add the character layer that explains why these patterns express as they do.`,
     ],
     cross_analysis: {
       title:       'Integrated reading',
@@ -381,40 +358,26 @@ function fallbackMatchReport(match) {
     subtitle:    'Compatibility first-layer report',
     description: descParts,
     strengths: cleanArray(appStrengths, [
-      valsA && valsB
-        ? `${pairStr} share ${nameA}'s value of ${ctxA?.selected_values?.[0] || 'alignment'} and ${nameB}'s value of ${ctxB?.selected_values?.[0] || 'connection'}, creating at least one layer of implicit common ground.`
-        : `The pair share at least some first-layer alignment that can serve as a starting point for deeper conversation.`,
-      `Named similarities in values or pillars give the pair a concrete shared vocabulary they can use to coordinate explicitly rather than by assumption.`,
-      `Understanding both profiles simultaneously creates a more intentional relational dynamic — each person can calibrate expectations based on what the other actually selected, not on projection.`,
+      `Named value overlap gives the pair a concrete vocabulary to use explicitly rather than assuming alignment.`,
+      `Knowing where pillars align makes it easier for each person to support the other's most consistent investments.`,
+      `Understanding both profiles simultaneously lets the pair calibrate expectations based on actual data, not projection.`,
     ], 3),
     challenges: cleanArray(appTensions, [
-      valsA && valsB
-        ? `Diverging values between ${nameA} (${valsA}) and ${nameB} (${valsB}) may generate implicit expectation gaps that need to be surfaced and discussed explicitly.`
-        : `Value divergences between the pair may generate implicit expectation gaps that need to be surfaced.`,
-      decA && decB && decA !== decB
-        ? `The ${decA} and ${decB} decision rhythm pairing requires both people to develop an intentional shared protocol for collaborative choices, especially under time pressure.`
-        : `Decision rhythm differences require the pair to develop intentional protocols for collaborative choices.`,
-      `First-layer data captures today's configuration — both profiles can evolve, and the full Self-Profile from both people would significantly refine this match reading.`,
+      valsA && valsB ? `Values exclusive to one list are implicit expectations the other person may not share — a friction zone if left unnamed.` : `Diverging values create implicit expectations that may generate friction if not surfaced.`,
+      decA && decB && decA !== decB ? `A ${decA} and ${decB} rhythm pairing requires an explicit shared protocol — especially under time pressure.` : `Divergent decision rhythms require an explicit shared protocol for collaborative choices.`,
+      `First-layer data captures today's configuration — both profiles can evolve, and full Self-Profile data would refine this reading.`,
     ], 3),
     cross_analysis: {
       title:       'Integrated compatibility reading',
       description: [
-        decA && decB
-          ? `The decision rhythm pairing (${decA} × ${decB}) tends to be the most immediately visible layer of coordination or friction — it shapes how the pair experiences shared action and initiative in real time.`
-          : 'Decision rhythm is often the most immediately visible layer of coordination or friction.',
-        wvA && wvB
-          ? `The worldview pairing (${wvA} × ${wvB}) is typically the deepest layer — it shapes not just specific disagreements but the meaning each person assigns to the same events and choices.`
-          : 'Worldview alignment shapes the meaning each person assigns to the same events and choices.',
-        valsA && valsB
-          ? `Reading the values and pillar comparison together with the decision and worldview pairing gives a more complete picture: compatibility is not determined by any single result, but by the pattern formed when all four dimensions are read in relation to each other for ${nameA} and ${nameB}.`
-          : `Reading all four dimensions together is more useful than any single result — compatibility is a pattern, not a score.`,
+        decA && decB ? `The ${decA} × ${decB} decision pairing is typically where the most visible day-to-day coordination or friction originates — it shapes how the pair experiences joint action in real time.` : 'Decision rhythm pairing is where the most visible day-to-day coordination or friction originates.',
+        wvA && wvB   ? `The ${wvA} × ${wvB} worldview combination is the deepest layer: it determines whether the pair finds each other's reasoning legible even in moments of strong disagreement.` : 'Worldview pairing is the deepest layer — it shapes whether each person finds the other´s reasoning legible.',
+        `Compatibility is a pattern across all four dimensions, not a score on any one — reading values, pillars, decision style, and worldview together reveals dynamics that no single result shows.`,
       ].filter(Boolean).join(' '),
       bullets: [
-        `Decision style pairing describes how the pair synchronizes — or negotiates — real-time action and initiative.`,
-        valsA && valsB
-          ? `Value and pillar overlap defines the moral and structural common ground: where ${nameA}'s ${ctxA?.selected_values?.[0] || 'values'} and ${nameB}'s ${ctxB?.selected_values?.[0] || 'values'} converge is where the pair most naturally agrees on what matters.`
-          : `Value and pillar overlap defines the moral and structural common ground between the pair.`,
-        `Worldview alignment is the deepest compatibility layer — it determines whether the pair is likely to find each other's reasoning legible even in the moments where they strongly disagree.`,
+        `Decision rhythm describes real-time coordination; worldview describes interpretive compatibility — together they set the floor and ceiling of the relationship's natural ease.`,
+        valsA && valsB ? `Value overlap defines common moral ground; pillar alignment shows whether current life structures support or compete with each other.` : `Value overlap defines common moral ground; pillar comparison shows whether life structures align or compete.`,
+        `The interaction between all four dimensions reveals whether differences are complementary — and therefore productive — or genuinely divergent and requiring explicit negotiation.`,
       ],
     },
     sections,
@@ -549,36 +512,37 @@ async function generatePersonalizedReport({ scope, profile, match }) {
 Language: ${language}. Write ALL text content in that language.
 You are writing a full compatibility report for ${pairStr}.
 
-━━━ MANDATORY RULES — APPLY TO EVERY SINGLE FIELD ━━━
-1. ALWAYS reference specific values, pillars, decision styles, and worldviews by their exact names from the payload. NEVER write "their values" or "their differences" without naming what they actually are.
-2. For each dimension section: explicitly compare both people. Name what they share in that dimension, name what differs, and explain the practical implication for the pair's dynamic.
-3. "description" (top-level): 200–270 words of continuous flowing prose. NO line breaks inside the string. Cover: overall compatibility picture, key alignment points with specific names, main friction or growth sources with specific names, and what the pair can practically do with this information.
-4. "sections[].description": 130–170 words of continuous flowing prose per section. NO line breaks. Compare both people in that specific dimension using their actual selected items.
-5. All strength and challenge items (top-level and per-section): complete sentences, 40–70 words, naming specific profile elements from both people.
-6. All cross_analysis bullets: complete sentences, 40–65 words, connecting multiple dimensions.
-7. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims, nothing that sounds like a final verdict.
-8. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (one per dimension: decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
+━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
+1. ANALYZE — do not inventory. NEVER open a section with "Person A selected X, Person B selected Y." Identify patterns: what do both people share, what diverges, and what does each pattern create in practice for the pair?
+2. For values and pillars: compute shared items (appear in both lists) and exclusive items (appear in only one). Analyze the shared ones as common ground — explain what that alignment enables. Analyze the exclusive ones as friction or complementarity — explain WHY the asymmetry matters, not just THAT it exists.
+3. For decision style and worldview: analyze what the PAIRING produces as a dynamic, not what each individual style means in isolation.
+4. "description" (top-level): 200–260 words of analytical prose. Cover: the dominant compatibility pattern, key alignment points and their practical implications, the main friction or complementarity sources and their relational meaning.
+5. "sections[].description": 120–150 words per section of analytical prose. For each dimension, lead with the pattern the comparison reveals — not with a list of who selected what.
+6. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight per item. No re-listing of items already analyzed in the description above it.
+7. All cross_analysis bullets: 30–45 words each. Connect multiple dimensions — show how the combination of patterns creates a more complex relational picture than any single dimension suggests.
+8. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims.
+9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
 
 Required JSON schema:
 {
   "title": "string",
   "subtitle": "string",
-  "description": "string — 200–270 words, flowing prose, no line breaks",
-  "strengths": ["string 40–70w", "string 40–70w", "string 40–70w"],
-  "challenges": ["string 40–70w", "string 40–70w", "string 40–70w"],
+  "description": "string — 200–260 words, analytical prose, no line breaks",
+  "strengths": ["string 25–40w", "string 25–40w", "string 25–40w"],
+  "challenges": ["string 25–40w", "string 25–40w", "string 25–40w"],
   "cross_analysis": {
     "title": "string",
-    "description": "string — 120–160 words, flowing prose",
-    "bullets": ["string 40–65w", "string 40–65w", "string 40–65w"]
+    "description": "string — 120–150 words, analytical prose",
+    "bullets": ["string 30–45w", "string 30–45w", "string 30–45w"]
   },
   "result_sections": [
     {
       "key": "decision|values|pillars|worldview",
       "title": "string",
       "subtitle": "string",
-      "description": "string — 130–170 words, flowing prose, comparing both people",
-      "strengths": ["string 40–70w", "string 40–70w", "string 40–70w"],
-      "challenges": ["string 40–70w", "string 40–70w", "string 40–70w"]
+      "description": "string — 120–150 words, analytical prose, pattern-led not inventory-led",
+      "strengths": ["string 25–40w", "string 25–40w", "string 25–40w"],
+      "challenges": ["string 25–40w", "string 25–40w", "string 25–40w"]
     }
   ]
 }`;
@@ -614,37 +578,37 @@ Required JSON schema:
 Language: ${language}. Write ALL text content in that language.
 You are writing a full personalized report for ${name}.
 
-━━━ MANDATORY RULES — APPLY TO EVERY SINGLE FIELD ━━━
-1. ALWAYS reference specific values, pillars, decision style, and worldview by their exact names from the payload. NEVER write "their values" or "your selection" without naming what they actually are.
-2. Write specifically about ${name}'s result — not about what a dimension means in general, but what it means for this person given their specific selections.
-3. Connect dimensions to each other when relevant: explain how the decision style serves the values, how the worldview frames the life pillars, etc.
-4. "description" (top-level): 200–270 words of continuous flowing prose. NO line breaks inside the string. Describe all four dimensions and how they form a coherent first-layer picture for ${name}.
-5. "sections[].description": 130–170 words of continuous flowing prose per section. NO line breaks. Write specifically about ${name}'s result in that dimension, referencing their actual selections.
-6. All strength and challenge items (top-level and per-section): complete sentences, 40–70 words, referencing at least one specific element from ${name}'s profile.
-7. All cross_analysis bullets: complete sentences, 40–65 words, connecting multiple dimensions.
-8. Tone: elegant, constructive, non-diagnostic. No therapy language, no diagnosis, no certainty claims.
-9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (one per dimension: decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
+━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
+1. ANALYZE — do not enumerate. NEVER structure a description as "User selected X, Y, Z." Reveal what the combination of selections creates: a pattern, a tension, a distinctive profile characteristic.
+2. Reference specific items only when they serve an analytical point — to anchor an insight, not to create a list. One or two items named per analytical claim is sufficient; listing all of them adds length without depth.
+3. Connect dimensions: how does the decision style interact with the values? What does the worldview imply about how life pillars are experienced? What does the combination of values and pillars reveal about where motivation and structure meet? These connections are the analysis.
+4. "description" (top-level): 200–260 words of analytical prose covering all four dimensions as a coherent profile — what the combination creates, not what each dimension contains.
+5. "sections[].description": 120–150 words per section of analytical prose. Answer: what does this specific dimension create for ${name}, given their other dimensions?
+6. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight — a practical implication, not a general observation. No re-listing.
+7. All cross_analysis bullets: 30–45 words each. Synthesize across dimensions — show what the combination reveals that no single dimension would.
+8. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.
+9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
 
 Required JSON schema:
 {
   "title": "string",
   "subtitle": "string",
-  "description": "string — 200–270 words, flowing prose, no line breaks",
-  "strengths": ["string 40–70w", "string 40–70w", "string 40–70w"],
-  "challenges": ["string 40–70w", "string 40–70w", "string 40–70w"],
+  "description": "string — 200–260 words, analytical prose, no line breaks",
+  "strengths": ["string 25–40w", "string 25–40w", "string 25–40w"],
+  "challenges": ["string 25–40w", "string 25–40w", "string 25–40w"],
   "cross_analysis": {
     "title": "string",
-    "description": "string — 120–160 words, flowing prose",
-    "bullets": ["string 40–65w", "string 40–65w", "string 40–65w"]
+    "description": "string — 120–150 words, analytical prose",
+    "bullets": ["string 30–45w", "string 30–45w", "string 30–45w"]
   },
   "result_sections": [
     {
       "key": "decision|values|pillars|worldview",
       "title": "string",
       "subtitle": "string",
-      "description": "string — 130–170 words, flowing prose, specific to ${name}",
-      "strengths": ["string 40–70w", "string 40–70w", "string 40–70w"],
-      "challenges": ["string 40–70w", "string 40–70w", "string 40–70w"]
+      "description": "string — 120–150 words, analytical prose specific to ${name}",
+      "strengths": ["string 25–40w", "string 25–40w", "string 25–40w"],
+      "challenges": ["string 25–40w", "string 25–40w", "string 25–40w"]
     }
   ]
 }`;
