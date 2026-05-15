@@ -63,6 +63,24 @@ function buildProfileContext(profile) {
    AI can name specifics for each dimension.
 ───────────────────────────────────────────── */
 
+/* ─────────────────────────────────────────────
+   DIMENSION CODE RESOLVER
+   Converts raw formula codes (e.g. 'honesty')
+   to display labels using the phase1 functions
+   that are available globally after formula files
+   are loaded.
+───────────────────────────────────────────── */
+function resolveDimCode(code, type) {
+  if (!code) return '';
+  const s = String(code);
+  try {
+    if (type === 'value')  { const lbl = valueLabel(s);  if (lbl) return resolveLabel(lbl); }
+    if (type === 'pillar') { const lbl = pillarLabel(s); if (lbl) return resolveLabel(lbl); }
+  } catch(_) {}
+  // Fallback: capitalise the raw code
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function buildMatchContext(match) {
   if (!match) return null;
   const userA    = match.user_a    || (match.usernames || [])[0] || '';
@@ -70,8 +88,23 @@ function buildMatchContext(match) {
   const profileA = typeof getProfile === 'function' ? getProfile(userA) : null;
   const profileB = typeof getProfile === 'function' ? getProfile(userB) : null;
   const app      = match.results_app || {};
+  const dims     = app.dimensions   || {};
   const ctxA     = buildProfileContext(profileA);
   const ctxB     = buildProfileContext(profileB);
+
+  /* Pull the formula's pre-computed relational analysis */
+  const vd = dims.values   || {};
+  const pd = dims.pillars  || {};
+  const dd = dims.decision || {};
+  const wd = dims.worldview|| {};
+
+  function codePairs(pairs, type) {
+    return (pairs || []).map(([a, b]) => ({
+      a: resolveDimCode(a, type),
+      b: resolveDimCode(b, type),
+      label: `${resolveDimCode(a, type)} ↔ ${resolveDimCode(b, type)}`,
+    }));
+  }
 
   return {
     users:              match.users || [ctxA?.display_name || userA, ctxB?.display_name || userB].filter(Boolean),
@@ -80,7 +113,38 @@ function buildMatchContext(match) {
     gold_tip:           resolveLabel(app.gold_tip),
     profile_a:          ctxA,
     profile_b:          ctxB,
-    // Resolved match cards (per-dimension comparison scores)
+
+    /* ── Formula-computed relational analysis ── */
+    formula_analysis: {
+      values: {
+        shared:              (vd.shared    || []).map(c => resolveDimCode(c, 'value')).filter(Boolean),
+        convergent_pairs:    codePairs(vd.convergent, 'value'),
+        potential_frictions: codePairs(vd.divergent,  'value'),
+        score:               vd.score,
+        alignment_type:      resolveLabel(vd.type),
+      },
+      pillars: {
+        shared:              (pd.shared    || []).map(c => resolveDimCode(c, 'pillar')).filter(Boolean),
+        convergent_pairs:    codePairs(pd.convergent, 'pillar'),
+        potential_frictions: codePairs(pd.divergent,  'pillar'),
+        score:               pd.score,
+        alignment_type:      resolveLabel(pd.type),
+      },
+      decision: {
+        style_a:        resolveLabel((dd.tags || [])[0]),
+        style_b:        resolveLabel((dd.tags || [])[1]),
+        alignment_type: resolveLabel(dd.type),
+        score:          dd.score,
+      },
+      worldview: {
+        label_a:        resolveLabel((wd.pair || [])[0]),
+        label_b:        resolveLabel((wd.pair || [])[1]),
+        alignment_type: resolveLabel(wd.type),
+        score:          wd.score,
+      },
+    },
+
+    /* Resolved match cards */
     match_cards: (app.cards || []).map(c => ({
       key:         c.key,
       title:       resolveLabel(c.title),
@@ -89,18 +153,10 @@ function buildMatchContext(match) {
       description: resolveLabel(c.description),
       tags:        (c.tags || []).map(resolveLabel).filter(Boolean),
     })),
-    strengths: (app.strengths || []).map(s => ({
-      title:       resolveLabel(s.title),
-      description: resolveLabel(s.description),
-    })),
-    tensions: (app.tensions || []).map(t => ({
-      title:       resolveLabel(t.title),
-      description: resolveLabel(t.description),
-    })),
-    dynamics: (app.dynamics || []).map(d => ({
-      title:       resolveLabel(d.title),
-      description: resolveLabel(d.description),
-    })),
+    strengths: (app.strengths || []).map(s => ({ title: resolveLabel(s.title), description: resolveLabel(s.description) })),
+    tensions:  (app.tensions  || []).map(t => ({ title: resolveLabel(t.title), description: resolveLabel(t.description) })),
+    dynamics:  (app.dynamics  || []).map(d => ({ title: resolveLabel(d.title), description: resolveLabel(d.description) })),
+    gaps:      (app.gaps      || []).map(g => ({ gap: resolveLabel(g.gap), severity: g.severity })),
   };
 }
 
@@ -356,6 +412,7 @@ async function generateAIDetails({ scope, key, profile, match }) {
     const pB      = ctx.profile_b || {};
     const cardCtx = (ctx.match_cards || []).find(c => c.key === key) || {};
     const names   = (ctx.users || []).join(' & ');
+    const fa      = ctx.formula_analysis || {};
 
     payload = {
       scope,
@@ -369,41 +426,48 @@ async function generateAIDetails({ scope, key, profile, match }) {
         title:       cardCtx.title,
         metric:      cardCtx.metric_value,
         score:       cardCtx.bar,
-        description: cardCtx.description,
       },
-      person_a: {
-        name:            pA.display_name,
-        selected_values: pA.selected_values,
-        selected_pillars:pA.selected_pillars,
-        decision_style:  pA.decision_style,
-        worldview:       pA.worldview,
-      },
-      person_b: {
-        name:            pB.display_name,
-        selected_values: pB.selected_values,
-        selected_pillars:pB.selected_pillars,
-        decision_style:  pB.decision_style,
-        worldview:       pB.worldview,
-      },
+      person_a: { name: pA.display_name, decision_style: pA.decision_style, worldview: pA.worldview },
+      person_b: { name: pB.display_name, decision_style: pB.decision_style, worldview: pB.worldview },
+      /* Formula-computed relational data — the core of the analysis */
+      formula_analysis: fa,
       overall_strengths: ctx.strengths,
       overall_tensions:  ctx.tensions,
     };
 
-    systemPrompt = `You are Budhi Lite's compatibility analyst. Return ONLY valid JSON with this exact schema: { "title": string, "description": string, "strengths": [string, string, string], "challenges": [string, string, string] }
+    systemPrompt = `You are Budhi Lite's compatibility analyst. Return ONLY valid JSON: { "title": string, "description": string, "strengths": [string, string, string], "challenges": [string, string, string] }
 
 Language: ${language}. Write ALL content in that language.
 
 You are analyzing the "${key}" dimension for the pair ${names}.
 
-━━━ ANALYSIS RULES ━━━
-1. ANALYZE — do not describe. Do NOT open with "Person A selected X, Person B selected Y." The description must answer: What do both people share in this dimension? What diverges, and does the divergence create friction, complementarity, or both? What is the practical relational implication of each pattern?
-2. For values and pillars: identify shared items (appear in both lists) as common ground and explain what that alignment enables. Identify exclusive items (appear in only one list) and explain whether the asymmetry creates tension or a useful complementarity — do not just state that it differs.
-3. For decision style and worldview: analyze what the PAIRING produces as a dynamic, not what each style means in isolation.
-4. "description": 160–200 words of analytical prose. NO line breaks inside the string. Lead with the dominant pattern the comparison reveals. Use specific names only to anchor the analysis — never to list inventories.
-5. Each "strengths" item: 20–35 words. One focused insight about a shared or complementary element and what it creates in practice. No re-listing of items already analyzed in the description.
-6. Each "challenges" item: 20–35 words. One focused friction point — name the specific asymmetry and its practical implication. No padding, no generalities.
-7. Exactly 3 strengths and 3 challenges.
-8. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims.`;
+━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
+The payload.formula_analysis contains pre-computed relational data you MUST use:
+
+For values and pillars:
+• "shared" = items BOTH people selected. Name these as established common ground — not "they share values" but which specific ones and what that shared base creates in practice.
+• "convergent_pairs" = semantically compatible items from different selections. For each pair (format "A ↔ B"), explain the specific compatible dynamic: what do A and B share beneath the surface that makes them complementary?
+• "potential_frictions" = semantically opposed items. For each pair, explain the SPECIFIC tension: what does each item imply for behavior, and where do those implications pull in different directions? (e.g., "Autonomy ↔ Solidarity" means one person orients toward self-direction while the other toward collective responsibility — this creates friction in group-vs-individual decisions, not just "they differ".)
+
+For decision:
+• style_a and style_b are the specific rhythm labels. Analyze what the SPECIFIC pairing of these two styles creates in practice — when does this pairing flow, when does it create friction?
+
+For worldview:
+• label_a, label_b, and alignment_type together tell you whether this is aligned, complementary, or divergent. Explain what the SPECIFIC combination of these two worldviews produces — not the general concept, but this pair.
+
+━━━ ANTI-PATTERN — NEVER WRITE THIS ━━━
+✗ "Decision rhythm and worldview together set the relationship's natural ease."
+✗ "Their differences create potential for both connection and misunderstanding."
+✗ Any sentence that would be true for ANY pair, not specifically for ${names}.
+
+━━━ QUALITY RULES ━━━
+1. ANALYZE — do not inventory. Lead with the pattern, not with "A has X and B has Y."
+2. Name specific items only to anchor analytical claims, not to list them.
+3. "description": 160–200 words. Start from the dominant dynamic this dimension reveals for this pair.
+4. Each "strengths" item: 20–35 words. One sharp insight about a specific alignment or complementarity.
+5. Each "challenges" item: 20–35 words. One specific friction — name what creates it and why.
+6. Exactly 3 strengths and 3 challenges.
+7. Tone: constructive, non-diagnostic. No therapy language.`;
 
   /* ── PROFILE scope ── */
   } else {
