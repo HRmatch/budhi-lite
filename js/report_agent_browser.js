@@ -469,9 +469,59 @@ async function generatePersonalizedReport({ scope, profile, match }) {
     const ctxA    = extractProfileContext(profA);
     const ctxB    = extractProfileContext(profB);
     const app     = match?.results_app || {};
+    const dims    = app.dimensions || {};
     const nameA   = ctxA?.display_name || (match?.users || [])[0] || userA || 'Person A';
     const nameB   = ctxB?.display_name || (match?.users || [])[1] || userB || 'Person B';
     const pairStr = `${nameA} & ${nameB}`;
+
+    /* Extract formula-computed relational analysis */
+    const vd = dims.values   || {};
+    const pd = dims.pillars  || {};
+    const dd = dims.decision || {};
+    const wd = dims.worldview|| {};
+
+    function rptResolveDimCode(code, type) {
+      if (!code) return '';
+      const s = String(code);
+      try {
+        if (type === 'value')  { const lbl = valueLabel(s);  if (lbl) return rptResolveLabel(lbl) || s; }
+        if (type === 'pillar') { const lbl = pillarLabel(s); if (lbl) return rptResolveLabel(lbl) || s; }
+      } catch(_) {}
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function rptCodePairs(pairs, type) {
+      return (pairs || []).map(([a, b]) => `${rptResolveDimCode(a, type)} ↔ ${rptResolveDimCode(b, type)}`);
+    }
+
+    const formulaAnalysis = {
+      values: {
+        shared:              (vd.shared    || []).map(c => rptResolveDimCode(c, 'value')).filter(Boolean),
+        convergent_pairs:    rptCodePairs(vd.convergent, 'value'),
+        potential_frictions: rptCodePairs(vd.divergent,  'value'),
+        score:               vd.score,
+        alignment_type:      rptResolveLabel(vd.type),
+      },
+      pillars: {
+        shared:              (pd.shared    || []).map(c => rptResolveDimCode(c, 'pillar')).filter(Boolean),
+        convergent_pairs:    rptCodePairs(pd.convergent, 'pillar'),
+        potential_frictions: rptCodePairs(pd.divergent,  'pillar'),
+        score:               pd.score,
+        alignment_type:      rptResolveLabel(pd.type),
+      },
+      decision: {
+        style_a:        rptResolveLabel((dd.tags || [])[0]),
+        style_b:        rptResolveLabel((dd.tags || [])[1]),
+        alignment_type: rptResolveLabel(dd.type),
+        score:          dd.score,
+      },
+      worldview: {
+        label_a:        rptResolveLabel((wd.pair || [])[0]),
+        label_b:        rptResolveLabel((wd.pair || [])[1]),
+        alignment_type: rptResolveLabel(wd.type),
+        score:          wd.score,
+      },
+    };
 
     payload = {
       scope,
@@ -480,48 +530,46 @@ async function generatePersonalizedReport({ scope, profile, match }) {
       compatibility_score: app.score,
       match_type:          rptResolveLabel(app.match_type?.label),
       gold_tip:            rptResolveLabel(app.gold_tip),
-      person_a: {
-        name:            nameA,
-        selected_values: ctxA?.selected_values,
-        selected_pillars:ctxA?.selected_pillars,
-        decision_style:  ctxA?.decision_style,
-        worldview:       ctxA?.worldview,
-      },
-      person_b: {
-        name:            nameB,
-        selected_values: ctxB?.selected_values,
-        selected_pillars:ctxB?.selected_pillars,
-        decision_style:  ctxB?.decision_style,
-        worldview:       ctxB?.worldview,
-      },
-      dimension_cards: (app.cards || []).map(c => ({
-        key:         c.key,
-        title:       rptResolveLabel(c.title),
-        metric:      rptResolveLabel(c.metric_value),
-        score:       c.bar,
-        description: rptResolveLabel(c.description),
-        tags:        (c.tags || []).map(rptResolveLabel).filter(Boolean),
-      })),
+      person_a: { name: nameA, decision_style: ctxA?.decision_style, worldview: ctxA?.worldview },
+      person_b: { name: nameB, decision_style: ctxB?.decision_style, worldview: ctxB?.worldview },
+      /* The relational formula analysis — core input for the report */
+      formula_analysis: formulaAnalysis,
       match_dynamics:  (app.dynamics  || []).map(d => `${rptResolveLabel(d.title)}: ${rptResolveLabel(d.description)}`).filter(Boolean),
       match_strengths: (app.strengths || []).map(s => `${rptResolveLabel(s.title)}: ${rptResolveLabel(s.description)}`).filter(Boolean),
       match_tensions:  (app.tensions  || []).map(t => `${rptResolveLabel(t.title)}: ${rptResolveLabel(t.description)}`).filter(Boolean),
-      match_gaps:      (app.gaps      || []).map(g => `${rptResolveLabel(g.gap || g.title)}: ${rptResolveLabel(g.description)}`).filter(Boolean),
     };
 
     system = `You are Budhi Lite's full match report writer. Return ONLY valid JSON following the schema below exactly.
 Language: ${language}. Write ALL text content in that language.
 You are writing a full compatibility report for ${pairStr}.
 
-━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
-1. ANALYZE — do not inventory. NEVER open a section with "Person A selected X, Person B selected Y." Identify patterns: what do both people share, what diverges, and what does each pattern create in practice for the pair?
-2. For values and pillars: compute shared items (appear in both lists) and exclusive items (appear in only one). Analyze the shared ones as common ground — explain what that alignment enables. Analyze the exclusive ones as friction or complementarity — explain WHY the asymmetry matters, not just THAT it exists.
-3. For decision style and worldview: analyze what the PAIRING produces as a dynamic, not what each individual style means in isolation.
-4. "description" (top-level): 200–260 words of analytical prose. Cover: the dominant compatibility pattern, key alignment points and their practical implications, the main friction or complementarity sources and their relational meaning.
-5. "sections[].description": 120–150 words per section of analytical prose. For each dimension, lead with the pattern the comparison reveals — not with a list of who selected what.
-6. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight per item. No re-listing of items already analyzed in the description above it.
-7. All cross_analysis bullets: 30–45 words each. Connect multiple dimensions — show how the combination of patterns creates a more complex relational picture than any single dimension suggests.
-8. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims.
-9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
+━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
+payload.formula_analysis contains pre-computed relational data from the match engine:
+
+values / pillars (same structure):
+• "shared": items BOTH people selected. These are established common ground. Name them and explain what that specific shared base creates for the pair — not "they share values" generically.
+• "convergent_pairs" (format "A ↔ B"): semantically compatible items from different selections. For each pair, explain the specific compatible dynamic beneath the surface.
+• "potential_frictions" (format "A ↔ B"): semantically opposed items. For each pair in the report, explain SPECIFICALLY what tension it creates: what does each item imply for behavior, and where do those implications pull against each other?
+
+decision: style_a and style_b are the specific rhythm labels. Analyze what THIS SPECIFIC pairing creates — when does it flow, when does it create friction?
+
+worldview: label_a, label_b, and alignment_type. Analyze what this SPECIFIC combination of worldviews produces for the pair.
+
+━━━ ANTI-PATTERN — BANNED ━━━
+✗ "Decision rhythm and worldview together set the relationship's natural ease."
+✗ "Their differences create potential for both connection and misunderstanding."
+✗ Any sentence that would be true for ANY pair rather than specifically for ${pairStr}.
+✗ Any section that re-lists the formula data without analyzing it.
+
+━━━ QUALITY RULES ━━━
+1. ANALYZE — do not inventory. Lead every section with the pattern, not with "A has X and B has Y."
+2. For friction pairs: name the specific pair AND explain WHY that combination creates tension (what each item implies for behavior and where those implications conflict).
+3. "description" (top-level): 200–260 words. Dominant compatibility pattern, key alignments and their practical implications, main friction/complementarity sources and their relational meaning.
+4. "sections[].description": 120–150 words per section. Pattern-led, analytical. What does this dimension reveal for this specific pair?
+5. Strength/challenge items (all levels): 25–40 words. One sharp specific insight. No generalities.
+6. cross_analysis bullets: 30–45 words. Connect dimensions — show what the combination reveals.
+7. Tone: constructive, non-diagnostic. No therapy language, no certainty claims.
+8. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections, each 3 strengths + 3 challenges.
 
 Required JSON schema:
 {
@@ -540,7 +588,7 @@ Required JSON schema:
       "key": "decision|values|pillars|worldview",
       "title": "string",
       "subtitle": "string",
-      "description": "string — 120–150 words, analytical prose, pattern-led not inventory-led",
+      "description": "string — 120–150 words, analytical, pattern-led",
       "strengths": ["string 25–40w", "string 25–40w", "string 25–40w"],
       "challenges": ["string 25–40w", "string 25–40w", "string 25–40w"]
     }
