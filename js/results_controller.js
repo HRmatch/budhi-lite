@@ -192,6 +192,114 @@ async function generateMatch() {
   renderMatch(currentMatch, root);
 }
 
+/* ─────────────────────────────────────────────
+   MATCH DIMENSION BREAKDOWN
+   Shows the formula's computed shared / convergent /
+   potential-friction data directly in the UI.
+───────────────────────────────────────────── */
+
+/* Multilingual labels for the new breakdown UI */
+function tMatchLabel(key) {
+  const lang = getLang();
+  const map = {
+    sharedGround:      {en:'Common ground',    pt:'Em comum',           es:'En común',            fr:'En commun',        de:'Gemeinsam'},
+    compatibleDirs:    {en:'Compatible',       pt:'Compatíveis',        es:'Compatibles',         fr:'Compatibles',      de:'Kompatibel'},
+    potentialFrictions:{en:'Potential frictions',pt:'Possíveis atritos',es:'Fricciones posibles', fr:'Frictions possibles',de:'Mögliche Spannungen'},
+    valueDynamics:     {en:'Value dynamics',   pt:'Dinâmica de valores',es:'Dinámica de valores', fr:'Dynamique des valeurs',de:'Wertedynamik'},
+    pillarDynamics:    {en:'Pillar dynamics',  pt:'Dinâmica de pilares',es:'Dinámica de pilares', fr:'Dynamique des piliers',de:'Säulendynamik'},
+    decisionRhythm:    {en:'Decision rhythm',  pt:'Ritmo de decisão',   es:'Ritmo de decisión',  fr:'Rythme décisionnel',de:'Entscheidungsrhythmus'},
+    worldviewPairing:  {en:'Worldview pairing',pt:'Visões de mundo',    es:'Visiones de mundo',  fr:'Vision du monde',   de:'Weltanschauungs-Paarung'},
+  };
+  return (map[key] || {})[lang] || (map[key] || {}).en || key;
+}
+
+/* Resolve a raw formula code (e.g. 'honesty') to a display label */
+function resolveDimCode(code, type) {
+  if (!code) return '';
+  if (typeof code === 'object') { try { return ml(code); } catch(_) {} }
+  const s = String(code);
+  try {
+    if (type === 'value')  { const lbl = valueLabel(s);  if (lbl) return ml(lbl) || s; }
+    if (type === 'pillar') { const lbl = pillarLabel(s); if (lbl) return ml(lbl) || s; }
+  } catch(_) {}
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function matchDimensionBreakdownHtml(match) {
+  const dims = match?.results_app?.dimensions || {};
+  const vd   = dims.values   || {};
+  const pd   = dims.pillars  || {};
+  const dd   = dims.decision || {};
+  const wd   = dims.worldview|| {};
+
+  const vShared = (vd.shared    || []).map(c => resolveDimCode(c, 'value')).filter(Boolean);
+  const vConv   = (vd.convergent|| []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean);
+  const vFric   = (vd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean);
+
+  const pShared = (pd.shared    || []).map(c => resolveDimCode(c, 'pillar')).filter(Boolean);
+  const pConv   = (pd.convergent|| []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean);
+  const pFric   = (pd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean);
+
+  const decTags  = (dd.tags || []).map(t => ml(t) || '').filter(Boolean);
+  const wvPair   = (wd.pair || []).map(t => ml(t) || '').filter(Boolean);
+  const wvType   = wd.type ? ml(wd.type) || '' : '';
+
+  const hasValues  = vShared.length || vConv.length || vFric.length;
+  const hasPillars = pShared.length || pConv.length || pFric.length;
+  if (!hasValues && !hasPillars) return '';
+
+  function tagGroup(label, items, style) {
+    if (!items.length) return '';
+    const tagStyle = {
+      green: 'background:rgba(16,185,129,0.12);color:#065f46;border-color:rgba(16,185,129,0.3)',
+      teal:  'background:rgba(20,184,166,0.10);color:#0f766e;border-color:rgba(20,184,166,0.25)',
+      amber: 'background:rgba(245,158,11,0.12);color:#92400e;border-color:rgba(245,158,11,0.3)',
+    }[style] || '';
+    return `<div style="margin-top:10px">
+      <p class="small" style="margin:0 0 6px;font-weight:500;color:var(--color-text-secondary)">${label}</p>
+      <div class="tags">${items.map(i => `<span class="tag" style="${tagStyle}">${i}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  function dimCard(icon, color, title, shared, conv, fric) {
+    return `<article class="card">
+      <h2 class="section-title"><span class="icon ${color}">${icon}</span>${title}</h2>
+      ${tagGroup(tMatchLabel('sharedGround'),       shared, 'green')}
+      ${tagGroup(tMatchLabel('compatibleDirs'),     conv,   'teal')}
+      ${tagGroup(tMatchLabel('potentialFrictions'), fric,   'amber')}
+    </article>`;
+  }
+
+  const valCard = hasValues
+    ? dimCard('♡', 'gold',  tMatchLabel('valueDynamics'),  vShared, vConv, vFric)
+    : '';
+  const pilCard = hasPillars
+    ? dimCard('▣', 'green', tMatchLabel('pillarDynamics'), pShared, pConv, pFric)
+    : '';
+
+  /* Decision & worldview compact strip */
+  const rhythmCard = decTags.length === 2 ? `<article class="card">
+    <h2 class="section-title"><span class="icon blue">↗</span>${tMatchLabel('decisionRhythm')}</h2>
+    <div class="tags" style="margin-top:10px">
+      ${decTags.map(s => `<span class="tag">${s}</span>`).join('<span style="margin:0 4px;opacity:.45">↔</span>')}
+    </div>
+    <p class="small" style="margin-top:8px;color:var(--color-text-secondary)">${ml(dd.type)||''} · ${ml(dd.alignment)||''}</p>
+  </article>` : '';
+
+  const wvCard = wvPair.length === 2 ? `<article class="card">
+    <h2 class="section-title"><span class="icon purple">◎</span>${tMatchLabel('worldviewPairing')}</h2>
+    <div class="tags" style="margin-top:10px">
+      ${wvPair.map(l => `<span class="tag">${l}</span>`).join('<span style="margin:0 4px;opacity:.45">↔</span>')}
+    </div>
+    <p class="small" style="margin-top:8px;color:var(--color-text-secondary)">${wvType}</p>
+  </article>` : '';
+
+  return `
+    <section class="grid equal-two" style="margin-top:1.4rem">${valCard}${pilCard}</section>
+    ${rhythmCard || wvCard ? `<section class="grid equal-two">${rhythmCard}${wvCard}</section>` : ''}
+  `;
+}
+
 function renderList(items, color) {
   return `<div class="list">${(items || [])
     .map(
@@ -224,9 +332,7 @@ function renderMatch(match, root) {
     "generateReport"
   )}</a></section><section class="grid four">${app.cards
     .map((c) => cardHtml(c, "match"))
-    .join(
-      ""
-    )}</section><section class="grid two"><article class="card"><h2 class="section-title"><span class="icon navy">🏷️</span>${t(
+    .join("")}</section>${matchDimensionBreakdownHtml(match)}<section class="grid two"><article class="card"><h2 class="section-title"><span class="icon navy">🏷️</span>${t(
     "matchType"
   )}</h2><p class="summary-text"><strong>${ml(
     app.match_type.label
