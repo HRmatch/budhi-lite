@@ -117,8 +117,10 @@ function fallbackDetailsProfile(key, profile) {
   const card  = cards.find(c => c.key === key) || {};
   const title = resolveLabel(card.title) || key;
   const name  = ctx?.display_name || 'the user';
-  const vals  = ctx?.selected_values?.length  ? ctx.selected_values.join(', ')  : null;
-  const pils  = ctx?.selected_pillars?.length ? ctx.selected_pillars.join(', ') : null;
+  const ctxVals = ctx?.selected_values  || [];
+  const ctxPils = ctx?.selected_pillars || [];
+  const vals  = ctxVals.length ? ctxVals.join(', ') : null;
+  const pils  = ctxPils.length ? ctxPils.join(', ') : null;
   const dec   = ctx?.decision_style  || null;
   const wv    = ctx?.worldview || null;
 
@@ -143,63 +145,47 @@ function fallbackDetailsProfile(key, profile) {
 
   const strengthsByKey = {
     values: [
-      vals
-        ? `The values ${vals} give ${name} a reliable moral compass that can filter noise from genuinely important decisions, reducing the cognitive load of high-stakes choices.`
-        : `The selected values give ${name} a reliable moral compass for high-stakes decisions.`,
-      `Having named values creates a shared vocabulary that others — partners, collaborators, family — can use to understand what ${name} genuinely protects and prioritizes.`,
-      `This values set establishes a first-layer foundation for the Match Lite compatibility reading, enabling a concrete comparison of moral and relational anchors.`,
+      vals ? `Values like ${ctxVals[0] || 'the ones selected'} create a concrete moral filter that reduces noise in high-stakes decisions.` : `Named values create a concrete moral filter that reduces noise in high-stakes decisions.`,
+      `A visible value set gives others — partners, collaborators — a reliable map of what ${name} genuinely protects and prioritizes.`,
+      `Named values enable a concrete Match Lite comparison instead of a generic one.`,
     ],
     pillars: [
-      pils
-        ? `The pillars ${pils} show where ${name} is making consistent investments of attention, which makes it easier to protect those areas during periods of high demand or transition.`
-        : `The selected pillars show where ${name} is making consistent investments of attention.`,
-      `Knowing the current pillar structure supports more intentional prioritization — ${name} can assess new commitments against what is already load-bearing in their life.`,
-      `This pillar set can be compared in Match Lite to reveal whether a partner's current life structure is aligned, complementary, or in tension with ${name}'s own.`,
+      pils ? `Current pillars show where ${name} is investing consistent energy — a useful map for protecting what matters most under pressure.` : `Current pillars show where consistent energy is being invested.`,
+      `Knowing the pillar structure allows ${name} to evaluate new commitments against what is already load-bearing.`,
+      `Pillar data generates a direct and practical Match Lite comparison of life structure alignment.`,
     ],
     decision: [
-      dec
-        ? `A ${dec} style gives ${name} a recognizable rhythm that, when understood, allows others to synchronize their expectations and reduce friction in joint decision-making.`
-        : `This decision style gives ${name} a recognizable rhythm that others can learn to work with.`,
-      `Understanding this style helps ${name} identify contexts where their natural pace is an advantage and where it may need adjustment.`,
-      `The decision style result is one of the most directly actionable dimensions in the Match Lite reading, showing how the pair's action rhythms interact.`,
+      dec ? `A ${dec} style creates a recognizable behavioral rhythm that others can learn to coordinate with.` : `This decision style creates a recognizable rhythm that others can coordinate with.`,
+      `Understanding this pattern helps ${name} identify contexts where the natural tempo is an advantage.`,
+      `Decision style is one of the most visible and actionable dimensions in Match Lite coordination.`,
     ],
     worldview: [
-      wv
-        ? `A ${wv} worldview gives ${name} a coherent interpretive framework that adds depth and consistency to first-layer profile decisions and value choices.`
-        : `This worldview gives ${name} a coherent interpretive framework that adds depth to other profile dimensions.`,
-      `Naming this perspective makes it easier for ${name} to recognize when they are in dialogue with fundamentally different worldviews, reducing unproductive misunderstandings.`,
-      `Worldview is one of the deepest compatibility levers in Match Lite — shared or complementary perspectives can support a more resonant relational dynamic.`,
+      wv ? `A ${wv} worldview adds interpretive consistency that makes values and decisions cohere as a profile.` : `This worldview adds interpretive consistency that makes values and decisions cohere.`,
+      `Naming this perspective helps ${name} recognize when different worldviews are in dialogue rather than in conflict.`,
+      `Worldview is one of the deepest compatibility levers — shared or complementary perspectives support lasting relational resonance.`,
     ],
   };
 
   const challengesByKey = {
     values: [
-      vals
-        ? `Values like ${vals} can function as implicit expectations that others do not share — creating friction when those expectations are not made explicit in close relationships or collaborations.`
-        : `Selected values can function as implicit expectations that require explicit communication with others.`,
-      `Surface-level value labels often carry a range of personal interpretations — what ${name} means by one of these values may differ significantly from how others understand the same word.`,
-      `The full Self-Profile will reveal how these values interact with character patterns and emotional tendencies, adding a layer of nuance not captured here.`,
+      vals ? `Value labels carry personal meanings — what ${name} means by one of them may not match how others interpret the same word.` : `Value labels carry personal meanings that may not match how others interpret them.`,
+      `Values function as implicit expectations; friction arises when those expectations are not made explicit with others.`,
+      `The full Self-Profile will reveal how these values interact with character patterns not visible here.`,
     ],
     pillars: [
-      pils
-        ? `A strong concentration in pillars like ${pils} can indicate areas of imbalance or under-investment elsewhere that only become visible under stress or transition.`
-        : `The current pillar concentration may indicate areas of under-investment that become visible under stress.`,
-      `Pillars reflect the present life structure, not a permanent configuration — shifts in context, relationships, or priorities can change which areas naturally command more energy.`,
-      `The full Self-Profile will distinguish between pillars that reflect genuine character strengths and those that reflect temporary life circumstances or compensatory habits.`,
+      pils ? `Concentration in current pillars may mask under-investment elsewhere — gaps that show up under stress or transition.` : `Strong pillar concentration may mask under-investment elsewhere.`,
+      `Pillars describe today's structure, not a permanent identity — they shift as circumstances and relationships evolve.`,
+      `The full Self-Profile will distinguish genuine character strengths from situational adaptation patterns.`,
     ],
     decision: [
-      dec
-        ? `A ${dec} style may create visible friction in contexts that require a different tempo — particularly when working with people whose natural decision rhythm differs significantly.`
-        : `This decision style may create friction in contexts that require a different tempo.`,
-      `Decision style can shift substantially under stress, in unfamiliar environments, or in emotionally charged situations — this teaser captures the current surface pattern, not the full range.`,
-      `The full Self-Profile will connect this style to deeper character patterns, distinguishing habitual responses from conscious preferences.`,
+      dec ? `A ${dec} style can create friction with people whose natural tempo differs significantly.` : `This decision style can create friction with people whose natural tempo differs.`,
+      `Decision style shifts under stress and in emotionally charged situations — this result captures the current surface pattern.`,
+      `The full Self-Profile will distinguish whether this pattern is a stable trait or a situational adaptation.`,
     ],
     worldview: [
-      wv
-        ? `A ${wv} perspective may generate blind spots when engaging with people or situations that operate from fundamentally different interpretive frameworks.`
-        : `This worldview may generate blind spots when engaging with fundamentally different perspectives.`,
-      `Worldview labels are broad anchors, not precise identities — they should be treated as starting points for reflection rather than fixed categories.`,
-      `The full Self-Profile will connect this worldview to character-level patterns, showing how it shapes not just interpretation but also motivation and relational style.`,
+      wv ? `A ${wv} perspective may generate blind spots when engaging with fundamentally different interpretive frameworks.` : `This worldview may generate blind spots with fundamentally different perspectives.`,
+      `Worldview labels are broad anchors — useful as starting points, not as precise classifications.`,
+      `The full Self-Profile will reveal how this worldview connects to deeper motivational and relational patterns.`,
     ],
   };
 
@@ -253,68 +239,52 @@ function fallbackDetailsMatch(key, match) {
 
   const strengthsByKey = {
     values: [
-      valsA && valsB
-        ? `Shared or adjacent values between ${nameA} (${valsA}) and ${nameB} (${valsB}) create a moral and relational common ground that reduces the need to negotiate basic priorities.`
-        : `Shared values between the pair create a moral and relational common ground.`,
-      `Named value overlap gives the pair a concrete vocabulary they can use explicitly, rather than relying on unspoken assumptions about what each person protects and expects.`,
-      `Understanding which values converge and which diverge helps the pair anticipate where alignment is easy and where deliberate communication becomes more important.`,
+      valsA && valsB ? `Shared values between ${nameA} and ${nameB} create implicit common ground — reducing the need to negotiate basic moral priorities.` : `Shared values create implicit common ground between the pair.`,
+      `Named overlap gives the pair a concrete vocabulary to use explicitly, rather than assuming alignment that may not exist.`,
+      `Knowing which values diverge lets both people anticipate where negotiation is needed before friction accumulates.`,
     ],
     pillars: [
-      pilsA && pilsB
-        ? `When ${nameA}'s pillars (${pilsA}) and ${nameB}'s pillars (${pilsB}) align or complement each other, the pair tends to naturally support each other's most important life investments.`
-        : `Aligned or complementary life pillars between the pair tend to support each other's most important investments.`,
-      `Understanding the pillar structures of both profiles helps each person appreciate the other's current demands, making it easier to coordinate availability and attention.`,
-      `Where pillars differ, the contrast can be complementary rather than conflicting — one person's strong investment in an area the other has deprioritized can create a useful balance.`,
+      pilsA && pilsB ? `Aligned pillars mean the pair's current life structures pull in compatible directions — supporting mutual availability and attention.` : `Aligned pillars mean current life structures pull in compatible directions.`,
+      `Understanding each other's pillar structure helps the pair coordinate demands and protect what each person considers load-bearing.`,
+      `Where pillars differ, the contrast can be complementary rather than conflicting — one person's strong area can serve what the other has deprioritized.`,
     ],
     decision: [
-      decA && decB
-        ? `When ${nameA}'s ${decA} style and ${nameB}'s ${decB} style are well understood, the pair can intentionally design how they approach shared decisions to minimize friction.`
-        : `When both decision styles are well understood, the pair can intentionally design shared decision processes to minimize friction.`,
-      `Naming the style contrast gives both people a non-personal frame for discussing differences in tempo, deliberation depth, and initiative — reducing the risk of misreading style differences as character flaws.`,
-      `Even divergent decision styles can become a functional pairing when both people understand their complementary roles in moving from reflection to action.`,
+      decA && decB ? `When both styles are understood, the pair can design shared decision protocols intentionally rather than letting rhythm differences create recurring friction.` : `Named decision styles let the pair design shared protocols rather than improvising around friction.`,
+      `Style differences become most visible under time pressure — naming them in advance reduces the risk of misreading tempo as commitment.`,
+      `Even divergent styles can be a functional pairing when each person understands their complementary role in joint decisions.`,
     ],
     worldview: [
-      wvA && wvB
-        ? `A ${wvA} perspective and a ${wvB} perspective can enrich each other's interpretation of complex situations, offering the pair a broader combined view of meaning and possibility.`
-        : `Different worldviews can enrich each other's interpretation of complex situations.`,
-      `When the pair understands each other's worldview framing, they can interpret differences in reaction and meaning-making as perspectival rather than as personal rejection or disagreement.`,
-      `A combination of worldviews can make the pair more adaptive when facing situations that challenge any single interpretive lens.`,
+      wvA && wvB ? `A ${wvA} and a ${wvB} perspective can enrich each other's reading of complex situations, widening the pair's combined interpretive range.` : `Different worldviews can widen the pair's combined interpretive range.`,
+      `When worldview framing is understood, interpretation differences feel perspectival rather than personal — reducing unnecessary conflict.`,
+      `A worldview pairing that genuinely complements each other tends to produce a sense that the pair "speaks the same language" even when they disagree.`,
     ],
   };
 
   const challengesByKey = {
     values: [
-      valsA && valsB
-        ? `Diverging values between ${nameA} and ${nameB} — particularly those that appear in one list but not the other — can generate silent friction when treated as shared without confirmation.`
-        : `Diverging values can generate silent friction when treated as shared without confirmation.`,
-      `Even values that share a label can mean very different things in practice — the pair may need to explicitly explore what each value implies for expectations, priorities, and boundaries.`,
-      `First-layer values data does not capture intensity or hierarchy; the full Self-Profile would reveal which values are load-bearing for each person and which are more aspirational.`,
+      valsA && valsB ? `Values exclusive to one list are potential friction zones — implicit expectations the other person does not share and may not anticipate.` : `Values exclusive to one person are implicit expectations the other may not share.`,
+      `Even shared value labels can mean different things; the pair may interpret the same word through different practical standards.`,
+      `The full Self-Profile would reveal which values are load-bearing vs. aspirational for each person.`,
     ],
     pillars: [
-      pilsA && pilsB
-        ? `Where ${nameA}'s pillars (${pilsA}) and ${nameB}'s pillars (${pilsB}) diverge significantly, the pair may need to explicitly negotiate how each person's life structure is respected by the other.`
-        : `Where pillars diverge, the pair may need to negotiate how each person's life structure is respected.`,
-      `Pillar data captures the current configuration, which can shift with life events — what is load-bearing today may look different in a year, requiring ongoing recalibration between the pair.`,
-      `The full Self-Profile would add character-level data that clarifies whether pillar divergences reflect fundamental differences or simply distinct life moments.`,
+      pilsA && pilsB ? `Where pillars diverge significantly, the pair may need to explicitly negotiate how each person's current structure is respected by the other.` : `Diverging pillars may require explicit negotiation about how each person's structure is respected.`,
+      `Pillar data captures today's configuration — what is load-bearing now may shift with life events, requiring ongoing recalibration.`,
+      `The full Self-Profile would distinguish structural character differences from different life moments.`,
     ],
     decision: [
-      decA && decB
-        ? `A ${decA} style meeting a ${decB} style can create persistent friction if neither person understands that the difference is stylistic rather than a reflection of commitment or care.`
-        : `Divergent decision styles can create persistent friction if misread as commitment or care differences.`,
-      `Under stress or time pressure, style differences often become more pronounced — the pair may find that their natural rhythms feel more mismatched in high-stakes moments than in routine ones.`,
-      `The full Self-Profile would clarify whether these style patterns are stable traits or situational adaptations that could shift with context.`,
+      decA && decB ? `A ${decA} and a ${decB} rhythm pairing can create persistent friction if neither person frames the difference as stylistic rather than personal.` : `Divergent rhythms create friction when mistaken for differences in commitment or care.`,
+      `Style gaps tend to widen under stress — the pair may find their natural rhythms feel more mismatched in high-stakes moments.`,
+      `The full Self-Profile would clarify whether these patterns are stable traits or situational adaptations.`,
     ],
     worldview: [
-      wvA && wvB
-        ? `A ${wvA} and a ${wvB} worldview can generate persistent misunderstanding when the pair applies different interpretive frameworks to the same event without realizing they are doing so.`
-        : `Different worldviews can generate misunderstanding when different interpretive frameworks are applied to the same event without recognition.`,
-      `Worldview differences tend to be most challenging in high-stakes or emotionally loaded moments, where the meaning each person assigns to events may feel irreconcilable.`,
-      `The full Self-Profile would reveal the character-level drivers behind each worldview, adding nuance that goes beyond first-layer classification.`,
+      wvA && wvB ? `A ${wvA} and a ${wvB} perspective can apply different interpretive frameworks to the same event without realizing they are doing so.` : `Different worldviews can apply incompatible interpretive frames to the same event without awareness.`,
+      `Worldview differences tend to be most challenging when the pair is under emotional load and meaning-assignment feels non-negotiable.`,
+      `The full Self-Profile would add character-level drivers that explain why each worldview expresses as it does.`,
     ],
   };
 
-  const defaultStrengths  = [`This dimension gives ${nameA} and ${nameB} a concrete reference point for conversation.`, `Named comparisons create a shared vocabulary the pair can use to discuss differences explicitly.`, `Understanding this result supports more intentional coordination.`];
-  const defaultChallenges = [`Differences in this dimension may create implicit friction if not addressed directly.`, `First-layer data captures current configuration only — both profiles can evolve.`, `The full Self-Profile from both people would significantly refine this reading.`];
+  const defaultStrengths  = [`This dimension gives both people a concrete reference point for naming what they share.`, `Named comparisons let the pair discuss differences explicitly rather than feeling vague incompatibility.`, `Understanding this result supports more intentional coordination.`];
+  const defaultChallenges = [`Differences here may generate implicit friction if left unnamed.`, `First-layer data captures current configuration only — both profiles can evolve.`, `Full Self-Profile data from both people would significantly refine this reading.`];
 
   return {
     title,
@@ -425,16 +395,15 @@ Language: ${language}. Write ALL content in that language.
 
 You are analyzing the "${key}" dimension for the pair ${names}.
 
-━━━ MANDATORY RULES ━━━
-1. ALWAYS name the specific values, pillars, decision styles, or worldviews from the data. NEVER write "their values" or "their differences" without naming what they actually are.
-2. Explicitly compare person_a and person_b: name what they share, name what differs, and explain what each difference means in practice for their dynamic.
-3. For overlapping items: name them and explain the practical benefit of that alignment.
-4. For diverging items: name both sides and articulate whether the difference creates friction, complementarity, or requires explicit negotiation.
-5. "description": 170–220 words of continuous flowing prose. NO line breaks inside the string. Structure: (a) what both profiles share or how they compare in this dimension, (b) what the key difference means in practice, (c) what this implies for the pair's relational dynamic.
-6. Each "strengths" item: one complete sentence of 40–65 words naming specific elements from both profiles and explaining the positive dynamic they create.
-7. Each "challenges" item: one complete sentence of 40–65 words naming specific diverging elements and explaining the practical tension or growth edge.
-8. Exactly 3 strengths and 3 challenges. No sentence fragments.
-9. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims, nothing that sounds like a final verdict.`;
+━━━ ANALYSIS RULES ━━━
+1. ANALYZE — do not describe. Do NOT open with "Person A selected X, Person B selected Y." The description must answer: What do both people share in this dimension? What diverges, and does the divergence create friction, complementarity, or both? What is the practical relational implication of each pattern?
+2. For values and pillars: identify shared items (appear in both lists) as common ground and explain what that alignment enables. Identify exclusive items (appear in only one list) and explain whether the asymmetry creates tension or a useful complementarity — do not just state that it differs.
+3. For decision style and worldview: analyze what the PAIRING produces as a dynamic, not what each style means in isolation.
+4. "description": 160–200 words of analytical prose. NO line breaks inside the string. Lead with the dominant pattern the comparison reveals. Use specific names only to anchor the analysis — never to list inventories.
+5. Each "strengths" item: 20–35 words. One focused insight about a shared or complementary element and what it creates in practice. No re-listing of items already analyzed in the description.
+6. Each "challenges" item: 20–35 words. One focused friction point — name the specific asymmetry and its practical implication. No padding, no generalities.
+7. Exactly 3 strengths and 3 challenges.
+8. Tone: constructive, practical, non-diagnostic. No therapy language, no certainty claims.`;
 
   /* ── PROFILE scope ── */
   } else {
@@ -476,15 +445,15 @@ Language: ${language}. Write ALL content in that language.
 
 You are writing personalized insights for ${name} about their "${key}" dimension.
 
-━━━ MANDATORY RULES ━━━
-1. ALWAYS reference the user's specific selections by name. If values are "Autonomy, Creativity, Family", write about those exact values — never "your values" without naming them.
-2. Connect this dimension to the user's other dimensions when relevant (e.g., how the decision style relates to the values or worldview).
-3. Write specifically about ${name}'s result — not about what the "${key}" dimension means in general, but what it means for this person given these specific selections.
-4. "description": 170–220 words of continuous flowing prose. NO line breaks inside the string. Explain concretely what this specific result means for ${name}, referencing their actual selections and how they relate to each other.
-5. Each "strengths" item: one complete sentence of 40–65 words naming at least one specific element from ${name}'s profile and explaining a practical benefit, clarity, or advantage it provides.
-6. Each "challenges" item: one complete sentence of 40–65 words naming at least one specific element and explaining a practical tension, blind spot, or productive growth edge.
-7. Exactly 3 strengths and 3 challenges. No sentence fragments.
-8. Tone: elegant, constructive, non-diagnostic. No therapy language, no diagnosis, no certainty claims.`;
+━━━ ANALYSIS RULES ━━━
+1. ANALYZE — do not enumerate. Reveal what this specific combination of selections creates for this person: a pattern, a tension, a distinctive profile characteristic. Do NOT structure the description as "User selected X, Y, Z and this means..."
+2. Reference specific items only when they serve an analytical point. Name one or two to anchor an insight; do not list all selections in sequence.
+3. Connect dimensions when it deepens the analysis: how does the decision style interact with the values? What does the worldview imply about how the life pillars are experienced? These connections are the analysis.
+4. "description": 160–200 words of analytical prose. NO line breaks inside the string. Start from insight, not inventory.
+5. Each "strengths" item: 20–35 words. One focused analytical insight — a practical benefit, clarity, or advantage this combination creates. No re-listing.
+6. Each "challenges" item: 20–35 words. One focused tension or growth edge — a specific practical implication, not a general caveat.
+7. Exactly 3 strengths and 3 challenges.
+8. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.`;
   }
 
   try {
