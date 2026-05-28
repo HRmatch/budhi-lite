@@ -1,50 +1,110 @@
-# Budhi Lite V1 — GitHub Pages Ready
+# Checkmatch Lite V1
 
-Standalone teaser web application for a first-layer Budhi Self-Profile and Match Lite experience.
+Checkmatch Lite is a standalone teaser web application for a first-layer Self-Profile and Match Lite experience.
 
-This version was adjusted for **GitHub Pages** and does **not require a backend**. The user may insert their own OpenAI API key during the browser session to enable AI-generated card details.
+The application was designed to run on GitHub Pages and can operate without a traditional backend. User profiles and match results can be stored online through Supabase, while OpenAI-powered insights are generated using an API key provided by the user during the browser session.
+
+## Overview
+
+Checkmatch Lite provides a lightweight experience based on the first phase of the Self-Profile. It focuses on four core dimensions:
+
+* Decision Style
+* Values
+* Life Pillars
+* Worldview
+
+From these results, the application can generate:
+
+* an individual profile snapshot;
+* a Match Lite compatibility report between two completed profiles;
+* AI-generated card details and personalized reports when an OpenAI API key is provided.
 
 ## Pages
 
-- `index.html` — Home, language selection, preset user selection, optional OpenAI API key input
-- `forms.html` — Phase 1 Self-Profile form
-- `results.html` — Individual report and Match Lite report
+* `index.html` — Home, language selection, preset user selection and optional OpenAI API key input
+* `dashboard.html` — Logged area with access to forms, results and match features
+* `forms.html` — Phase 1 Self-Profile form
+* `results.html` — Individual results and Match Lite results
+* `report.html` — Personalized individual or match report generated from saved results
 
 ## Preset users
 
-- beto
-- luciana
-- laercio
-- ana_luiza / Ana Luiza
-- idejan
-- xarlys
-- thierry
-- admin
+The current version includes preset demo users:
 
-Default teaser password for regular users: `budhi-lite`  
-Admin password: `budhi-admin`
+* `beto`
+* `luciana`
+* `laercio`
+* `ana_luiza`
+* `idejan`
+* `xarlys`
+* `thierry`
+* `admin`
 
-This login is only a client-side demo gate. It is not secure authentication.
+Default password for regular users
 
-## API key behavior
+This login is a client-side demo gate only. It should not be treated as secure authentication for production use.
 
-The OpenAI API key is never committed to GitHub and is not hardcoded.
+## OpenAI API key behavior
 
-In this GitHub Pages version:
+The application does not include a hardcoded OpenAI API key.
 
-- the user types their own key in `index.html`;
-- the key is stored temporarily in `sessionStorage` under `budhi_lite_openai_key`;
-- the key survives navigation across `index.html`, `forms.html`, and `results.html` within the same tab/session;
-- the key is removed when the tab/browser session ends or when the user clicks **Clear API key**;
-- the key is not stored in `localStorage`;
-- the key is not saved with profile results;
-- the key is not sent to a Budhi backend, because this version has no backend.
+In this version:
 
-If no key is present, the app uses local deterministic fallback details for the AI modals.
+* the user may enter their own OpenAI API key on the Home page;
+* the key is stored temporarily in `sessionStorage`;
+* the key is available only during the active browser session;
+* the key is removed when the session ends or when the user clicks **Clear API key**;
+* the key is not stored in `localStorage`;
+* the key is not saved in Supabase;
+* the key is not saved with profile or match results;
+* the key is not committed to GitHub.
+
+The session key is stored under:
+
+```text
+budhi_lite_openai_key
+```
+
+If no OpenAI API key is available, the application uses deterministic fallback content for AI-related details.
+
+## Supabase storage
+
+This version uses Supabase REST to store profile and match buckets online.
+
+The Supabase integration allows completed profiles and match results to be reused across sessions and devices, instead of depending only on browser-local storage.
+
+Main online buckets:
+
+* `budhi_profiles` — stores individual Self-Profile results
+* `budhi_matches` — stores Match Lite results
+
+See:
+
+```text
+docs/SUPABASE_SETUP.md
+```
+
+for the SQL schema and Supabase configuration details.
+
+## Local storage behavior
+
+The application also keeps a local cache in the browser.
+
+Storage summary:
+
+* OpenAI API key: `sessionStorage` only
+* Current user, language and selected model: `sessionStorage`
+* Profile cache: `localStorage`
+* Match cache: `localStorage`
+* Online profile and match storage: Supabase
+
+The local cache is used as a fallback and to improve responsiveness, but Supabase is the main storage layer for online use.
 
 ## Running locally
 
-Because the app fetches `data/phase1_snapshot.json`, run it with a local static server instead of opening files directly:
+Because the application fetches local JSON data, it should be run with a local static server instead of opening the HTML files directly.
+
+From the project root, run:
 
 ```bash
 python -m http.server 8000
@@ -56,51 +116,81 @@ Then open:
 http://127.0.0.1:8000/index.html
 ```
 
-## Deploying to GitHub Pages
+## GitHub Pages deployment
 
-1. Create a GitHub repository.
-2. Commit the contents of this folder.
-3. Do not add any real API key to the repository.
-4. In GitHub, go to `Settings > Pages`.
-5. Choose the branch and folder to publish.
-6. Open the generated GitHub Pages URL.
+The project is compatible with GitHub Pages.
 
-If you use a custom domain, point the domain to GitHub Pages normally. This version is static.
-
-## Important security note
-
-This browser-key approach is acceptable for a teaser/demo where each user provides their own key, but it is not the recommended production architecture. A production version should use a backend that stores the API key in environment variables or a secrets manager and proxies AI calls safely.
-
-## Storage summary
-
-- API key: `sessionStorage` only.
-- Current user/language/model: `sessionStorage`.
-- Deterministic profile reports: `localStorage`, so demo profiles can be reused across refreshes.
-- No backend storage.
-
-## Files
+The root of the repository should contain:
 
 ```text
 index.html
+dashboard.html
 forms.html
 results.html
+report.html
+css/
+js/
+data/
+docs/
+```
+
+In GitHub Pages settings, the recommended configuration is:
+
+```text
+Source: Deploy from a branch
+Branch: main
+Folder: / (root)
+```
+
+## Security notes
+
+This version is suitable for a teaser, prototype or controlled demo.
+
+For a production application, the recommended architecture is different:
+
+* use a backend or serverless function to proxy OpenAI calls;
+* store API keys in environment variables or a secrets manager;
+* replace the client-side demo login with secure authentication;
+* define stricter Supabase Row Level Security policies;
+* avoid exposing any private service keys in frontend code.
+
+The Supabase publishable key can be used in the browser when Row Level Security policies are configured correctly. The Supabase `service_role` key must never be placed in frontend code.
+
+## Main files
+
+```text
+index.html
+dashboard.html
+forms.html
+results.html
+report.html
+
 css/styles.css
+
 js/i18n.js
 js/users.js
 js/session.js
 js/storage.js
+js/supabase_client.js
 js/formula_phase1_lite.js
 js/match_lite_formula.js
 js/openai_client_browser.js
+js/report_agent_browser.js
 js/home.js
+js/dashboard.js
 js/forms_controller.js
 js/results_controller.js
+js/report_controller.js
+
 data/phase1_snapshot.json
+
 docs/SECURITY_NOTES.md
 docs/FORMULA_CHANGES.md
+docs/SUPABASE_SETUP.md
 ```
 
+## Current scope
 
-## Supabase online buckets
+Checkmatch Lite V1 is focused on a first-layer profile and compatibility experience.
 
-This build saves profile and match buckets online using Supabase REST. See `docs/SUPABASE_SETUP.md` for the SQL and configuration details.
+It does not yet include the full character model, deeper Self-Profile phases or the complete match system from the full application.
