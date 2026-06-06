@@ -38,20 +38,21 @@ function buildProfileContext(profile) {
   const wvCard  = get('worldview');
 
   return {
-    display_name:    profile.display_name || profile.username || 'User',
-    selected_values: (valCard?.tags  || []).map(resolveLabel).filter(Boolean),
-    selected_pillars:(pilCard?.tags  || []).map(resolveLabel).filter(Boolean),
-    decision_style:  resolveLabel(decCard?.metric_value),
-    worldview:       resolveLabel(wvCard?.metric_value),
-    decision_bar:    decCard?.bar || 0,
+    display_name: profile.display_name || profile.username || "User",
+    golden_tip:        resolveLabel(app.golden_tip), // <-- INSERIDO golden_tip
+    selected_values: (valCard?.tags || []).map(resolveLabel).filter(Boolean),
+    selected_pillars: (pilCard?.tags || []).map(resolveLabel).filter(Boolean),
+    decision_style: resolveLabel(decCard?.metric_value),
+    worldview: resolveLabel(wvCard?.metric_value),
+    decision_bar: decCard?.bar || 0,
     // Full card list for cross-dimension references
-    all_cards: cards.map(c => ({
-      key:         c.key,
-      title:       resolveLabel(c.title),
-      metric:      resolveLabel(c.metric_value),
-      bar:         c.bar,
+    all_cards: cards.map((c) => ({
+      key: c.key,
+      title: resolveLabel(c.title),
+      metric: resolveLabel(c.metric_value),
+      bar: c.bar,
       description: resolveLabel(c.description),
-      tags:        (c.tags || []).map(resolveLabel).filter(Boolean),
+      tags: (c.tags || []).map(resolveLabel).filter(Boolean),
     })),
   };
 }
@@ -110,7 +111,7 @@ function buildMatchContext(match) {
     users:              match.users || [ctxA?.display_name || userA, ctxB?.display_name || userB].filter(Boolean),
     compatibility_score:app.score,
     match_type:         resolveLabel(app.match_type?.label),
-    gold_tip:           resolveLabel(app.gold_tip),
+    golden_tip:           resolveLabel(app.golden_tip),
     profile_a:          ctxA,
     profile_b:          ctxB,
 
@@ -154,9 +155,9 @@ function buildMatchContext(match) {
       tags:        (c.tags || []).map(resolveLabel).filter(Boolean),
     })),
     strengths: (app.strengths || []).map(s => ({ title: resolveLabel(s.title), description: resolveLabel(s.description) })),
-    tensions:  (app.tensions  || []).map(t => ({ title: resolveLabel(t.title), description: resolveLabel(t.description) })),
+    challenges: (app.challenges  || []).map(t => ({ title: resolveLabel(t.title), description: resolveLabel(t.description) })),
     dynamics:  (app.dynamics  || []).map(d => ({ title: resolveLabel(d.title), description: resolveLabel(d.description) })),
-    gaps:      (app.gaps      || []).map(g => ({ gap: resolveLabel(g.gap), severity: g.severity })),
+    gaps: (app.gaps      || []).map(g => ({ gap: resolveLabel(g.gap), severity: g.severity })),
   };
 }
 
@@ -431,8 +432,8 @@ async function generateAIDetails({ scope, key, profile, match }) {
       person_b: { name: pB.display_name, decision_style: pB.decision_style, worldview: pB.worldview },
       /* Formula-computed relational data — the core of the analysis */
       formula_analysis: fa,
-      overall_strengths: ctx.strengths,
-      overall_tensions:  ctx.tensions,
+     // overall_strengths: ctx.strengths,
+     // overall_challenges:  ctx.challenges, * REMOVIDO: overall_strengths e overall_challenges para forçar a IA a criar novos
     };
 
     systemPrompt = `You are Budhi Lite's compatibility analyst. Return ONLY valid JSON: { "title": string, "description": string, "strengths": [string, string, string], "challenges": [string, string, string] }
@@ -447,7 +448,7 @@ The payload.formula_analysis contains pre-computed relational data you MUST use:
 For values and pillars:
 • "shared" = items BOTH people selected. Name these as established common ground — not "they share values" but which specific ones and what that shared base creates in practice.
 • "convergent_pairs" = semantically compatible items from different selections. For each pair (format "A ↔ B"), explain the specific compatible dynamic: what do A and B share beneath the surface that makes them complementary?
-• "potential_frictions" = semantically opposed items. For each pair, explain the SPECIFIC tension: what does each item imply for behavior, and where do those implications pull in different directions? (e.g., "Autonomy ↔ Solidarity" means one person orients toward self-direction while the other toward collective responsibility — this creates friction in group-vs-individual decisions, not just "they differ".)
+• "potential_frictions" = semantically opposed items. For each pair, explain the SPECIFIC challenges: what does each item imply for behavior, and where do those implications pull in different directions? (e.g., "Autonomy ↔ Solidarity" means one person orients toward self-direction while the other toward collective responsibility — this creates friction in group-vs-individual decisions, not just "they differ".)
 
 For decision:
 • style_a and style_b are the specific rhythm labels. Analyze what the SPECIFIC pairing of these two styles creates in practice — when does this pairing flow, when does it create friction?
@@ -458,16 +459,20 @@ For worldview:
 ━━━ ANTI-PATTERN — NEVER WRITE THIS ━━━
 ✗ "Decision rhythm and worldview together set the relationship's natural ease."
 ✗ "Their differences create potential for both connection and misunderstanding."
+✗ "DO NOT repeat general relationship strengths or challenges. Your output MUST be 100% specific to the "${key}" dimension."  
 ✗ Any sentence that would be true for ANY pair, not specifically for ${names}.
 
+
 ━━━ QUALITY RULES ━━━
-1. ANALYZE — do not inventory. Lead with the pattern, not with "A has X and B has Y."
-2. Name specific items only to anchor analytical claims, not to list them.
-3. "description": 160–200 words. Start from the dominant dynamic this dimension reveals for this pair.
-4. Each "strengths" item: 20–35 words. One sharp insight about a specific alignment or complementarity.
-5. Each "challenges" item: 20–35 words. One specific friction — name what creates it and why.
-6. Exactly 3 strengths and 3 challenges.
-7. Tone: constructive, non-diagnostic. No therapy language.`;
+1. STRICT DIMENSION FOCUS: Your output MUST be exclusively about the "${key}" dimension.
+2. ANALYZE — do not inventory. Lead with the pattern, not with "A has X and B has Y."
+3. Name specific items only to anchor analytical claims, not to list them.
+4. "description": 160–200 words. Start from the dominant dynamic this dimension reveals for this pair.
+5. Each "strengths" item: 20–35 words. One sharp insight about a specific alignment or complementarity.
+6. Each "challenges" item: 20–35 words. One specific friction — name what creates it and why.
+7. Exactly 3 strengths and 3 challenges.
+8. Tone: constructive, non-diagnostic. No therapy language.
+9. NO EMPTY RESULTS: You must always generate the complete JSON structure with populated content.`;
 
   /* ── PROFILE scope ── */
   } else {
@@ -510,14 +515,15 @@ Language: ${language}. Write ALL content in that language.
 You are writing personalized insights for ${name} about their "${key}" dimension.
 
 ━━━ ANALYSIS RULES ━━━
-1. ANALYZE — do not enumerate. Reveal what this specific combination of selections creates for this person: a pattern, a tension, a distinctive profile characteristic. Do NOT structure the description as "User selected X, Y, Z and this means..."
-2. Reference specific items only when they serve an analytical point. Name one or two to anchor an insight; do not list all selections in sequence.
-3. Connect dimensions when it deepens the analysis: how does the decision style interact with the values? What does the worldview imply about how the life pillars are experienced? These connections are the analysis.
-4. "description": 160–200 words of analytical prose. NO line breaks inside the string. Start from insight, not inventory.
-5. Each "strengths" item: 20–35 words. One focused analytical insight — a practical benefit, clarity, or advantage this combination creates. No re-listing.
-6. Each "challenges" item: 20–35 words. One focused tension or growth edge — a specific practical implication, not a general caveat.
-7. Exactly 3 strengths and 3 challenges.
-8. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.`;
+1. STRICT DIMENSION FOCUS: Your output MUST be exclusively about the "${key}" dimension. Do NOT write general summaries of the user's entire profile. If you write generic statements, the outputs will repeat across different cards.
+2. ANALYZE — do not enumerate. Reveal what this specific combination of selections creates for this person: a pattern, a challenges, a distinctive profile characteristic. Do NOT structure the description as "User selected X, Y, Z and this means..."
+3. Reference specific items only when they serve an analytical point. Name one or two to anchor an insight; do not list all selections in sequence.
+4. Connect dimensions when it deepens the analysis: how does the decision style interact with the values? What does the worldview imply about how the life pillars are experienced? These connections are the analysis.
+5. "description": 160–200 words of analytical prose. NO line breaks inside the string. Start from insight, not inventory.
+6. Each "strengths" item: 20–35 words. One focused analytical insight — a practical benefit, clarity, or advantage this combination creates. No re-listing.
+7. Each "challenges" item: 20–35 words. One focused challenges or growth edge — a specific practical implication, not a general caveat.
+8. Exactly 3 strengths and 3 challenges.
+9. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.`; 
   }
 
   try {
