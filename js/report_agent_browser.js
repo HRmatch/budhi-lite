@@ -349,7 +349,7 @@ function fallbackMatchReport(match) {
   const appStrengths = (app.strengths || [])
     .map(s => cleanText(rptResolveLabel(s.description) || rptResolveLabel(s.title)))
     .filter(Boolean);
-  const appTensions = (app.tensions || [])
+  const appchallenges = (app.challenges || [])
     .map(t => cleanText(rptResolveLabel(t.description) || rptResolveLabel(t.title)))
     .filter(Boolean);
 
@@ -362,7 +362,7 @@ function fallbackMatchReport(match) {
       `Knowing where pillars align makes it easier for each person to support the other's most consistent investments.`,
       `Understanding both profiles simultaneously lets the pair calibrate expectations based on actual data, not projection.`,
     ], 3),
-    challenges: cleanArray(appTensions, [
+    challenges: cleanArray(appchallenges, [
       valsA && valsB ? `Values exclusive to one list are implicit expectations the other person may not share — a friction zone if left unnamed.` : `Diverging values create implicit expectations that may generate friction if not surfaced.`,
       decA && decB && decA !== decB ? `A ${decA} and ${decB} rhythm pairing requires an explicit shared protocol — especially under time pressure.` : `Divergent decision rhythms require an explicit shared protocol for collaborative choices.`,
       `First-layer data captures today's configuration — both profiles can evolve, and full Self-Profile data would refine this reading.`,
@@ -529,14 +529,14 @@ async function generatePersonalizedReport({ scope, profile, match }) {
       pair:                pairStr,
       compatibility_score: app.score,
       match_type:          rptResolveLabel(app.match_type?.label),
-      gold_tip:            rptResolveLabel(app.gold_tip),
+      golden_tip:            rptResolveLabel(app.golden_tip),
       person_a: { name: nameA, decision_style: ctxA?.decision_style, worldview: ctxA?.worldview },
       person_b: { name: nameB, decision_style: ctxB?.decision_style, worldview: ctxB?.worldview },
       /* The relational formula analysis — core input for the report */
       formula_analysis: formulaAnalysis,
       match_dynamics:  (app.dynamics  || []).map(d => `${rptResolveLabel(d.title)}: ${rptResolveLabel(d.description)}`).filter(Boolean),
       match_strengths: (app.strengths || []).map(s => `${rptResolveLabel(s.title)}: ${rptResolveLabel(s.description)}`).filter(Boolean),
-      match_tensions:  (app.tensions  || []).map(t => `${rptResolveLabel(t.title)}: ${rptResolveLabel(t.description)}`).filter(Boolean),
+      match_challenges:  (app.challenges  || []).map(t => `${rptResolveLabel(t.title)}: ${rptResolveLabel(t.description)}`).filter(Boolean),
     };
 
     system = `You are Budhi Lite's full match report writer. Return ONLY valid JSON following the schema below exactly.
@@ -549,7 +549,7 @@ payload.formula_analysis contains pre-computed relational data from the match en
 values / pillars (same structure):
 • "shared": items BOTH people selected. These are established common ground. Name them and explain what that specific shared base creates for the pair — not "they share values" generically.
 • "convergent_pairs" (format "A ↔ B"): semantically compatible items from different selections. For each pair, explain the specific compatible dynamic beneath the surface.
-• "potential_frictions" (format "A ↔ B"): semantically opposed items. For each pair in the report, explain SPECIFICALLY what tension it creates: what does each item imply for behavior, and where do those implications pull against each other?
+• "potential_frictions" (format "A ↔ B"): semantically opposed items. For each pair in the report, explain SPECIFICALLY what challenges it creates: what does each item imply for behavior, and where do those implications pull against each other?
 
 decision: style_a and style_b are the specific rhythm labels. Analyze what THIS SPECIFIC pairing creates — when does it flow, when does it create friction?
 
@@ -562,14 +562,16 @@ worldview: label_a, label_b, and alignment_type. Analyze what this SPECIFIC comb
 ✗ Any section that re-lists the formula data without analyzing it.
 
 ━━━ QUALITY RULES ━━━
-1. ANALYZE — do not inventory. Lead every section with the pattern, not with "A has X and B has Y."
-2. For friction pairs: name the specific pair AND explain WHY that combination creates tension (what each item implies for behavior and where those implications conflict).
-3. "description" (top-level): 200–260 words. Dominant compatibility pattern, key alignments and their practical implications, main friction/complementarity sources and their relational meaning.
-4. "sections[].description": 120–150 words per section. Pattern-led, analytical. What does this dimension reveal for this specific pair?
-5. Strength/challenge items (all levels): 25–40 words. One sharp specific insight. No generalities.
-6. cross_analysis bullets: 30–45 words. Connect dimensions — show what the combination reveals.
-7. Tone: constructive, non-diagnostic. No therapy language, no certainty claims.
-8. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections, each 3 strengths + 3 challenges.
+1. STRICT SECTION FOCUS: The top-level strengths/challenges must be about the relationship as a whole. However, inside the "result_sections" array, the strengths and challenges MUST be 100% exclusive and specific to that exact dimension (e.g., the "values" section must ONLY contain insights about their values overlap). DO NOT repeat top-level insights inside the result_sections.
+2. ANALYZE — do not inventory. Lead every section with the pattern, not with "A has X and B has Y."
+3. For friction pairs: name the specific pair AND explain WHY that combination creates challenges (what each item implies for behavior and where those implications conflict).
+4. "description" (top-level): 200–260 words. Dominant compatibility pattern, key alignments and their practical implications, main friction/complementarity sources and their relational meaning.
+5. "sections[].description": 120–150 words per section. Pattern-led, analytical. What does this dimension reveal for this specific pair?
+6. Strength/challenge items (all levels): 25–40 words. One sharp specific insight. No generalities.
+7. cross_analysis bullets: 30–45 words. Connect dimensions — show what the combination reveals.
+8. Tone: constructive, non-diagnostic. No therapy language, no certainty claims.
+9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections, each 3 strengths + 3 challenges.
+10. NO EMPTY RESULTS: Always generate the complete JSON structure.
 
 Required JSON schema:
 {
@@ -605,6 +607,7 @@ Required JSON schema:
       scope,
       language,
       display_name: name,
+      golden_tip:     ctx?.golden_tip, // <-- INSERIDO golden_tip
       profile: {
         selected_values:  ctx?.selected_values,
         selected_pillars: ctx?.selected_pillars,
@@ -627,15 +630,16 @@ Language: ${language}. Write ALL text content in that language.
 You are writing a full personalized report for ${name}.
 
 ━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
-1. ANALYZE — do not enumerate. NEVER structure a description as "User selected X, Y, Z." Reveal what the combination of selections creates: a pattern, a tension, a distinctive profile characteristic.
-2. Reference specific items only when they serve an analytical point — to anchor an insight, not to create a list. One or two items named per analytical claim is sufficient; listing all of them adds length without depth.
-3. Connect dimensions: how does the decision style interact with the values? What does the worldview imply about how life pillars are experienced? What does the combination of values and pillars reveal about where motivation and structure meet? These connections are the analysis.
-4. "description" (top-level): 200–260 words of analytical prose covering all four dimensions as a coherent profile — what the combination creates, not what each dimension contains.
-5. "sections[].description": 120–150 words per section of analytical prose. Answer: what does this specific dimension create for ${name}, given their other dimensions?
-6. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight — a practical implication, not a general observation. No re-listing.
-7. All cross_analysis bullets: 30–45 words each. Synthesize across dimensions — show what the combination reveals that no single dimension would.
-8. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.
-9. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
+1. STRICT SECTION FOCUS: The top-level strengths and challenges must summarize the person's overall profile. However, inside the "result_sections" array, the text, strengths, and challenges MUST focus exclusively on that specific dimension. Do NOT repeat top-level insights inside the individual dimension cards.
+2. ANALYZE — do not enumerate. NEVER structure a description as "User selected X, Y, Z." Reveal what the combination of selections creates: a pattern, a challenges, a distinctive profile characteristic.
+3. Reference specific items only when they serve an analytical point — to anchor an insight, not to create a list. One or two items named per analytical claim is sufficient; listing all of them adds length without depth.
+4. Connect dimensions: how does the decision style interact with the values? What does the worldview imply about how life pillars are experienced? What does the combination of values and pillars reveal about where motivation and structure meet? These connections are the analysis.
+5. "description" (top-level): 200–260 words of analytical prose covering all four dimensions as a coherent profile — what the combination creates, not what each dimension contains.
+6. "sections[].description": 120–150 words per section of analytical prose. Answer: what does this specific dimension create for ${name}, given their other dimensions?
+7. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight — a practical implication, not a general observation. No re-listing.
+8. All cross_analysis bullets: 30–45 words each. Synthesize across dimensions — show what the combination reveals that no single dimension would.
+9. Tone: elegant, constructive, non-diagnostic. No therapy language, no certainty claims.
+10. Exactly 3 top-level strengths, 3 challenges, 3 cross_analysis bullets, 4 result_sections (decision, values, pillars, worldview), each with 3 strengths and 3 challenges.
 
 Required JSON schema:
 {
