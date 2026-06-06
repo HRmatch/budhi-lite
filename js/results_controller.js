@@ -105,35 +105,63 @@ function loadIndividual() {
 }
 
 function renderIndividual(profile, root) {
-  root.innerHTML = `<section class="hero"><div class="hero-top"><div><div class="eyebrow">✨ Budhi Lite · Phase 1 Snapshot</div><h1>${ml(
-    profile.results_app.title
-  )}</h1><p>${ml(
-    profile.results_app.overview
-  )}</p></div></div></section><section class="card report-cta-card"><div><h2 class="section-title"><span class="icon teal">✧</span>${t(
-    "personalizedReport"
-  )}</h2><p class="small">${t(
-    "personalizedReportText"
-  )}</p></div><a class="btn primary" href="./report.html?scope=profile&user=${encodeURIComponent(
-    profile.username
-  )}">${t(
-    "generateReport"
-  )}</a></section><section class="grid four">${profile.results_app.cards
-    .map((c) => cardHtml(c, "profile"))
-    .join(
-      ""
-    )}</section><section class="grid two"><article class="card character-card"><h2 class="section-title"><span class="icon navy">✦</span>${t(
-    "discoverCharacter"
-  )}</h2><p class="summary-text">${ml(
-    profile.results_app.character_teaser
-  )}</p><p class="small" style="margin-top:12px">${t(
-    "completeSelf"
-  )}</p></article><article class="card"><h2 class="section-title"><span class="icon purple">↻</span>${t(
-    "editProfile"
-  )}</h2><p class="small">${
-    profile.source === "demo_seed" ? t("sampleProfilesLoaded") : ""
-  }</p><div class="footer-actions"><a href="./forms.html" class="btn primary">${t(
-    "editProfile"
-  )}</a></div></article></section>`;
+root.innerHTML = `
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">✨ Budhi Lite · Phase 1 Snapshot</div>
+          <h1>${ml(profile.results_app.title)}</h1>
+          <p>${ml(profile.results_app.overview)}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card report-cta-card">
+      <div>
+        <h2 class="section-title">
+          <span class="icon teal">✧</span>${t("personalizedReport")}
+        </h2>
+        <p class="small">${t("personalizedReportText")}</p>
+      </div>
+      <a class="btn primary"
+         href="./report.html?scope=profile&user=${encodeURIComponent(profile.username)}">
+        ${t("generateReport")}
+      </a>
+    </section>
+
+    <section class="grid four">
+      ${profile.results_app.cards.map((c) => cardHtml(c, "profile")).join("")}
+    </section>
+
+    <section class="grid three">
+      <article class="card">
+        <h2 class="section-title">
+          <span class="icon navy">💬</span>${t("goldenTip")}
+        </h2>
+        <p class="summary-text">${ml(profile.results_app.golden_tip)}</p>
+      </article>
+
+      <article class="card character-card">
+        <h2 class="section-title">
+          <span class="icon navy">✦</span>${t("discoverCharacter")}
+        </h2>
+        <p class="summary-text">${ml(profile.results_app.character_teaser)}</p>
+        <p class="small" style="margin-top:12px">${t("completeSelf")}</p>
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">
+          <span class="icon purple">↻</span>${t("editProfile")}
+        </h2>
+        <p class="small">
+          ${profile.source === "demo_seed" ? t("sampleProfilesLoaded") : ""}
+        </p>
+        <div class="footer-actions">
+          <a href="./forms.html" class="btn primary">${t("editProfile")}</a>
+        </div>
+      </article>
+    </section>
+  `;
 
   bindAICards();
 }
@@ -337,9 +365,9 @@ function renderMatch(match, root) {
   )}</h2><p class="summary-text"><strong>${ml(
     app.match_type.label
   )}</strong></p></article><article class="card"><h2 class="section-title"><span class="icon navy">💬</span>${t(
-    "goldTip"
+    "goldenTip"
   )}</h2><p class="summary-text">${ml(
-    app.gold_tip
+    app.golden_tip
   )}</p></article></section><section class="grid three"><article class="card"><h2 class="section-title"><span class="icon blue">⚙</span>${t(
     "keyDynamics"
   )}</h2>${renderList(
@@ -351,9 +379,9 @@ function renderMatch(match, root) {
     app.strengths,
     "green"
   )}</article><article class="card"><h2 class="section-title"><span class="icon gold">⚠</span>${t(
-    "tensions"
+    "challenges"
   )}</h2>${renderList(
-    app.tensions,
+    app.challenges,
     "gold"
   )}</article></section><section class="grid two"><article class="card"><h2 class="section-title"><span class="icon purple">🧩</span>${t(
     "matchGaps"
@@ -445,3 +473,4 @@ function closeModal() {
   modal.classList.remove("is-open");
   document.body.style.overflow = "";
 }
+
