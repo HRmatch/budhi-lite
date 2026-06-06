@@ -202,12 +202,12 @@ function buildMatchLite(profileA, profileB) {
   let type = 'misaligned';
   if (score >= 82) type = 'balanced';
   else if (score >= 65) type = 'growth';
-  else if (score >= 45) type = 'tension';
+  else if (score >= 45) type = 'challenges';
 
   const typeML = {
     balanced:  obj('Balanced Pair', 'Par Equilibrado', 'Par Equilibrado', 'Duo Équilibré', 'Ausgeglichenes Paar'),
     growth:    obj('Growth-Compatible Pair', 'Par Compatível para Crescimento', 'Par Compatible para Crecimiento', 'Duo Compatible pour la Croissance', 'Wachstumskompatibles Paar'),
-    tension:   obj('Tension-Based Growth Pair', 'Par de Crescimento por Tensão', 'Par de Crecimiento por Tensión', 'Duo de Croissance par Tension', 'Spannungsbasiertes Wachstumspaar'),
+    challenges:   obj('Challenges-Based Growth Pair', 'Par de Crescimento por Desafios', 'Par de Crecimiento por Desafíos', 'Duo de Croissance par les Défis', 'Herausforderungsbasiertes Wachstumspaar'),
     misaligned: obj('Misaligned Pair', 'Par Desalinhado', 'Par Desalineado', 'Duo Désaligné', 'Fehlangepasstes Paar')
   };
 
@@ -324,7 +324,7 @@ function buildMatchLite(profileA, profileB) {
     }
   ];
 
-  const strengths = [], tensions = [], gaps = [], dynamics = [];
+  const strengths = [], challenges = [], gaps = [], dynamics = [];
 
   if (d >= .62) {
     strengths.push({
@@ -332,7 +332,7 @@ function buildMatchLite(profileA, profileB) {
       description: obj('The pair can negotiate timing without losing movement.', 'O par pode negociar timing sem perder movimento.', 'El par puede negociar timing sin perder movimiento.', 'Le duo peut négocier le timing sans perdre le mouvement.', 'Das Paar kann Timing verhandeln, ohne Bewegung zu verlieren.')
     });
   } else {
-    tensions.push({
+    challenges.push({
       title:       obj('Decision pace friction', 'Atrito no ritmo de decisão', 'Fricción en el ritmo de decisión', 'Friction du rythme décisionnel', 'Reibung im Entscheidungstempo'),
       description: obj('One person may push for action while the other needs more context.', 'Uma pessoa pode pressionar por ação enquanto a outra precisa de mais contexto.', 'Una persona puede presionar por acción mientras la otra necesita más contexto.', 'Une personne peut pousser à l\'action tandis que l\'autre a besoin de plus de contexte.', 'Eine Person kann auf Handlung drängen, während die andere mehr Kontext braucht.')
     });
@@ -345,7 +345,7 @@ function buildMatchLite(profileA, profileB) {
       description: obj('Shared values create anchors for trust and direct conversation.', 'Valores compartilhados criam âncoras para confiança e conversa direta.', 'Los valores compartidos crean anclas para confianza y conversación directa.', 'Les valeurs partagées créent des ancrages de confiance et de conversation directe.', 'Gemeinsame Werte schaffen Anker für Vertrauen und direkte Gespräche.')
     });
   } else {
-    tensions.push({
+    challenges.push({
       title:       obj('Value distance', 'Distância de valores', 'Distancia de valores', 'Distance de valeurs', 'Wertedistanz'),
       description: obj('The pair may judge priorities from different moral anchors.', 'O par pode julgar prioridades a partir de âncoras morais diferentes.', 'El par puede juzgar prioridades desde anclas morales diferentes.', 'Le duo peut juger les priorités à partir d\'ancrages moraux différents.', 'Das Paar kann Prioritäten aus unterschiedlichen moralischen Ankern beurteilen.')
     });
@@ -358,7 +358,7 @@ function buildMatchLite(profileA, profileB) {
       description: obj('Shared pillars make daily priorities easier to understand.', 'Pilares compartilhados facilitam compreender prioridades diárias.', 'Los pilares compartidos facilitan comprender prioridades diarias.', 'Les piliers partagés facilitent la compréhension des priorités quotidiennes.', 'Gemeinsame Säulen erleichtern das Verständnis täglicher Prioritäten.')
     });
   } else {
-    tensions.push({
+    challenges.push({
       title:       obj('Priority distribution gap', 'Gap de distribuição de prioridades', 'Brecha de distribución de prioridades', 'Écart de distribution des priorités', 'Prioritätsverteilungs-Gap'),
       description: obj('Different pillars may compete for time and emotional energy.', 'Pilares diferentes podem competir por tempo e energia emocional.', 'Pilares diferentes pueden competir por tiempo y energía emocional.', 'Des piliers différents peuvent entrer en concurrence pour le temps et l\'énergie émotionnelle.', 'Unterschiedliche Säulen können um Zeit und emotionale Energie konkurrieren.')
     });
@@ -371,7 +371,7 @@ function buildMatchLite(profileA, profileB) {
       description: obj('The pair can expand interpretation by combining different lenses.', 'O par pode ampliar a interpretação combinando lentes diferentes.', 'El par puede ampliar la interpretación combinando lentes diferentes.', 'Le duo peut élargir l\'interprétation en combinant différentes lentilles.', 'Das Paar kann Interpretation durch unterschiedliche Perspektiven erweitern.')
     });
   } else if (w.score < .45) {
-    tensions.push({
+    challenges.push({
       title:       obj('Worldview friction', 'Atrito de visão de mundo', 'Fricción de visión del mundo', 'Friction de vision du monde', 'Weltanschauungs-Reibung'),
       description: obj('The pair may explain the same situation through conflicting lenses.', 'O par pode explicar a mesma situação por lentes conflitantes.', 'El par puede explicar la misma situación con lentes conflictivas.', 'Le duo peut expliquer la même situation à travers des lentilles conflictuelles.', 'Das Paar kann dieselbe Situation durch widersprüchliche Linsen erklären.')
     });
@@ -411,9 +411,9 @@ function buildMatchLite(profileA, profileB) {
       match_type: { key: type, label: typeML[type] },
       dynamics:   dynamics.slice(0, 3),
       strengths:  strengths.slice(0, 3),
-      tensions:   tensions.slice(0, 3),
-      gaps:       gaps.slice(0, 3),
-      gold_tip: obj(
+      challenges: challenges.slice(0, 3),
+      gaps:       gaps.slice(0, 3), // redução para 1
+      golden_tip: obj(
         'Use the Match Lite as a conversation starter: first agree on decision timing, then compare values and life priorities before drawing conclusions about compatibility.',
         'Use o Match Lite como ponto de partida para conversa: primeiro combinem o timing das decisões, depois comparem valores e prioridades de vida antes de tirar conclusões sobre compatibilidade.',
         'Use Match Lite como punto de partida para conversar: primero acuerden el timing de decisiones, luego comparen valores y prioridades de vida antes de sacar conclusiones sobre compatibilidad.',
