@@ -33,7 +33,7 @@ const I18N = {
     generateMatch:"Generate Match Lite",
     noProfile:"Complete the form to generate your first report.",
     discoverCharacter:"Discover your character",
-    completeSelf:"Complete the full Self-Profile in the future to unlock character-level insights.",
+    completeSelf:"Unlock deeper behavioral insights by completing your full Self-Profile.",
     required:"Please complete all questions.",
     saved:"Profile saved successfully.",
     homeTitle:"Explore your behavioral blueprint",
@@ -74,7 +74,7 @@ const I18N = {
     eyebrowTeaser:"✦ Budhi Lite · Teaser V1",
     enterExperience:"Começar experiência",
     howItWorks:"Como funciona",
-    flowHeading:"Três passos para o retrato do seu perfil.",
+    flowHeading:"Três passos para seus insights pessoais",
     explore:"Explorar",
     home:"Home",
     forms:"Formulário",
@@ -85,7 +85,7 @@ const I18N = {
     username:"Usuário",
     password:"Senha",
     start:"Iniciar",
-    saveProfile:"Gerar Retrato do Perfil",
+    saveProfile:"Gerar Snapshot do Perfil",
     individual:"Resultado individual",
     match:"Match",
     compatibilityScore:"Compatibility Score",
@@ -104,7 +104,7 @@ const I18N = {
     generateMatch:"Gerar Match Lite",
     noProfile:"Complete o formulário para gerar o primeiro report.",
     discoverCharacter:"Descubra seu character",
-    completeSelf:"Complete o Self-Profile completo no futuro para desbloquear insights de character.",
+    completeSelf:"Desbloqueie insights comportamentais mais profundos completando seu Self-Profile completo.",
     required:"Responda todas as questões.",
     saved:"Perfil salvo com sucesso.",
     homeTitle:"Descubra sua primeira camada de perfil.",
@@ -145,7 +145,7 @@ const I18N = {
     eyebrowTeaser:"✦ Budhi Lite · Teaser V1",
     enterExperience:"Comenzar experiencia",
     howItWorks:"Cómo funciona",
-    flowHeading:"Tres pasos para su retrato de perfil.",
+    flowHeading:"Tres pasos para sus insights personales",
     explore:"Explorar",
     home:"Home",
     forms:"Formulario",
@@ -156,7 +156,7 @@ const I18N = {
     username:"Usuario",
     password:"Contraseña",
     start:"Iniciar",
-    saveProfile:"Generar Retrato del Perfil",
+    saveProfile:"Generar Snapshot del Perfil",
     individual:"Resultado individual",
     match:"Match",
     compatibilityScore:"Compatibility Score",
@@ -175,7 +175,7 @@ const I18N = {
     generateMatch:"Generar Match Lite",
     noProfile:"Complete el formulario para generar su primer report.",
     discoverCharacter:"Descubra su character",
-    completeSelf:"Complete el Self-Profile completo en el futuro para desbloquear insights de character.",
+    completeSelf:"Desbloquee insights conductuales más profundos completando su Self-Profile completo.",
     required:"Responda todas las preguntas.",
     saved:"Perfil guardado correctamente.",
     homeTitle:"Descubra su primera capa de perfil.",
@@ -216,7 +216,7 @@ const I18N = {
     eyebrowTeaser:"✦ Budhi Lite · Teaser V1",
     enterExperience:"Commencer l’expérience",
     howItWorks:"Comment ça marche",
-    flowHeading:"Trois étapes pour votre aperçu de profil.",
+    flowHeading:"Trois étapes vers vos insights personnels",
     explore:"Explorer",
     home:"Home",
     forms:"Formulaire",
@@ -227,7 +227,7 @@ const I18N = {
     username:"Utilisateur",
     password:"Mot de passe",
     start:"Commencer",
-    saveProfile:"Générer le Profil Snapshot",
+    saveProfile:"Générer le Snapshot du Profil",
     individual:"Résultat individuel",
     match:"Match",
     compatibilityScore:"Compatibility Score",
@@ -246,7 +246,7 @@ const I18N = {
     generateMatch:"Générer Match Lite",
     noProfile:"Complétez le formulaire pour générer votre premier report.",
     discoverCharacter:"Découvrez votre character",
-    completeSelf:"Complétez le Self-Profile complet plus tard pour débloquer les insights de character.",
+    completeSelf:"Débloquez des insights comportementaux plus profonds en complétant votre Self-Profile complet.",
     required:"Répondez à toutes les questions.",
     saved:"Profil enregistré avec succès.",
     homeTitle:"Découvrez votre première couche de profil.",
@@ -287,7 +287,7 @@ const I18N = {
     eyebrowTeaser:"✦ Budhi Lite · Teaser V1",
     enterExperience:"Erfahrung starten",
     howItWorks:"So funktioniert es",
-    flowHeading:"Drei Schritte zu Ihrem Profil-Snapshot.",
+    flowHeading:"Drei Schritte zu Ihren persönlichen Insights.",
     explore:"Entdecken",
     home:"Home",
     forms:"Formular",
@@ -317,7 +317,7 @@ const I18N = {
     generateMatch:"Match Lite generieren",
     noProfile:"Füllen Sie das Formular aus, um Ihren ersten Report zu generieren.",
     discoverCharacter:"Entdecken Sie Ihren character",
-    completeSelf:"Vervollständigen Sie später das vollständige Self-Profile, um character-Insights freizuschalten.",
+    completeSelf:"Schalten Sie tiefere Verhaltenseinblicke frei, indem Sie Ihr vollständiges Self-Profile abschließen.",
     required:"Bitte beantworten Sie alle Fragen.",
     saved:"Profil erfolgreich gespeichert.",
     homeTitle:"Entdecken Sie Ihre erste Profilebene.",
@@ -616,6 +616,41 @@ Object.keys(I18N_REPORT_PAGE).forEach(lang => Object.assign(I18N[
 I18N_REPORT_PAGE[
   lang
 ]));
+
+const I18N_REPORT_CACHE_FLOW = {
+  en:{
+    viewSavedReport:"View saved report",
+    viewReport:"View report",
+    savedReportAvailableText:"A saved report is available for your current language.",
+    reportTranslationAvailableText:"A report already exists and will be translated/adapted for your current language if needed."
+  },
+  pt:{
+    viewSavedReport:"Ver report salvo",
+    viewReport:"Ver report",
+    savedReportAvailableText:"Já existe um report salvo para o idioma atual.",
+    reportTranslationAvailableText:"Já existe um report e ele será traduzido/adaptado para o idioma atual, se necessário."
+  },
+  es:{
+    viewSavedReport:"Ver report guardado",
+    viewReport:"Ver report",
+    savedReportAvailableText:"Ya existe un report guardado para el idioma actual.",
+    reportTranslationAvailableText:"Ya existe un report y se traducirá/adaptará al idioma actual si es necesario."
+  },
+  fr:{
+    viewSavedReport:"Voir le report enregistré",
+    viewReport:"Voir le report",
+    savedReportAvailableText:"Un report enregistré existe déjà pour la langue actuelle.",
+    reportTranslationAvailableText:"Un report existe déjà et sera traduit/adapté dans la langue actuelle si nécessaire."
+  },
+  de:{
+    viewSavedReport:"Gespeicherten Report ansehen",
+    viewReport:"Report ansehen",
+    savedReportAvailableText:"Für die aktuelle Sprache ist bereits ein gespeicherter Report verfügbar.",
+    reportTranslationAvailableText:"Ein Report existiert bereits und wird bei Bedarf für die aktuelle Sprache übersetzt/adaptiert."
+  }
+};
+Object.keys(I18N_REPORT_CACHE_FLOW).forEach(lang => Object.assign(I18N[lang], I18N_REPORT_CACHE_FLOW[lang]));
+
 function getLang(){
   return sessionStorage.getItem('budhi_lite_lang') || 'en'
 }
@@ -649,3 +684,51 @@ function applyStaticText(){
     el.textContent=t(el.dataset.i18n)
   })
 }
+
+
+/* Multilingual label overrides for report/card UI */
+const I18N_AI_LABEL_FIXES = {
+  pt:{description:"Descrição", loadingAI:"Carregando detalhes de IA...", clickAI:"Clique para detalhes de IA", challenges:"Desafios"},
+  es:{description:"Descripción", loadingAI:"Cargando detalles de IA...", clickAI:"Clic para detalles de IA", challenges:"Desafíos"},
+  fr:{description:"Description", loadingAI:"Chargement des détails IA...", clickAI:"Cliquez pour les détails IA", challenges:"Défis"},
+  de:{description:"Beschreibung", loadingAI:"KI-Details werden geladen...", clickAI:"Für KI-Details klicken", challenges:"Herausforderungen"},
+  ge:{description:"Beschreibung", loadingAI:"KI-Details werden geladen...", clickAI:"Für KI-Details klicken", challenges:"Herausforderungen"}
+};
+Object.keys(I18N_AI_LABEL_FIXES).forEach(lang => {
+  if (I18N[lang]) Object.assign(I18N[lang], I18N_AI_LABEL_FIXES[lang]);
+});
+
+
+const I18N_MATCH_CACHE = {
+  en:{
+    openSavedMatch:"Open saved Match",
+    regenerateMatchLite:"Regenerate Match Lite",
+    savedMatchAvailable:"A saved match is available. Open it to keep the same AI interpretation, or regenerate after profile updates.",
+    noSavedMatchYet:"No saved match yet for this pair."
+  },
+  pt:{
+    openSavedMatch:"Abrir match salvo",
+    regenerateMatchLite:"Regenerar Match Lite",
+    savedMatchAvailable:"Há um match salvo. Abra para manter a mesma interpretação de IA, ou regenere após atualizações de perfil.",
+    noSavedMatchYet:"Ainda não há match salvo para este par."
+  },
+  es:{
+    openSavedMatch:"Abrir match guardado",
+    regenerateMatchLite:"Regenerar Match Lite",
+    savedMatchAvailable:"Hay un match guardado. Ábralo para mantener la misma interpretación de IA, o regenere después de actualizar perfiles.",
+    noSavedMatchYet:"Aún no hay match guardado para este par."
+  },
+  fr:{
+    openSavedMatch:"Ouvrir le match enregistré",
+    regenerateMatchLite:"Régénérer Match Lite",
+    savedMatchAvailable:"Un match enregistré est disponible. Ouvrez-le pour conserver la même interprétation IA, ou régénérez après des mises à jour de profil.",
+    noSavedMatchYet:"Aucun match enregistré pour cette paire."
+  },
+  de:{
+    openSavedMatch:"Gespeicherten Match öffnen",
+    regenerateMatchLite:"Match Lite neu generieren",
+    savedMatchAvailable:"Ein gespeicherter Match ist verfügbar. Öffnen Sie ihn, um dieselbe KI-Interpretation beizubehalten, oder generieren Sie ihn nach Profiländerungen neu.",
+    noSavedMatchYet:"Für dieses Paar gibt es noch keinen gespeicherten Match."
+  }
+};
+Object.keys(I18N_MATCH_CACHE).forEach(lang => Object.assign(I18N[lang], I18N_MATCH_CACHE[lang]));
