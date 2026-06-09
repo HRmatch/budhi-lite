@@ -652,11 +652,11 @@ function buildPhase1Profile({
       dimensions,
       cards,
       character_teaser: obj(
-        "Character-level insights are not included in Budhi Lite V1. Complete the full Self-Profile later to discover the user’s character and unlock deeper interpretation.",
-        "Insights de character não estão incluídos no Budhi Lite V1. Complete o Self-Profile completo posteriormente para descobrir o character do usuário e desbloquear uma interpretação mais profunda.",
-        "Los insights de character no están incluidos en Budhi Lite V1. Complete el Self-Profile completo más adelante para descubrir el character del usuario y desbloquear una interpretación más profunda.",
-        "Les insights de character ne sont pas inclus dans Budhi Lite V1. Complétez plus tard le Self-Profile complet pour découvrir le character de l’utilisateur.",
-        "Character-Insights sind in Budhi Lite V1 nicht enthalten. Vervollständigen Sie später das komplette Self-Profile, um den character des Nutzers zu entdecken.",
+        "This is just an initial view. Discover your Character and access deep behavioral mapping in the full version of the BUDHI App.",
+        "Esta é apenas uma visão inicial. Descubra seu Character e acesse o mapeamento comportamental profundo na versão completa do BUDHI App.",
+        "Esta es solo una visión inicial. Descubra su Character y acceda al mapeo de comportamiento profundo en la versión completa de BUDHI App.",
+        "Ceci n'est qu'un aperçu initial. Découvrez votre Character et accédez à une cartographie comportementale approfondie dans la version complète de BUDHI App.",
+        "Dies ist nur ein erster Einblick. Entdecken Sie Ihren Character und greifen Sie auf tiefgreifendes Verhaltens-Mapping in der Vollversion der BUDHI App zu."
       ),
       // NOVA SESSÃO GOLD TIP AQUI:
       golden_tip: obj(
@@ -670,4 +670,3 @@ function buildPhase1Profile({
   };
   return profile;
 }
-
