@@ -1,4 +1,4 @@
-# Checkmatch Lite V1
+# Checkmatch Lite V7 - 08 Jun 26
 
 Checkmatch Lite is a standalone teaser web application for a first-layer Self-Profile and Match Lite experience.
 
@@ -418,7 +418,7 @@ docs/SUPABASE_SETUP.md
 
 ## Current scope
 
-Checkmatch Lite V1 is focused on a first-layer profile and compatibility experience.
+Checkmatch Lite V7 is focused on a first-layer profile and compatibility experience.
 
 It does not yet include:
 
