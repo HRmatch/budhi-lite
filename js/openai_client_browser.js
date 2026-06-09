@@ -439,8 +439,10 @@ async function generateAIDetails({ scope, key, profile, match }) {
     systemPrompt = `You are Budhi Lite's compatibility analyst. Return ONLY valid JSON: { "title": string, "description": string, "strengths": [string, string, string], "challenges": [string, string, string] }
 
 Language: ${language}. Write ALL content in that language.
+Target language name: ${aiLanguageName(language)}.
 
 You are analyzing the "${key}" dimension for the pair ${names}.
+For MATCH outputs, write neutrally about the pair in third person. Do not address the viewer as "you" and do not write from only one participant's perspective.
 
 ━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
 The payload.formula_analysis contains pre-computed relational data you MUST use:
@@ -553,4 +555,366 @@ You are writing personalized insights for ${name} about their "${key}" dimension
       _note:   `${t('aiFailed')} ${err.message || ''}`.trim(),
     };
   }
+}
+
+
+/* ─────────────────────────────────────────────
+   MULTILINGUAL AI CACHE + TRANSLATION FLOW
+   Match AI is generated once as an original and
+   later translated/adapted per viewer language.
+───────────────────────────────────────────── */
+
+function aiLanguageName(code){
+  return ({en:'English', pt:'Portuguese (Brazil)', es:'Spanish', fr:'French', de:'German', ge:'German'}[code] || code || 'English');
+}
+
+function aiViewerUsername(){
+  try { return requireSession()?.username || sessionStorage.getItem('budhi_lite_user') || 'unknown'; }
+  catch(_) { return 'unknown'; }
+}
+
+function aiNow(){ return new Date().toISOString(); }
+
+function aiEnsureRoot(subject){
+  subject.results_ai = subject.results_ai || {};
+  subject.results_ai.ai_content = subject.results_ai.ai_content || {};
+  return subject.results_ai.ai_content;
+}
+
+function aiEnsureBucket(subject, bucketName){
+  const root = aiEnsureRoot(subject);
+  root[bucketName] = root[bucketName] || { original:null, by_language:{} };
+  root[bucketName].by_language = root[bucketName].by_language || {};
+  return root[bucketName];
+}
+
+function aiGetCardFromLanguage(bucket, lang, key){
+  return bucket?.by_language?.[lang]?.cards?.[key] || null;
+}
+
+function aiGetOriginalCard(bucket, key){
+  return bucket?.original?.cards?.[key] || null;
+}
+
+function aiSetCardLanguage(bucket, lang, key, detail, meta){
+  bucket.by_language = bucket.by_language || {};
+  bucket.by_language[lang] = bucket.by_language[lang] || { cards:{} };
+  bucket.by_language[lang].cards = bucket.by_language[lang].cards || {};
+  bucket.by_language[lang] = {
+    ...bucket.by_language[lang],
+    ...meta,
+    language: lang,
+    updated_at: aiNow(),
+    cards: {
+      ...(bucket.by_language[lang].cards || {}),
+      [key]: detail
+    }
+  };
+}
+
+function aiSetOriginalCard(bucket, lang, key, detail){
+  const viewer = aiViewerUsername();
+  bucket.original = bucket.original || { language:lang, generated_by:viewer, generated_at:aiNow(), cards:{} };
+  bucket.original.language = bucket.original.language || lang;
+  bucket.original.generated_by = bucket.original.generated_by || viewer;
+  bucket.original.generated_at = bucket.original.generated_at || aiNow();
+  bucket.original.cards = bucket.original.cards || {};
+  bucket.original.cards[key] = detail;
+  aiSetCardLanguage(bucket, lang, key, detail, { source:'original', generated_by:bucket.original.generated_by, generated_at:bucket.original.generated_at });
+}
+
+async function translateAIDetails({scope, key, sourceDetails, sourceLanguage, targetLanguage, profile, match}){
+  const apiKey = getAPIKey();
+  const fallback = scope === 'match' ? fallbackDetailsMatch(key, match) : fallbackDetailsProfile(key, profile);
+  if(!apiKey){
+    return {
+      ...normalizeAIDetails(sourceDetails, fallback),
+      _source:'source_language_cache',
+      _note:`${t('fallbackUsed')} Translation requires an API key.`
+    };
+  }
+  const model = getOpenAIModel();
+  const targetName = aiLanguageName(targetLanguage);
+  const sourceName = aiLanguageName(sourceLanguage);
+  const system = `You are Budhi Lite's contextual translation agent for AI card details. Return ONLY valid JSON with exactly this schema: {"title": string, "description": string, "strengths": [string,string,string], "challenges": [string,string,string]}.
+Translate and adapt the provided JSON from ${sourceName} to ${targetName}. Preserve meaning, intensity, structure, bullet counts, and the original analytical claims. Do not add new interpretation from the raw match data. All human-visible strings must be in ${targetName}.
+For MATCH content, keep the wording neutral about the pair in third person; do not address the viewer as "you" and do not shift the perspective toward only one participant.
+Never leave fields empty.`;
+  try{
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model,
+        messages:[
+          {role:'system', content:system},
+          {role:'user', content:JSON.stringify({scope,key,source_language:sourceLanguage,target_language:targetLanguage,source_details:sourceDetails})}
+        ],
+        temperature:.18,
+        response_format:{type:'json_object'}
+      })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data?.error?.message || 'OpenAI translation failed');
+    const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
+    return {...normalizeAIDetails(parsed, fallback), _source:'translation', _note:t('aiGenerated')};
+  }catch(err){
+    return {
+      ...normalizeAIDetails(sourceDetails, fallback),
+      _source:'translation_error_source_language',
+      _note:`${t('aiFailed')} ${err.message || ''}`.trim()
+    };
+  }
+}
+
+async function getOrCreateAIDetails({scope, key, profile, match}){
+  const targetLang = getLang();
+  const bucketName = scope === 'match' ? 'match_cards' : 'profile_cards';
+  const subject = scope === 'match' ? match : profile;
+  if(!subject) return generateAIDetails({scope,key,profile,match});
+
+  const bucket = aiEnsureBucket(subject, bucketName);
+  const cached = aiGetCardFromLanguage(bucket, targetLang, key);
+  if(cached){
+    return {...cached, _source: bucket.by_language?.[targetLang]?.source || 'cache', _note:t('aiGenerated')};
+  }
+
+  const originalLang = bucket.original?.language;
+  const originalCard = aiGetOriginalCard(bucket, key);
+  let detail;
+
+  if(originalCard && originalLang && originalLang !== targetLang){
+    detail = await translateAIDetails({scope,key,sourceDetails:originalCard,sourceLanguage:originalLang,targetLanguage:targetLang,profile,match});
+    aiSetCardLanguage(bucket, targetLang, key, detail, {
+      source:'translation',
+      translated_from:originalLang,
+      generated_for:aiViewerUsername(),
+      generated_at:aiNow()
+    });
+  } else {
+    detail = await generateAIDetails({scope,key,profile,match});
+    if(!bucket.original || !bucket.original.language || bucket.original.language === targetLang){
+      aiSetOriginalCard(bucket, targetLang, key, detail);
+    } else {
+      aiSetCardLanguage(bucket, targetLang, key, detail, {source:'original_independent', generated_by:aiViewerUsername(), generated_at:aiNow()});
+    }
+  }
+
+  try{
+    if(scope === 'match') await saveMatch(subject);
+    else await saveProfile(subject.username, subject);
+  }catch(err){
+    console.warn('[Budhi Lite] AI details generated but cache save failed.', err);
+  }
+  return detail;
+}
+
+
+/* ─────────────────────────────────────────────
+   AI GOLDEN TIP
+   Context-sensitive golden tip for profile and
+   match views. Uses the same multilingual cache
+   strategy as AI card details.
+───────────────────────────────────────────── */
+
+function normalizeGoldenTip(value, fallbackText){
+  const fallback = String(fallbackText || '').trim();
+  let text = '';
+
+  if (typeof value === 'string') text = value;
+  else if (value && typeof value === 'object') {
+    text = value.golden_tip || value.tip || value.text || value.message || '';
+  }
+
+  text = String(text || '').replace(/\s+/g, ' ').trim();
+  return {
+    text: text || fallback || 'Use this result as a focused prompt for reflection before drawing conclusions.',
+  };
+}
+
+function fallbackGoldenTip(scope, profile, match){
+  if (scope === 'match') {
+    const ctx = buildMatchContext(match);
+    const users = (ctx?.users || []).join(' and ') || 'this pair';
+    const deterministic = resolveLabel(match?.results_app?.golden_tip);
+    return normalizeGoldenTip(deterministic || `${users} should use this Match Lite result as a practical conversation starter: name the strongest alignment first, then choose one potential friction point to discuss explicitly.`, '');
+  }
+
+  const ctx = buildProfileContext(profile);
+  const name = ctx?.display_name || profile?.display_name || profile?.username || 'the user';
+  const deterministic = resolveLabel(profile?.results_app?.golden_tip);
+  return normalizeGoldenTip(deterministic || `${name} should use this profile snapshot to choose one concrete behavior to observe this week, especially where decision style, values, life pillars and worldview seem to reinforce each other.`, '');
+}
+
+function aiGetTipFromLanguage(bucket, lang){
+  return bucket?.by_language?.[lang]?.tip || null;
+}
+
+function aiGetOriginalTip(bucket){
+  return bucket?.original?.tip || null;
+}
+
+function aiSetTipLanguage(bucket, lang, tip, meta){
+  bucket.by_language = bucket.by_language || {};
+  bucket.by_language[lang] = {
+    ...(bucket.by_language[lang] || {}),
+    ...meta,
+    language: lang,
+    updated_at: aiNow(),
+    tip
+  };
+}
+
+function aiSetOriginalTip(bucket, lang, tip){
+  const viewer = aiViewerUsername();
+  bucket.original = bucket.original || { language:lang, generated_by:viewer, generated_at:aiNow(), tip:null };
+  bucket.original.language = bucket.original.language || lang;
+  bucket.original.generated_by = bucket.original.generated_by || viewer;
+  bucket.original.generated_at = bucket.original.generated_at || aiNow();
+  bucket.original.tip = tip;
+  aiSetTipLanguage(bucket, lang, tip, { source:'original', generated_by:bucket.original.generated_by, generated_at:bucket.original.generated_at });
+}
+
+async function generateGoldenTip({scope, profile, match}){
+  const targetLang = getLang();
+  const apiKey = getAPIKey();
+  const fallback = fallbackGoldenTip(scope, profile, match);
+
+  if(!apiKey){
+    return {...fallback, _source:'fallback', _note:t('fallbackUsed')};
+  }
+
+  const model = getOpenAIModel();
+  const language = aiLanguageName(targetLang);
+  const context = scope === 'match' ? buildMatchContext(match) : buildProfileContext(profile);
+
+  const system = scope === 'match'
+    ? `You are Budhi Lite's Golden Tip agent for Match Lite. Return ONLY valid JSON with this exact schema: {"golden_tip": string}.
+Language: ${language}. Write the golden_tip in this language.
+Create one elegant, practical and highly personalized golden tip for the MATCH, not for only one participant. Use neutral third-person wording about the pair. Do not address the viewer as "you".
+The tip must synthesize the match's decision rhythm, values, life pillars and worldview into one actionable recommendation. It should be 30–45 words, specific, non-diagnostic, and useful as a next-step conversation prompt. Do not repeat the compatibility score unless it is analytically necessary. Never leave the field empty.`
+    : `You are Budhi Lite's Golden Tip agent for an individual Self-Profile snapshot. Return ONLY valid JSON with this exact schema: {"golden_tip": string}.
+Language: ${language}. Write the golden_tip in this language.
+Create one elegant, practical and highly personalized golden tip for the user. You may address the user directly. The tip must synthesize decision style, values, life pillars and worldview into one actionable recommendation. It should be 30–45 words, specific, non-diagnostic, and useful as a next step for self-observation. Never leave the field empty.`;
+
+  try{
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model,
+        messages:[
+          {role:'system', content:system},
+          {role:'user', content:JSON.stringify({scope, language:targetLang, context})}
+        ],
+        temperature:.55,
+        response_format:{type:'json_object'}
+      })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data?.error?.message || 'OpenAI golden tip request failed');
+    const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
+    return {...normalizeGoldenTip(parsed, fallback.text), _source:'ai', _note:t('aiGenerated')};
+  }catch(err){
+    return {...fallback, _source:'fallback_error', _note:`${t('aiFailed')} ${err.message || ''}`.trim()};
+  }
+}
+
+async function translateGoldenTip({scope, sourceTip, sourceLanguage, targetLanguage, profile, match}){
+  const apiKey = getAPIKey();
+  const fallback = fallbackGoldenTip(scope, profile, match);
+
+  if(!apiKey){
+    return {
+      ...normalizeGoldenTip(sourceTip, fallback.text),
+      _source:'source_language_cache',
+      _note:`${t('fallbackUsed')} Translation requires an API key.`
+    };
+  }
+
+  const model = getOpenAIModel();
+  const sourceName = aiLanguageName(sourceLanguage);
+  const targetName = aiLanguageName(targetLanguage);
+  const system = scope === 'match'
+    ? `You are Budhi Lite's contextual translation/adaptation agent for a Match Lite Golden Tip. Return ONLY valid JSON with this exact schema: {"golden_tip": string}.
+Translate and adapt the source golden tip from ${sourceName} to ${targetName}. Preserve the same analytical meaning, practical recommendation, intensity and scope. Do not create a new interpretation from raw data.
+For MATCH content, keep wording neutral about the pair in third person. Do not address the viewer as "you" and do not shift the perspective toward only one participant.`
+    : `You are Budhi Lite's contextual translation/adaptation agent for an individual Self-Profile Golden Tip. Return ONLY valid JSON with this exact schema: {"golden_tip": string}.
+Translate and adapt the source golden tip from ${sourceName} to ${targetName}. Preserve the same analytical meaning, practical recommendation, intensity and scope. Do not create a new interpretation from raw data.`;
+
+  try{
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model,
+        messages:[
+          {role:'system', content:system},
+          {role:'user', content:JSON.stringify({scope, source_language:sourceLanguage, target_language:targetLanguage, source_tip:sourceTip})}
+        ],
+        temperature:.18,
+        response_format:{type:'json_object'}
+      })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data?.error?.message || 'OpenAI golden tip translation failed');
+    const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
+    return {...normalizeGoldenTip(parsed, fallback.text), _source:'translation', _note:t('aiGenerated')};
+  }catch(err){
+    return {
+      ...normalizeGoldenTip(sourceTip, fallback.text),
+      _source:'translation_error_source_language',
+      _note:`${t('aiFailed')} ${err.message || ''}`.trim()
+    };
+  }
+}
+
+async function getOrCreateGoldenTip({scope, profile, match}){
+  const targetLang = getLang();
+  const bucketName = scope === 'match' ? 'match_golden_tip' : 'profile_golden_tip';
+  const subject = scope === 'match' ? match : profile;
+
+  if(!subject) return fallbackGoldenTip(scope, profile, match);
+
+  const bucket = aiEnsureBucket(subject, bucketName);
+  const cached = aiGetTipFromLanguage(bucket, targetLang);
+  const cachedIsFallback = cached?._source && String(cached._source).includes('fallback');
+
+  if(cached && !(cachedIsFallback && getAPIKey())){
+    return {...cached, _source: cached._source || bucket.by_language?.[targetLang]?.source || 'cache', _note: cached._note || t('aiGenerated')};
+  }
+
+  const originalLang = bucket.original?.language;
+  const originalTip = aiGetOriginalTip(bucket);
+  let tip;
+
+  if(originalTip && originalLang && originalLang !== targetLang){
+    tip = await translateGoldenTip({scope, sourceTip:originalTip, sourceLanguage:originalLang, targetLanguage:targetLang, profile, match});
+    if(!String(tip._source || '').includes('fallback')){
+      aiSetTipLanguage(bucket, targetLang, tip, {
+        source:'translation',
+        translated_from:originalLang,
+        generated_for:aiViewerUsername(),
+        generated_at:aiNow()
+      });
+    }
+  } else {
+    tip = await generateGoldenTip({scope, profile, match});
+    if(!String(tip._source || '').includes('fallback')){
+      if(!bucket.original || !bucket.original.language || bucket.original.language === targetLang){
+        aiSetOriginalTip(bucket, targetLang, tip);
+      } else {
+        aiSetTipLanguage(bucket, targetLang, tip, {source:'original_independent', generated_by:aiViewerUsername(), generated_at:aiNow()});
+      }
+    }
+  }
+
+  try{
+    if(scope === 'match') await saveMatch(subject);
+    else await saveProfile(subject.username, subject);
+  }catch(err){
+    console.warn('[Budhi Lite] Golden Tip generated but cache save failed.', err);
+  }
+
+  return tip;
 }

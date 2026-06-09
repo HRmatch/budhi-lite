@@ -17,6 +17,27 @@ function saveMatchesLocal(matches){
   localStorage.setItem(MATCH_STORE_KEY, JSON.stringify(matches||{}));
 }
 
+function isPlainObject(value){
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function deepMergeObjects(base, incoming){
+  if(!isPlainObject(base)) base = {};
+  if(!isPlainObject(incoming)) return {...base};
+  const out = {...base};
+  Object.keys(incoming).forEach(key => {
+    const next = incoming[key];
+    const prev = out[key];
+    if(isPlainObject(prev) && isPlainObject(next)) out[key] = deepMergeObjects(prev, next);
+    else out[key] = next;
+  });
+  return out;
+}
+
+function mergeResultsAI(existingAI, incomingAI){
+  return deepMergeObjects(existingAI || {}, incomingAI || {});
+}
+
 function loadProfiles(){
   if(!BUDHI_PROFILE_CACHE) BUDHI_PROFILE_CACHE = loadProfilesLocal();
   return BUDHI_PROFILE_CACHE || {};
@@ -35,7 +56,17 @@ async function syncProfilesFromCloud(){
   if(typeof supabaseFetchProfiles !== 'function') return loadProfiles();
   try{
     const cloudProfiles = await supabaseFetchProfiles();
-    const merged = {...loadProfilesLocal(), ...cloudProfiles};
+    const localProfiles = loadProfilesLocal();
+    const merged = {...localProfiles, ...cloudProfiles};
+    Object.keys(localProfiles || {}).forEach(username => {
+      if(cloudProfiles?.[username]){
+        merged[username] = {
+          ...localProfiles[username],
+          ...cloudProfiles[username],
+          results_ai: mergeResultsAI(localProfiles[username]?.results_ai, cloudProfiles[username]?.results_ai)
+        };
+      }
+    });
     saveProfiles(merged);
     return merged;
   }catch(err){
@@ -47,20 +78,30 @@ async function syncProfilesFromCloud(){
 
 async function saveProfile(username, profile){
   const profiles = loadProfiles();
-  profiles[username] = profile;
+  const existing = profiles[username] || {};
+  const record = {
+    ...existing,
+    ...profile,
+    username,
+    lang: profile.lang || profile.language || existing.lang || existing.language || getLang(),
+    language: profile.language || profile.lang || existing.language || existing.lang || getLang(),
+    results_ai: mergeResultsAI(existing.results_ai, profile.results_ai),
+    updated_at: new Date().toISOString()
+  };
+
+  profiles[username] = record;
   saveProfiles(profiles);
 
   if(typeof supabaseUpsertProfile === 'function'){
     try{
-      await supabaseUpsertProfile(username, profile);
-      // Refresh cache lightly after cloud write.
+      await supabaseUpsertProfile(username, record);
       await syncProfilesFromCloud();
     }catch(err){
       console.warn('[Budhi Lite] Profile saved locally, but Supabase write failed.', err);
       throw err;
     }
   }
-  return profile;
+  return record;
 }
 
 function getCompletedUsers(){
@@ -90,7 +131,17 @@ async function syncMatchesFromCloud(){
   if(typeof supabaseFetchMatches !== 'function') return loadMatches();
   try{
     const cloudMatches = await supabaseFetchMatches();
-    const merged = {...loadMatchesLocal(), ...cloudMatches};
+    const localMatches = loadMatchesLocal();
+    const merged = {...localMatches, ...cloudMatches};
+    Object.keys(localMatches || {}).forEach(matchId => {
+      if(cloudMatches?.[matchId]){
+        merged[matchId] = {
+          ...localMatches[matchId],
+          ...cloudMatches[matchId],
+          results_ai: mergeResultsAI(localMatches[matchId]?.results_ai, cloudMatches[matchId]?.results_ai)
+        };
+      }
+    });
     saveMatches(merged);
     return merged;
   }catch(err){
@@ -101,25 +152,33 @@ async function syncMatchesFromCloud(){
 }
 
 async function saveMatch(match){
-  const userA = match.user_a || (match.users||[])[0];
-  const userB = match.user_b || (match.users||[])[1];
+  const userA = match.user_a || (match.usernames||[])[0] || (match.users||[])[0];
+  const userB = match.user_b || (match.usernames||[])[1] || (match.users||[])[1];
   const matchId = match.match_id || makeMatchId(userA, userB);
+  const matches = loadMatches();
+  const existing = matches[matchId] || {};
+  const canonicalParticipants = [userA, userB].map(x=>String(x||'').trim()).filter(Boolean).sort();
+  const replaceAI = match.__replace_results_ai === true;
+  const {__replace_results_ai, ...cleanMatch} = match;
   const record = {
-    ...match,
+    ...existing,
+    ...cleanMatch,
     match_id: matchId,
     user_a: userA,
     user_b: userB,
-    lang: match.lang || getLang(),
+    participants: existing.participants || canonicalParticipants,
+    lang: cleanMatch.lang || existing.lang || getLang(),
+    results_ai: replaceAI ? (cleanMatch.results_ai || {}) : mergeResultsAI(existing.results_ai, cleanMatch.results_ai),
     updated_at: new Date().toISOString()
   };
 
-  const matches = loadMatches();
   matches[matchId] = record;
   saveMatches(matches);
 
   if(typeof supabaseUpsertMatch === 'function'){
     try{
-      await supabaseUpsertMatch(record);
+      const payload = replaceAI ? {...record, __replace_results_ai:true} : record;
+      await supabaseUpsertMatch(payload);
       await syncMatchesFromCloud();
     }catch(err){
       console.warn('[Budhi Lite] Match saved locally, but Supabase write failed.', err);

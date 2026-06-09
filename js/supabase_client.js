@@ -1,7 +1,7 @@
 // Supabase REST client for Budhi Lite V1
 // Public browser configuration. The publishable key is safe to ship with the frontend
 // when Row Level Security (RLS) and policies are configured correctly in Supabase.
-// DO NOT put a service_role/secret key here.
+// DO NOT put a service_role or secret key here.
 
 const SUPABASE_CONFIG = {
   url: "https://xzcnwbkinaswwsuiymqs.supabase.co",
@@ -29,6 +29,23 @@ function isSupabaseConfigured() {
   return Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
 }
 
+function supabaseIsPlainObject(value){
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function supabaseDeepMerge(base, incoming){
+  if(!supabaseIsPlainObject(base)) base = {};
+  if(!supabaseIsPlainObject(incoming)) return {...base};
+  const out = {...base};
+  Object.keys(incoming).forEach(key => {
+    const next = incoming[key];
+    const prev = out[key];
+    if(supabaseIsPlainObject(prev) && supabaseIsPlainObject(next)) out[key] = supabaseDeepMerge(prev, next);
+    else out[key] = next;
+  });
+  return out;
+}
+
 async function supabaseRequest(path, options = {}) {
   if (!isSupabaseConfigured()) throw new Error("Supabase is not configured.");
   const res = await fetch(supabaseRestUrl(path), {
@@ -52,6 +69,16 @@ async function supabaseRequest(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
+async function supabaseFetchProfile(username){
+  const rows = await supabaseRequest(`budhi_profiles?select=*&username=eq.${encodeURIComponent(username)}`, { method: "GET" });
+  return Array.isArray(rows) ? rows[0] : null;
+}
+
+async function supabaseFetchMatch(matchId){
+  const rows = await supabaseRequest(`budhi_matches?select=*&match_id=eq.${encodeURIComponent(matchId)}`, { method: "GET" });
+  return Array.isArray(rows) ? rows[0] : null;
+}
+
 async function supabaseFetchProfiles() {
   const rows = await supabaseRequest("budhi_profiles?select=*", { method: "GET" });
   const out = {};
@@ -60,6 +87,7 @@ async function supabaseFetchProfiles() {
       username: row.username,
       display_name: row.display_name,
       lang: row.lang || "en",
+      language: row.lang || "en",
       answers: row.answers || {},
       results_app: row.results_app || {},
       results_ai: row.results_ai || {},
@@ -71,13 +99,16 @@ async function supabaseFetchProfiles() {
 }
 
 async function supabaseUpsertProfile(username, profile) {
+  let existing = null;
+  try{ existing = await supabaseFetchProfile(username); }catch(err){ console.warn('[Budhi Lite] Could not prefetch profile before upsert.', err); }
+
   const payload = {
     username,
-    display_name: profile.display_name || username,
-    lang: profile.lang || profile.language || getLang(),
-    answers: profile.answers || {},
-    results_app: profile.results_app || {},
-    results_ai: profile.results_ai || {},
+    display_name: profile.display_name || existing?.display_name || username,
+    lang: profile.lang || profile.language || existing?.lang || getLang(),
+    answers: profile.answers || existing?.answers || {},
+    results_app: profile.results_app || existing?.results_app || {},
+    results_ai: supabaseDeepMerge(existing?.results_ai || {}, profile.results_ai || {}),
     updated_at: new Date().toISOString()
   };
 
@@ -98,6 +129,7 @@ async function supabaseFetchMatches() {
       match_id: row.match_id,
       user_a: row.user_a,
       user_b: row.user_b,
+      participants: row.participants || [row.user_a, row.user_b].filter(Boolean).sort(),
       lang: row.lang || "en",
       results_app: row.results_app || {},
       results_ai: row.results_ai || {},
@@ -109,18 +141,21 @@ async function supabaseFetchMatches() {
 }
 
 async function supabaseUpsertMatch(match) {
-  const users = (match.users || []).map(x => String(x || "").trim()).filter(Boolean);
+  const users = (match.usernames || match.users || []).map(x => String(x || "").trim()).filter(Boolean);
   const userA = match.user_a || users[0];
   const userB = match.user_b || users[1];
   const matchId = match.match_id || makeMatchId(userA, userB);
+  const replaceAI = match.__replace_results_ai === true;
+  let existing = null;
+  try{ existing = await supabaseFetchMatch(matchId); }catch(err){ console.warn('[Budhi Lite] Could not prefetch match before upsert.', err); }
 
   const payload = {
     match_id: matchId,
-    user_a: userA,
-    user_b: userB,
-    lang: match.lang || getLang(),
-    results_app: match.results_app || {},
-    results_ai: match.results_ai || {},
+    user_a: userA || existing?.user_a,
+    user_b: userB || existing?.user_b,
+    lang: match.lang || existing?.lang || getLang(),
+    results_app: match.results_app || existing?.results_app || {},
+    results_ai: replaceAI ? (match.results_ai || {}) : supabaseDeepMerge(existing?.results_ai || {}, match.results_ai || {}),
     updated_at: new Date().toISOString()
   };
 

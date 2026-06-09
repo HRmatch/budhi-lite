@@ -23,17 +23,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       const id = params.get('id') || sessionStorage.getItem('budhi_lite_last_match_id');
       reportMatch = hydrateMatchRecord(getMatch(id));
       if(!reportMatch) throw new Error('Missing match context.');
-      const report = await generatePersonalizedReport({scope:'match', match:reportMatch});
-      reportMatch.results_ai = {...(reportMatch.results_ai || {}), full_report: report};
-      await saveMatch(reportMatch);
+      const force = params.has('refresh');
+      const report = await getOrCreatePersonalizedReport({scope:'match', match:reportMatch, force});
       renderReport(report, {scope:'match', match:reportMatch});
     }else{
       const username = params.get('user') || reportCurrentUser.username;
       reportProfile = getProfile(username);
       if(!reportProfile) throw new Error('Missing profile context.');
-      const report = await generatePersonalizedReport({scope:'profile', profile:reportProfile});
-      reportProfile.results_ai = {...(reportProfile.results_ai || {}), full_report: report};
-      await saveProfile(reportProfile.username, reportProfile);
+      const force = params.has('refresh');
+      const report = await getOrCreatePersonalizedReport({scope:'profile', profile:reportProfile, force});
       renderReport(report, {scope:'profile', profile:reportProfile});
     }
   }catch(err){

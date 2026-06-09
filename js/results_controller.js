@@ -62,6 +62,105 @@ function activateInitialTab() {
   else activateTab("individual", false);
 }
 
+function reportUrl(scope, subject, refresh) {
+  const params = new URLSearchParams();
+  params.set("scope", scope);
+  if (scope === "match") {
+    const id = subject?.match_id || makeMatchId(subject?.user_a, subject?.user_b);
+    params.set("id", id);
+  } else {
+    params.set("user", subject?.username || currentUser?.username || "");
+  }
+  if (refresh) params.set("refresh", Date.now().toString());
+  return `./report.html?${params.toString()}`;
+}
+
+function reportStatus(scope, subject) {
+  try {
+    if (typeof getPersonalizedReportCacheStatus !== "function") return { has_current_language:false, has_original:false };
+    return getPersonalizedReportCacheStatus({
+      scope,
+      profile: scope === "profile" ? subject : null,
+      match: scope === "match" ? subject : null,
+      lang: getLang()
+    });
+  } catch (_) {
+    return { has_current_language:false, has_original:false };
+  }
+}
+
+function reportCtaHtml(scope, subject) {
+  const status = reportStatus(scope, subject);
+  const hasCurrent = status.has_current_language;
+  const hasAny = status.has_current_language || status.has_original;
+  const titleKey = scope === "match" ? "matchPersonalizedReport" : "personalizedReport";
+  const textKey = hasCurrent
+    ? "savedReportAvailableText"
+    : (hasAny ? "reportTranslationAvailableText" : (scope === "match" ? "matchPersonalizedReportText" : "personalizedReportText"));
+  const primaryLabel = hasCurrent ? t("viewSavedReport") : (hasAny ? t("viewReport") : t("generateReport"));
+  const secondary = hasCurrent
+    ? `<a class="btn ghost" href="${reportUrl(scope, subject, true)}">${t("regenerateReport")}</a>`
+    : "";
+
+  return `<section class="card report-cta-card">
+      <div>
+        <h2 class="section-title">
+          <span class="icon teal">✧</span>${t(titleKey)}
+        </h2>
+        <p class="small">${t(textKey)}</p>
+      </div>
+      <div class="footer-actions">
+        <a class="btn primary" href="${reportUrl(scope, subject, false)}">${primaryLabel}</a>
+        ${secondary}
+      </div>
+    </section>`;
+}
+
+
+function goldenTipDomId(scope){
+  return `${scope}GoldenTipText`;
+}
+
+function goldenTipFallbackText(scope, subject){
+  return ml(subject?.results_app?.golden_tip) || '';
+}
+
+function goldenTipCardHtml(scope, subject){
+  const id = goldenTipDomId(scope);
+  const fallback = goldenTipFallbackText(scope, subject) || t("loadingAI");
+  return `<article class="card golden-tip-card" data-golden-tip-scope="${scope}">
+        <h2 class="section-title">
+          <span class="icon navy">💬</span>${t("goldenTip")}
+        </h2>
+        <p class="summary-text" id="${id}">${fallback}</p>
+      </article>`;
+}
+
+async function hydrateGoldenTip(scope, subject){
+  const el = document.getElementById(goldenTipDomId(scope));
+  if(!el || !subject) return;
+
+  if(typeof getOrCreateGoldenTip !== "function"){
+    el.textContent = goldenTipFallbackText(scope, subject);
+    return;
+  }
+
+  const fallback = goldenTipFallbackText(scope, subject);
+  el.innerHTML = `<span class="loader"></span> ${t("loadingAI")}`;
+
+  try{
+    const data = await getOrCreateGoldenTip({
+      scope,
+      profile: scope === "profile" ? subject : null,
+      match: scope === "match" ? subject : null
+    });
+    el.textContent = data?.text || fallback || "";
+  }catch(err){
+    console.warn("[Budhi Lite] Golden Tip generation failed.", err);
+    el.textContent = fallback || "";
+  }
+}
+
 function cardHtml(card, scope) {
   const color = card.color || "navy";
   const tags = (card.tags || [])
@@ -116,30 +215,14 @@ root.innerHTML = `
       </div>
     </section>
 
-    <section class="card report-cta-card">
-      <div>
-        <h2 class="section-title">
-          <span class="icon teal">✧</span>${t("personalizedReport")}
-        </h2>
-        <p class="small">${t("personalizedReportText")}</p>
-      </div>
-      <a class="btn primary"
-         href="./report.html?scope=profile&user=${encodeURIComponent(profile.username)}">
-        ${t("generateReport")}
-      </a>
-    </section>
+    ${reportCtaHtml("profile", profile)}
 
     <section class="grid four">
       ${profile.results_app.cards.map((c) => cardHtml(c, "profile")).join("")}
     </section>
 
     <section class="grid three">
-      <article class="card">
-        <h2 class="section-title">
-          <span class="icon navy">💬</span>${t("goldenTip")}
-        </h2>
-        <p class="summary-text">${ml(profile.results_app.golden_tip)}</p>
-      </article>
+      ${goldenTipCardHtml("profile", profile)}
 
       <article class="card character-card">
         <h2 class="section-title">
@@ -164,6 +247,7 @@ root.innerHTML = `
   `;
 
   bindAICards();
+  hydrateGoldenTip("profile", profile);
 }
 
 function renderPartnerSelect() {
@@ -184,59 +268,221 @@ function renderPartnerSelect() {
     }
   );
 
-  document
-    .getElementById("generateMatch")
-    .addEventListener("click", generateMatch);
+  const generateBtn = document.getElementById("generateMatch");
+  generateBtn?.addEventListener("click", () => openOrGenerateMatch(false));
+
+  ensureMatchActionControls();
+  select.addEventListener("change", () => {
+    updateMatchActionState();
+    renderSavedMatchPreviewForSelection(false);
+  });
+
+  updateMatchActionState();
+  renderSavedMatchPreviewForSelection(true);
 }
 
-async function generateMatch() {
-  const partner = document.getElementById("partnerSelect").value;
-  const root = document.getElementById("matchRoot");
+function ensureMatchActionControls() {
+  const generateBtn = document.getElementById("generateMatch");
+  if (!generateBtn || document.getElementById("regenerateMatch")) return;
 
+  const holder = generateBtn.parentElement;
+  const regen = document.createElement("button");
+  regen.id = "regenerateMatch";
+  regen.type = "button";
+  regen.className = "btn ghost";
+  regen.style.marginTop = "10px";
+  regen.textContent = t("regenerateMatchLite");
+  regen.addEventListener("click", () => openOrGenerateMatch(true));
+  holder.appendChild(regen);
+
+  const status = document.createElement("p");
+  status.id = "savedMatchStatus";
+  status.className = "small";
+  status.style.marginTop = "8px";
+  holder.appendChild(status);
+}
+
+function getSelectedPartner() {
+  return document.getElementById("partnerSelect")?.value || "";
+}
+
+function getMatchIdForPartner(partner) {
+  return makeMatchId(currentUser.username, partner);
+}
+
+function getPartnerFromMatchId(matchId) {
+  const parts = String(matchId || "").split("__").filter(Boolean);
+  return parts.find((p) => p !== currentUser.username) || parts[0] || "";
+}
+
+function hydrateSavedMatch(match, fallbackPartner) {
+  if (!match) return null;
+
+  const matchId = match.match_id || getMatchIdForPartner(fallbackPartner);
+  const parts = String(matchId || "").split("__").filter(Boolean);
+
+  const userA = match.user_a || parts[0] || currentUser.username;
+  const userB = match.user_b || parts[1] || fallbackPartner;
+  const profileA = userA ? getProfile(userA) : null;
+  const profileB = userB ? getProfile(userB) : null;
+
+  return {
+    ...match,
+    match_id: matchId,
+    user_a: userA,
+    user_b: userB,
+    usernames: match.usernames || [userA, userB].filter(Boolean),
+    users:
+      match.users ||
+      [profileA?.display_name || userA, profileB?.display_name || userB].filter(
+        Boolean
+      ),
+  };
+}
+
+function getSavedMatchForPartner(partner) {
+  const matchId = getMatchIdForPartner(partner);
+  return hydrateSavedMatch(getMatch(matchId), partner);
+}
+
+function updateMatchActionState() {
+  const partner = getSelectedPartner();
+  const generateBtn = document.getElementById("generateMatch");
+  const regenBtn = document.getElementById("regenerateMatch");
+  const status = document.getElementById("savedMatchStatus");
+  if (!partner || !generateBtn) return;
+
+  const existing = getSavedMatchForPartner(partner);
+  generateBtn.textContent = existing ? t("openSavedMatch") : t("generateMatch");
+
+  if (regenBtn) {
+    regenBtn.hidden = !existing;
+    regenBtn.textContent = t("regenerateMatchLite");
+  }
+
+  if (status) {
+    status.textContent = existing ? t("savedMatchAvailable") : t("noSavedMatchYet");
+  }
+}
+
+function renderSavedMatchPreviewForSelection(preferLastMatch) {
+  const root = document.getElementById("matchRoot");
+  const select = document.getElementById("partnerSelect");
+  if (!root || !select) return;
+
+  let partner = getSelectedPartner();
+
+  if (preferLastMatch) {
+    const lastId = sessionStorage.getItem("budhi_lite_last_match_id") || "";
+    const lastPartner = getPartnerFromMatchId(lastId);
+    if (lastPartner && [...select.options].some((opt) => opt.value === lastPartner)) {
+      partner = lastPartner;
+      select.value = lastPartner;
+    }
+  }
+
+  const existing = getSavedMatchForPartner(partner);
+  if (existing) {
+    currentMatch = existing;
+    sessionStorage.setItem("budhi_lite_last_match_id", existing.match_id);
+    renderMatch(existing, root);
+  } else {
+    currentMatch = null;
+    root.innerHTML = "";
+  }
+
+  updateMatchActionState();
+}
+
+function buildFreshMatchForPartner(partner, resetAI) {
   const profileA = getProfile(currentUser.username);
   const profileB = getProfile(partner);
 
-  if (!profileA || !profileB) {
+  if (!profileA || !profileB) return null;
+
+  const match = buildMatchLite(profileA, profileB);
+  match.match_id = getMatchIdForPartner(partner);
+  match.user_a = currentUser.username;
+  match.user_b = partner;
+  match.lang = getLang();
+  match.results_ai = resetAI ? {} : match.results_ai || {};
+  if (resetAI) match.__replace_results_ai = true;
+
+  return match;
+}
+
+async function openOrGenerateMatch(forceRegenerate) {
+  const partner = getSelectedPartner();
+  const root = document.getElementById("matchRoot");
+  if (!partner || !root) return;
+
+  if (typeof syncMatchesFromCloud === "function") {
+    try {
+      await syncMatchesFromCloud();
+    } catch (err) {
+      console.warn("[Budhi Lite] Could not refresh saved matches before opening.", err);
+    }
+  }
+
+  const existing = getSavedMatchForPartner(partner);
+
+  if (existing && !forceRegenerate) {
+    currentMatch = existing;
+    sessionStorage.setItem("budhi_lite_last_match_id", existing.match_id);
+    renderMatch(existing, root);
+    updateMatchActionState();
+    return;
+  }
+
+  const fresh = buildFreshMatchForPartner(partner, Boolean(forceRegenerate));
+  if (!fresh) {
     root.innerHTML = `<div class="card"><p class="summary-text">${t(
       "noProfile"
     )}</p></div>`;
     return;
   }
 
-  currentMatch = buildMatchLite(profileA, profileB);
-  currentMatch.match_id = makeMatchId(currentUser.username, partner);
-  currentMatch.user_a = currentUser.username;
-  currentMatch.user_b = partner;
-  currentMatch.lang = getLang();
-
-  sessionStorage.setItem("budhi_lite_last_match_id", currentMatch.match_id);
+  sessionStorage.setItem("budhi_lite_last_match_id", fresh.match_id);
 
   try {
-    await saveMatch(currentMatch);
+    currentMatch = await saveMatch(fresh);
+    currentMatch = hydrateSavedMatch(currentMatch, partner);
   } catch (err) {
     console.warn("[Budhi Lite] Match cloud save failed.", err);
+    currentMatch = fresh;
   }
 
   renderMatch(currentMatch, root);
+  updateMatchActionState();
+}
+
+/* Backwards-compatible alias for older event bindings */
+async function generateMatch() {
+  return openOrGenerateMatch(false);
 }
 
 /* ─────────────────────────────────────────────
-   MATCH DIMENSION BREAKDOWN
-   Shows the formula's computed shared / convergent /
-   potential-friction data directly in the UI.
+   MATCH DIMENSION PRESENTATION
+   Presentation-only merge: the formula still returns the same
+   cards and dimensions, but the UI combines each main card with
+   its complementary breakdown data so the match shows 4 cards,
+   not 8.
 ───────────────────────────────────────────── */
 
-/* Multilingual labels for the new breakdown UI */
+/* Multilingual labels for the merged match cards */
 function tMatchLabel(key) {
   const lang = getLang();
   const map = {
-    sharedGround:      {en:'Common ground',    pt:'Em comum',           es:'En común',            fr:'En commun',        de:'Gemeinsam'},
-    compatibleDirs:    {en:'Compatible',       pt:'Compatíveis',        es:'Compatibles',         fr:'Compatibles',      de:'Kompatibel'},
-    potentialFrictions:{en:'Potential frictions',pt:'Possíveis atritos',es:'Fricciones posibles', fr:'Frictions possibles',de:'Mögliche Spannungen'},
-    valueDynamics:     {en:'Value dynamics',   pt:'Dinâmica de valores',es:'Dinámica de valores', fr:'Dynamique des valeurs',de:'Wertedynamik'},
-    pillarDynamics:    {en:'Pillar dynamics',  pt:'Dinâmica de pilares',es:'Dinámica de pilares', fr:'Dynamique des piliers',de:'Säulendynamik'},
-    decisionRhythm:    {en:'Decision rhythm',  pt:'Ritmo de decisão',   es:'Ritmo de decisión',  fr:'Rythme décisionnel',de:'Entscheidungsrhythmus'},
-    worldviewPairing:  {en:'Worldview pairing',pt:'Visões de mundo',    es:'Visiones de mundo',  fr:'Vision du monde',   de:'Weltanschauungs-Paarung'},
+    sharedGround:       {en:'Common ground',       pt:'Em comum',              es:'En común',              fr:'En commun',              de:'Gemeinsam'},
+    compatibleDirs:     {en:'Compatible',          pt:'Compatíveis',           es:'Compatibles',           fr:'Compatibles',            de:'Kompatibel'},
+    potentialFrictions: {en:'Potential frictions', pt:'Possíveis atritos',     es:'Fricciones posibles',   fr:'Frictions possibles',    de:'Mögliche Spannungen'},
+    valueDynamics:      {en:'Value dynamics',      pt:'Dinâmica de valores',   es:'Dinámica de valores',   fr:'Dynamique des valeurs',  de:'Wertedynamik'},
+    pillarDynamics:     {en:'Pillar dynamics',     pt:'Dinâmica de pilares',   es:'Dinámica de pilares',   fr:'Dynamique des piliers',  de:'Säulendynamik'},
+    decisionRhythm:     {en:'Decision rhythm',     pt:'Ritmo de decisão',      es:'Ritmo de decisión',     fr:'Rythme décisionnel',     de:'Entscheidungsrhythmus'},
+    worldviewPairing:   {en:'Worldview pairing',   pt:'Visões de mundo',       es:'Visiones de mundo',     fr:'Vision du monde',        de:'Weltanschauungs-Paarung'},
+    styles:             {en:'Styles',              pt:'Estilos',               es:'Estilos',               fr:'Styles',                 de:'Stile'},
+    perspectives:       {en:'Perspectives',        pt:'Perspectivas',          es:'Perspectivas',          fr:'Perspectives',           de:'Perspektiven'},
+    noDirectLinks:      {en:'No direct links detected in this layer.', pt:'Nenhuma conexão direta detectada nesta camada.', es:'No se detectaron vínculos directos en esta capa.', fr:'Aucun lien direct détecté dans cette couche.', de:'Keine direkten Verbindungen in dieser Ebene erkannt.'}
   };
   return (map[key] || {})[lang] || (map[key] || {}).en || key;
 }
@@ -253,79 +499,114 @@ function resolveDimCode(code, type) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function matchDimensionBreakdownHtml(match) {
+function getMatchDimensionPresentationData(match) {
   const dims = match?.results_app?.dimensions || {};
   const vd   = dims.values   || {};
   const pd   = dims.pillars  || {};
   const dd   = dims.decision || {};
   const wd   = dims.worldview|| {};
 
-  const vShared = (vd.shared    || []).map(c => resolveDimCode(c, 'value')).filter(Boolean);
-  const vConv   = (vd.convergent|| []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean);
-  const vFric   = (vd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean);
+  return {
+    values: {
+      shared: (vd.shared || []).map(c => resolveDimCode(c, 'value')).filter(Boolean),
+      compatible: (vd.convergent || []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean),
+      frictions: (vd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'value')} · ${resolveDimCode(b,'value')}`).filter(Boolean)
+    },
+    pillars: {
+      shared: (pd.shared || []).map(c => resolveDimCode(c, 'pillar')).filter(Boolean),
+      compatible: (pd.convergent || []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean),
+      frictions: (pd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean)
+    },
+    decision: {
+      tags: (dd.tags || []).map(t => ml(t) || '').filter(Boolean),
+      type: dd.type ? ml(dd.type) || '' : '',
+      alignment: dd.alignment ? ml(dd.alignment) || '' : ''
+    },
+    worldview: {
+      pair: (wd.pair || []).map(t => ml(t) || '').filter(Boolean),
+      type: wd.type ? ml(wd.type) || '' : '',
+      alignment: wd.alignment ? ml(wd.alignment) || '' : ''
+    }
+  };
+}
 
-  const pShared = (pd.shared    || []).map(c => resolveDimCode(c, 'pillar')).filter(Boolean);
-  const pConv   = (pd.convergent|| []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean);
-  const pFric   = (pd.divergent || []).map(([a,b]) => `${resolveDimCode(a,'pillar')} · ${resolveDimCode(b,'pillar')}`).filter(Boolean);
+function matchTagGroup(label, items, style) {
+  if (!items || !items.length) return '';
+  const tagStyle = {
+    green: 'background:rgba(16,185,129,0.12);color:#065f46;border-color:rgba(16,185,129,0.3)',
+    teal:  'background:rgba(20,184,166,0.10);color:#0f766e;border-color:rgba(20,184,166,0.25)',
+    amber: 'background:rgba(245,158,11,0.12);color:#92400e;border-color:rgba(245,158,11,0.3)'
+  }[style] || '';
 
-  const decTags  = (dd.tags || []).map(t => ml(t) || '').filter(Boolean);
-  const wvPair   = (wd.pair || []).map(t => ml(t) || '').filter(Boolean);
-  const wvType   = wd.type ? ml(wd.type) || '' : '';
+  return `<div style="margin-top:12px">
+    <p class="small" style="margin:0 0 6px;font-weight:600;color:var(--color-text-secondary)">${label}</p>
+    <div class="tags">${items.map(i => `<span class="tag" style="${tagStyle}">${i}</span>`).join('')}</div>
+  </div>`;
+}
 
-  const hasValues  = vShared.length || vConv.length || vFric.length;
-  const hasPillars = pShared.length || pConv.length || pFric.length;
-  if (!hasValues && !hasPillars) return '';
+function matchPairTags(label, items) {
+  if (!items || !items.length) return '';
+  return `<div style="margin-top:12px">
+    <p class="small" style="margin:0 0 6px;font-weight:600;color:var(--color-text-secondary)">${label}</p>
+    <div class="tags">${items.map(i => `<span class="tag">${i}</span>`).join('<span style="margin:0 4px;opacity:.45">↔</span>')}</div>
+  </div>`;
+}
 
-  function tagGroup(label, items, style) {
-    if (!items.length) return '';
-    const tagStyle = {
-      green: 'background:rgba(16,185,129,0.12);color:#065f46;border-color:rgba(16,185,129,0.3)',
-      teal:  'background:rgba(20,184,166,0.10);color:#0f766e;border-color:rgba(20,184,166,0.25)',
-      amber: 'background:rgba(245,158,11,0.12);color:#92400e;border-color:rgba(245,158,11,0.3)',
-    }[style] || '';
-    return `<div style="margin-top:10px">
-      <p class="small" style="margin:0 0 6px;font-weight:500;color:var(--color-text-secondary)">${label}</p>
-      <div class="tags">${items.map(i => `<span class="tag" style="${tagStyle}">${i}</span>`).join('')}</div>
-    </div>`;
+function matchMergedDetailsHtml(cardKey, match) {
+  const data = getMatchDimensionPresentationData(match);
+
+  if (cardKey === 'decision') {
+    const details = [
+      matchPairTags(tMatchLabel('styles'), data.decision.tags),
+      data.decision.type || data.decision.alignment
+        ? `<p class="small" style="margin-top:10px;color:var(--color-text-secondary)">${[data.decision.type, data.decision.alignment].filter(Boolean).join(' · ')}</p>`
+        : ''
+    ].join('');
+    return details ? `<div style="margin-top:14px"><h3 class="mini-title">${tMatchLabel('decisionRhythm')}</h3>${details}</div>` : '';
   }
 
-  function dimCard(icon, color, title, shared, conv, fric) {
-    return `<article class="card">
-      <h2 class="section-title"><span class="icon ${color}">${icon}</span>${title}</h2>
-      ${tagGroup(tMatchLabel('sharedGround'),       shared, 'green')}
-      ${tagGroup(tMatchLabel('compatibleDirs'),     conv,   'teal')}
-      ${tagGroup(tMatchLabel('potentialFrictions'), fric,   'amber')}
-    </article>`;
+  if (cardKey === 'values') {
+    const details = [
+      matchTagGroup(tMatchLabel('sharedGround'), data.values.shared, 'green'),
+      matchTagGroup(tMatchLabel('compatibleDirs'), data.values.compatible, 'teal'),
+      matchTagGroup(tMatchLabel('potentialFrictions'), data.values.frictions, 'amber')
+    ].join('');
+    return `<div style="margin-top:14px"><h3 class="mini-title">${tMatchLabel('valueDynamics')}</h3>${details || `<p class="small">${tMatchLabel('noDirectLinks')}</p>`}</div>`;
   }
 
-  const valCard = hasValues
-    ? dimCard('♡', 'gold',  tMatchLabel('valueDynamics'),  vShared, vConv, vFric)
-    : '';
-  const pilCard = hasPillars
-    ? dimCard('▣', 'green', tMatchLabel('pillarDynamics'), pShared, pConv, pFric)
-    : '';
+  if (cardKey === 'pillars') {
+    const details = [
+      matchTagGroup(tMatchLabel('sharedGround'), data.pillars.shared, 'green'),
+      matchTagGroup(tMatchLabel('compatibleDirs'), data.pillars.compatible, 'teal'),
+      matchTagGroup(tMatchLabel('potentialFrictions'), data.pillars.frictions, 'amber')
+    ].join('');
+    return `<div style="margin-top:14px"><h3 class="mini-title">${tMatchLabel('pillarDynamics')}</h3>${details || `<p class="small">${tMatchLabel('noDirectLinks')}</p>`}</div>`;
+  }
 
-  /* Decision & worldview compact strip */
-  const rhythmCard = decTags.length === 2 ? `<article class="card">
-    <h2 class="section-title"><span class="icon blue">↗</span>${tMatchLabel('decisionRhythm')}</h2>
-    <div class="tags" style="margin-top:10px">
-      ${decTags.map(s => `<span class="tag">${s}</span>`).join('<span style="margin:0 4px;opacity:.45">↔</span>')}
-    </div>
-    <p class="small" style="margin-top:8px;color:var(--color-text-secondary)">${ml(dd.type)||''} · ${ml(dd.alignment)||''}</p>
-  </article>` : '';
+  if (cardKey === 'worldview') {
+    const details = [
+      matchPairTags(tMatchLabel('perspectives'), data.worldview.pair),
+      data.worldview.type || data.worldview.alignment
+        ? `<p class="small" style="margin-top:10px;color:var(--color-text-secondary)">${[data.worldview.type, data.worldview.alignment].filter(Boolean).join(' · ')}</p>`
+        : ''
+    ].join('');
+    return details ? `<div style="margin-top:14px"><h3 class="mini-title">${tMatchLabel('worldviewPairing')}</h3>${details}</div>` : '';
+  }
 
-  const wvCard = wvPair.length === 2 ? `<article class="card">
-    <h2 class="section-title"><span class="icon purple">◎</span>${tMatchLabel('worldviewPairing')}</h2>
-    <div class="tags" style="margin-top:10px">
-      ${wvPair.map(l => `<span class="tag">${l}</span>`).join('<span style="margin:0 4px;opacity:.45">↔</span>')}
-    </div>
-    <p class="small" style="margin-top:8px;color:var(--color-text-secondary)">${wvType}</p>
-  </article>` : '';
+  return '';
+}
 
-  return `
-    <section class="grid equal-two" style="margin-top:1.4rem">${valCard}${pilCard}</section>
-    ${rhythmCard || wvCard ? `<section class="grid equal-two">${rhythmCard}${wvCard}</section>` : ''}
-  `;
+function matchCardHtml(card, match) {
+  const color = card.color || "navy";
+  const details = matchMergedDetailsHtml(card.key, match);
+
+  return `<article class="card ai-clickable dimension ${color}-line" tabindex="0" role="button" data-ai-scope="match" data-ai-key="${card.key}">
+    <span class="ai-cta">${t("clickAI")}</span>
+    <h2 class="section-title"><span class="icon ${color}">${card.icon || "◎"}</span>${ml(card.title)}</h2>
+    <div class="metric"><span class="metric-label">${ml(card.metric_label)}</span><span class="metric-value">${ml(card.metric_value)}</span></div>
+    <p class="small">${ml(card.description)}</p>
+    ${details}
+  </article>`;
 }
 
 function renderList(items, color) {
@@ -350,25 +631,9 @@ function renderMatch(match, root) {
     "compatibilityScore"
   )}</div><div class="score-number">${
     app.score
-  }%</div></aside></div></section><section class="card report-cta-card"><div><h2 class="section-title"><span class="icon teal">✧</span>${t(
-    "matchPersonalizedReport"
-  )}</h2><p class="small">${t(
-    "matchPersonalizedReportText"
-  )}</p></div><a class="btn primary" href="./report.html?scope=match&id=${encodeURIComponent(
-    match.match_id || makeMatchId(match.user_a, match.user_b)
-  )}">${t(
-    "generateReport"
-  )}</a></section><section class="grid four">${app.cards
-    .map((c) => cardHtml(c, "match"))
-    .join("")}</section>${matchDimensionBreakdownHtml(match)}<section class="grid two"><article class="card"><h2 class="section-title"><span class="icon navy">🏷️</span>${t(
-    "matchType"
-  )}</h2><p class="summary-text"><strong>${ml(
-    app.match_type.label
-  )}</strong></p></article><article class="card"><h2 class="section-title"><span class="icon navy">💬</span>${t(
-    "goldenTip"
-  )}</h2><p class="summary-text">${ml(
-    app.golden_tip
-  )}</p></article></section><section class="grid three"><article class="card"><h2 class="section-title"><span class="icon blue">⚙</span>${t(
+  }%</div></aside></div></section>${reportCtaHtml("match", match)}<section class="grid four">${app.cards
+    .map((c) => matchCardHtml(c, match))
+    .join("")}</section><section class="grid three"><article class="card"><h2 class="section-title"><span class="icon blue">⚙</span>${t(
     "keyDynamics"
   )}</h2>${renderList(
     app.dynamics,
@@ -383,11 +648,15 @@ function renderMatch(match, root) {
   )}</h2>${renderList(
     app.challenges,
     "gold"
-  )}</article></section><section class="grid two"><article class="card"><h2 class="section-title"><span class="icon purple">🧩</span>${t(
+  )}</article></section><section class="grid two">${goldenTipCardHtml(
+    "match",
+    match
+  )}<article class="card"><h2 class="section-title"><span class="icon purple">🧩</span>${t(
     "matchGaps"
   )}</h2>${renderList(app.gaps, "purple")}</article></section>`;
 
   bindAICards();
+  hydrateGoldenTip("match", match);
 }
 
 function bindAICards() {
@@ -458,7 +727,7 @@ async function openAIDetails(scope, key) {
 
   setModalLoading();
 
-  const data = await generateAIDetails({
+  const data = await getOrCreateAIDetails({
     scope,
     key,
     profile: currentProfile,

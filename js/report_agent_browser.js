@@ -541,7 +541,9 @@ async function generatePersonalizedReport({ scope, profile, match }) {
 
     system = `You are Budhi Lite's full match report writer. Return ONLY valid JSON following the schema below exactly.
 Language: ${language}. Write ALL text content in that language.
+Target language name: ${reportLanguageName(language)}.
 You are writing a full compatibility report for ${pairStr}.
+For MATCH reports, write neutrally about the pair in third person. Do not address the viewer as "you" and do not write from only one participant's perspective.
 
 ━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
 payload.formula_analysis contains pre-computed relational data from the match engine:
@@ -627,6 +629,7 @@ Required JSON schema:
 
     system = `You are Budhi Lite's full individual profile report writer. Return ONLY valid JSON following the schema below exactly.
 Language: ${language}. Write ALL text content in that language.
+Target language name: ${reportLanguageName(language)}.
 You are writing a full personalized report for ${name}.
 
 ━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
@@ -695,4 +698,188 @@ Required JSON schema:
       generated_at: new Date().toISOString(),
     };
   }
+}
+
+
+/* ─────────────────────────────────────────────
+   MULTILINGUAL FULL REPORT CACHE + TRANSLATION
+───────────────────────────────────────────── */
+
+function reportLanguageName(code){
+  return ({en:'English', pt:'Portuguese (Brazil)', es:'Spanish', fr:'French', de:'German', ge:'German'}[code] || code || 'English');
+}
+
+function reportViewerUsername(){
+  try { return requireSession()?.username || sessionStorage.getItem('budhi_lite_user') || 'unknown'; }
+  catch(_) { return 'unknown'; }
+}
+
+function reportNow(){ return new Date().toISOString(); }
+
+function reportEnsureRoot(subject){
+  subject.results_ai = subject.results_ai || {};
+  subject.results_ai.ai_content = subject.results_ai.ai_content || {};
+  return subject.results_ai.ai_content;
+}
+
+function reportEnsureBucket(subject, bucketName){
+  const root = reportEnsureRoot(subject);
+  root[bucketName] = root[bucketName] || { original:null, by_language:{} };
+  root[bucketName].by_language = root[bucketName].by_language || {};
+  return root[bucketName];
+}
+
+function reportGetLanguageContent(bucket, lang){
+  return bucket?.by_language?.[lang]?.content || null;
+}
+
+function reportReadBucket(subject, bucketName){
+  return subject?.results_ai?.ai_content?.[bucketName] || null;
+}
+
+function getPersonalizedReportCacheStatus({scope, profile, match, lang}){
+  const targetLang = lang || reportLang();
+  const subject = scope === 'match' ? match : profile;
+  const bucketName = scope === 'match' ? 'match_full_report' : 'profile_full_report';
+  const bucket = reportReadBucket(subject, bucketName);
+  const currentEntry = bucket?.by_language?.[targetLang] || null;
+  const original = bucket?.original || null;
+  return {
+    targetLang,
+    bucketName,
+    has_current_language: Boolean(currentEntry?.content),
+    has_original: Boolean(original?.content),
+    original_language: original?.language || null,
+    current_source: currentEntry?.source || null,
+    updated_at: currentEntry?.updated_at || original?.generated_at || null
+  };
+}
+
+function hasPersonalizedReportForCurrentLanguage({scope, profile, match}){
+  return getPersonalizedReportCacheStatus({scope, profile, match}).has_current_language;
+}
+
+function hasAnyPersonalizedReport({scope, profile, match}){
+  const status = getPersonalizedReportCacheStatus({scope, profile, match});
+  return status.has_current_language || status.has_original;
+}
+
+function reportSetLanguageContent(bucket, lang, content, meta){
+  bucket.by_language = bucket.by_language || {};
+  bucket.by_language[lang] = {
+    ...(bucket.by_language[lang] || {}),
+    ...meta,
+    language:lang,
+    updated_at:reportNow(),
+    content
+  };
+}
+
+function reportSetOriginal(bucket, lang, content){
+  const viewer = reportViewerUsername();
+  bucket.original = {
+    ...(bucket.original || {}),
+    language: lang,
+    generated_by: bucket.original?.generated_by || viewer,
+    generated_at: bucket.original?.generated_at || reportNow(),
+    content
+  };
+  reportSetLanguageContent(bucket, lang, content, {source:'original', generated_by:bucket.original.generated_by, generated_at:bucket.original.generated_at});
+}
+
+async function translatePersonalizedReport({scope, sourceReport, sourceLanguage, targetLanguage, profile, match}){
+  const apiKey = getAPIKey();
+  const fallback = sourceReport || (scope === 'match' ? fallbackMatchReport(match) : fallbackProfileReport(profile));
+  if(!apiKey){
+    return {
+      ...fallback,
+      _source:'source_language_cache',
+      _note:`${t('fallbackUsed')} Translation requires an API key.`,
+      generated_at: reportNow()
+    };
+  }
+
+  const model = getOpenAIModel();
+  const targetName = reportLanguageName(targetLanguage);
+  const sourceName = reportLanguageName(sourceLanguage);
+  const system = `You are Budhi Lite's contextual translation/adaptation agent for full reports. Return ONLY valid JSON using the same report schema you receive: title, subtitle, description, strengths, challenges, cross_analysis, and result_sections.
+Translate and adapt the source report from ${sourceName} to ${targetName}. Preserve the exact meaning, analytical claims, intensity, structure, field names, section keys, number of bullets, and order of sections. Do not reinterpret the match from scratch and do not add new analysis that is absent from the source report. All human-visible strings must be in ${targetName}.
+For MATCH reports, keep the wording neutral about the pair in third person. Do not address the viewer as "you" and do not shift the report toward only one participant.
+Never leave fields empty. Return valid JSON only.`;
+
+  try{
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model,
+        messages:[
+          {role:'system', content:system},
+          {role:'user', content:JSON.stringify({scope, source_language:sourceLanguage, target_language:targetLanguage, source_report:sourceReport})}
+        ],
+        temperature:.18,
+        response_format:{type:'json_object'}
+      })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data?.error?.message || 'OpenAI translation failed');
+    const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
+    return {...normalizeReport(parsed, fallback), _source:'translation', _note:t('aiGenerated')};
+  }catch(err){
+    return {
+      ...fallback,
+      _source:'translation_error_source_language',
+      _note:`${t('aiFailed')} ${err.message || ''}`.trim(),
+      generated_at: reportNow()
+    };
+  }
+}
+
+async function getOrCreatePersonalizedReport({scope, profile, match, force}){
+  const targetLang = reportLang();
+  const subject = scope === 'match' ? match : profile;
+  const bucketName = scope === 'match' ? 'match_full_report' : 'profile_full_report';
+  if(!subject) return generatePersonalizedReport({scope,profile,match});
+
+  const bucket = reportEnsureBucket(subject, bucketName);
+  const cached = reportGetLanguageContent(bucket, targetLang);
+  if(cached && !force){
+    return {...cached, _source: bucket.by_language?.[targetLang]?.source || 'cache', _note:t('aiGenerated')};
+  }
+
+  const original = bucket.original;
+  let report;
+
+  if(original?.content && original.language && original.language !== targetLang){
+    report = await translatePersonalizedReport({
+      scope,
+      sourceReport: original.content,
+      sourceLanguage: original.language,
+      targetLanguage: targetLang,
+      profile,
+      match
+    });
+    reportSetLanguageContent(bucket, targetLang, report, {
+      source:'translation',
+      translated_from:original.language,
+      generated_for:reportViewerUsername(),
+      generated_at:reportNow()
+    });
+  } else {
+    report = await generatePersonalizedReport({scope,profile,match});
+    if(!original || !original.language || original.language === targetLang || force){
+      reportSetOriginal(bucket, targetLang, report);
+    } else {
+      reportSetLanguageContent(bucket, targetLang, report, {source:'original_independent', generated_by:reportViewerUsername(), generated_at:reportNow()});
+    }
+  }
+
+  try{
+    if(scope === 'match') await saveMatch(subject);
+    else await saveProfile(subject.username, subject);
+  }catch(err){
+    console.warn('[Budhi Lite] Full report generated but cache save failed.', err);
+  }
+
+  return report;
 }
