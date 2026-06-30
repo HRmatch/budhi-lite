@@ -313,34 +313,35 @@ function decisionDescription(q4, q5) {
   const desired = Number(q5);
   if (act === "go")
     return obj(
-      "The user currently favors movement, initiative and early action. This first layer suggests a profile that prefers to shape situations rather than wait for them to settle.",
-      "O usuário atualmente favorece movimento, iniciativa e ação precoce. Esta primeira camada sugere um perfil que prefere moldar as situações em vez de esperar que elas se estabilizem.",
-      "El usuario actualmente favorece el movimiento, la iniciativa y la acción temprana. Esta primera capa sugiere un perfil que prefiere moldear las situaciones en lugar de esperar a que se estabilicen.",
-      "L’utilisateur favorise actuellement le mouvement, l’initiative et l’action précoce. Cette première couche suggère un profil qui préfère façonner les situations plutôt que d’attendre qu’elles se stabilisent.",
-      "Der Nutzer bevorzugt derzeit Bewegung, Initiative und frühes Handeln. Diese erste Ebene deutet auf ein Profil hin, das Situationen lieber gestaltet, als darauf zu warten, dass sie sich stabilisieren.",
+      "This result reflects your current state, demonstrating a natural tendency towards movement, initiative, and taking action at the right time. Your pace of decision-making tends to bring energy to daily interactions, ensuring the fluidity and continuous advancement of situations.",
+      "Este resultado reflete seu estado atual, demonstrando uma tendência natural ao movimento, à iniciativa e à ação no momento certo. Seu ritmo de decisão tende a levar energia às interações diárias, garantindo a fluidez e o avanço contínuo das situações.",
+      "Este resultado refleja tu estado actual, demostrando una tendencia natural hacia el movimiento, la iniciativa y la acción en el momento adecuado. Tu ritmo de decisión tiende a aportar energía a las interacciones diarias, garantizando la fluidez y el avance continuo de las situaciones.",
+      "Ce résultat reflète votre état actuel, démontrant une tendance naturelle au mouvement, à l'initiative et à l'action au bon moment. Votre rythme de décision a tendance à apporter de l'énergie aux interactions quotidiennes, garantissant la fluidité et l'avancement continu des situations.",
+      "Dieses Ergebnis spiegelt Ihren aktuellen Zustand wider und zeigt eine natürliche Tendenz zu Bewegung, Initiative und Handeln im richtigen Moment. Ihr Entscheidungstempo bringt tendenziell Energie in alltägliche Interaktionen und sorgt für den Fluss und das kontinuierliche Voranschreiten von Situationen.",
     );
   if (act === "wait")
     return obj(
-      "The user currently values observation, timing and protection of energy before acting. This first layer suggests a profile that prefers to understand the context before moving.",
-      "O usuário atualmente valoriza observação, timing e proteção de energia antes de agir. Esta primeira camada sugere um perfil que prefere compreender o contexto antes de se mover.",
-      "El usuario actualmente valora la observación, el timing y la protección de energía antes de actuar. Esta primera capa sugiere un perfil que prefiere comprender el contexto antes de moverse.",
-      "L’utilisateur valorise actuellement l’observation, le timing et la protection de l’énergie avant d’agir. Cette première couche suggère un profil qui préfère comprendre le contexte avant d’avancer.",
-      "Der Nutzer schätzt derzeit Beobachtung, Timing und den Schutz von Energie vor dem Handeln. Diese erste Ebene deutet auf ein Profil hin, das den Kontext verstehen möchte, bevor es handelt.",
+      "This result signals a more reflective pace, with space to observe, perceive the right moment, and act with care. In daily interactions, this can bring stability, active listening, and greater clarity on when to move forward. ",
+      "Este resultado sinaliza um ritmo mais reflexivo, com espaço para observar, perceber o momento certo e agir com cuidado. Nas interações diárias, isso pode trazer estabilidade, escuta e mais clareza sobre quando avançar.",
+      "Este resultado señala un ritmo más reflexivo, con espacio para observar, percibir el momento adecuado y actuar con cuidado. En las interacciones diarias, esto puede aportar estabilidad, escucha y mayor claridad sobre cuándo avanzar.",
+      "Ce résultat signale un rythme plus réfléchi, avec de l'espace pour observer, percevoir le bon moment et agir avec soin. Dans les interactions quotidiennes, cela peut apporter de la stabilité, de l'écoute et une plus grande clarté sur le moment d'avancer.",
+      "Dieses Ergebnis signalisiert ein eher nachdenkliches Tempo mit Raum zum Beobachten, Wahrnehmen des richtigen Moments und sorgfältigem Handeln. In alltäglichen Interaktionen kann dies Stabilität, Zuhören und mehr Klarheit darüber bringen, wann man voranschreiten sollte.",
     );
   if (act === "adaptive")
     return obj(
-      "The user currently combines pause and action, adjusting rhythm according to context. This first layer suggests strategic flexibility and situational judgment.",
-      "O usuário atualmente combina pausa e ação, ajustando o ritmo de acordo com o contexto. Esta primeira camada sugere flexibilidade estratégica e julgamento situacional.",
-      "El usuario actualmente combina pausa y acción, ajustando el ritmo según el contexto. Esta primera capa sugiere flexibilidad estratégica y juicio situacional.",
-      "L’utilisateur combine actuellement pause et action, ajustant son rythme selon le contexte. Cette première couche suggère flexibilité stratégique et jugement situationnel.",
-      "Der Nutzer kombiniert derzeit Pause und Handlung und passt den Rhythmus dem Kontext an. Diese erste Ebene deutet auf strategische Flexibilität und situatives Urteilsvermögen hin.",
+      "This result translates your current state, showing a flexible pace, capable of alternating between pause and action according to the moment. In everyday life, this can support more sensitive choices, because movement becomes guided by the context, not just by impulse.",
+      "Este resultado traduz o seu estado atual, mostrando um ritmo flexível, capaz de alternar pausa e ação conforme o momento. No dia a dia, isso pode sustentar escolhas mais sensíveis, porque o movimento passa a ser guiado pelo contexto, não apenas pelo impulso.",
+      "Este resultado traduce tu estado actual, mostrando un ritmo flexible, capaz de alternar entre pausa y acción según el momento. En el día a día, esto puede sustentar elecciones más sensibles, porque el movimiento pasa a ser guiado por el contexto, no solo por el impulso.",
+      "Ce résultat traduit votre état actuel, montrant un rythme flexible, capable d'alterner entre pause et action selon le moment. Au quotidien, cela peut soutenir des choix plus sensibles, car le mouvement est guidé par le contexte, et non plus seulement par l'impulsion.",
+      "Dieses Ergebnis übersetzt Ihren aktuellen Zustand und zeigt ein flexibles Tempo, das je nach Moment zwischen Pause und Aktion wechseln kann. Im Alltag kann dies sensiblere Entscheidungen unterstützen, da die Bewegung vom Kontext geleitet wird und nicht nur vom Impuls.",
+
     );
   return obj(
-    "The user currently seeks balance between action and reflection. This first layer suggests a profile that avoids extremes and adapts smoothly across situations.",
-    "O usuário atualmente busca equilíbrio entre ação e reflexão. Esta primeira camada sugere um perfil que evita extremos e se adapta suavemente entre situações.",
-    "El usuario actualmente busca equilibrio entre acción y reflexión. Esta primera capa sugiere un perfil que evita extremos y se adapta con fluidez entre situaciones.",
-    "L’utilisateur cherche actuellement un équilibre entre action et réflexion. Cette première couche suggère un profil qui évite les extrêmes et s’adapte avec fluidité selon les situations.",
-    "Der Nutzer sucht derzeit ein Gleichgewicht zwischen Handlung und Reflexion. Diese erste Ebene deutet auf ein Profil hin, das Extreme vermeidet und sich flexibel an Situationen anpasst.",
+    "Your profile indicates a search for balance between action and reflection. In daily interactions, this pace can help you avoid extremes, listen to the moment, and move with greater presence.",
+    "Seu perfil indica uma busca por equilíbrio entre ação e reflexão. Nas interações diárias, esse ritmo pode ajudar você a evitar extremos, escutar o momento e se mover com mais presença.",
+    "Tu perfil indica una búsqueda de equilibrio entre acción y reflexión. En las interacciones diarias, este ritmo puede ayudarte a evitar los extremos, escuchar el momento y moverte con mayor presencia.",
+    "Votre profil indique une recherche d'équilibre entre action et réflexion. Dans les interactions quotidiennes, ce rythme peut vous aider à éviter les extrêmes, à être à l'écoute du moment et à bouger avec plus de présence.",
+    "Ihr Profil weist auf die Suche nach einem Gleichgewicht zwischen Aktion und Reflexion hin. In alltäglichen Interaktionen kann dieses Tempo Ihnen helfen, Extreme zu vermeiden, auf den Moment zu hören und sich mit mehr Präsenz zu bewegen.",
   );
 }
 function worldviewDescription(code) {
@@ -354,117 +355,39 @@ function worldviewDescription(code) {
       "Weltanschauung",
     );
   return obj(
-    `The user's current worldview is organized around ${label.en}. This lens influences how meaning, choices and priorities are interpreted in this first profile layer.`,
-    `A visão de mundo atual do usuário se organiza em torno de ${label.pt}. Essa lente influencia como sentido, escolhas e prioridades são interpretados nesta primeira camada de perfil.`,
-    `La visión de mundo actual del usuario se organiza alrededor de ${label.es}. Esta lente influye en cómo se interpretan el sentido, las elecciones y las prioridades en esta primera capa del perfil.`,
-    `La vision du monde actuelle de l’utilisateur s’organise autour de ${label.fr}. Cette lentille influence la manière dont le sens, les choix et les priorités sont interprétés dans cette première couche du profil.`,
-    `Die aktuelle Weltanschauung des Nutzers ist um ${label.de} organisiert. Diese Perspektive beeinflusst, wie Bedeutung, Entscheidungen und Prioritäten in dieser ersten Profilebene interpretiert werden.`,
+    `Your worldview is organized, at this moment, around ${label.en}. This perspective gently shapes how you make sense of experiences, choose priorities, and recognize what feels coherent in your current journey.`,
+    `Sua visão de mundo se organiza, neste momento, em torno de ${label.pt}. Essa perspectiva molda com delicadeza a forma como você dá sentido às experiências, escolhe prioridades e reconhece o que parece coerente na sua jornada atual.`,
+    `Tu visión del mundo se organiza, en este momento, en torno a ${label.es}. Esta perspectiva moldea con delicadeza la forma en que das sentido a las experiencias, eliges prioridades y reconoces lo que parece coherente en tu viaje actual.`,
+    `Votre vision du monde s'organise, en ce moment, autour de ${label.fr}. Cette perspective façonne avec délicatesse la façon dont vous donnez du sens aux expériences, choisissez vos priorités et reconnaissez ce qui semble cohérent dans votre parcours actuel.`,
+    `Ihre Weltanschauung organisiert sich derzeit um ${label.de}. Diese Perspektive prägt behutsam die Art und Weise, wie Sie Erfahrungen einen Sinn geben, Prioritäten setzen und erkennen, was auf Ihrer aktuellen Reise stimmig erscheint.`,
   );
 }
+function phase1AIFallbackMessage() {
+  if (typeof aiFallbackError === 'function') return aiFallbackError();
+  return typeof t === 'function' ? t('ai_fallback_error') : 'ai_fallback_error';
+}
+
+function phase1AIFallbackML() {
+  const source = typeof I18N === 'object' && I18N ? I18N : null;
+  const value = lang => source?.[lang]?.ai_fallback_error || 'ai_fallback_error';
+  return obj(value('en'), value('pt'), value('es'), value('fr'), value('de'));
+}
+
 function fallbackDetailsProfile(key, profile) {
-  const dim = profile.results_app.dimensions[key] || {};
-  const title = ml(dim.title) || key;
-  const desc =
-    {
-      decision: obj(
-        "This card explains how the user currently moves between intention and action. It combines the current moment and the preferred way of pursuing goals to reveal whether the user tends to move quickly, wait, adapt strategically or seek balance. In Budhi Lite, this is treated as a first-layer signal rather than a final character classification, because deeper phases will later add emotional stability, thinking style and action style.",
-        "Este card explica como o usuário se move atualmente entre intenção e ação. Ele combina o momento atual e a forma preferida de perseguir objetivos para revelar se o usuário tende a avançar rapidamente, esperar, adaptar-se estrategicamente ou buscar equilíbrio. No Budhi Lite, isso é tratado como um sinal de primeira camada, e não como uma classificação final de character, porque fases mais profundas adicionarão estabilidade emocional, estilo de pensamento e estilo de ação.",
-        "Este card explica cómo el usuario se mueve actualmente entre intención y acción. Combina el momento actual y la forma preferida de perseguir objetivos para revelar si el usuario tiende a avanzar rápidamente, esperar, adaptarse estratégicamente o buscar equilibrio. En Budhi Lite, esto se trata como una señal de primera capa, no como una clasificación final de character, porque fases más profundas añadirán estabilidad emocional, estilo de pensamiento y estilo de acción.",
-        "Cette card explique comment l’utilisateur passe actuellement de l’intention à l’action. Elle combine le moment actuel et la manière préférée de poursuivre les objectifs pour révéler si l’utilisateur tend à avancer rapidement, attendre, s’adapter stratégiquement ou rechercher l’équilibre. Dans Budhi Lite, cela reste un signal de première couche, pas une classification finale de character.",
-        "Diese Card erklärt, wie der Nutzer derzeit zwischen Absicht und Handlung wechselt. Sie kombiniert den aktuellen Moment und die bevorzugte Zielverfolgung, um zu zeigen, ob der Nutzer schnell handelt, wartet, sich strategisch anpasst oder Balance sucht. In Budhi Lite ist dies ein Signal der ersten Ebene, keine endgültige character-Klassifikation.",
-      ),
-      values: obj(
-        "This card summarizes the selected values that most strongly organize the user’s current self-perception. Values are interpreted as anchors for trust, judgment and relational expectations. In the teaser report, they help identify what the user may protect, admire or expect from others before deeper personality dimensions are available.",
-        "Este card resume os valores selecionados que mais organizam a autopercepção atual do usuário. Valores são interpretados como âncoras de confiança, julgamento e expectativas relacionais. No report teaser, ajudam a identificar aquilo que o usuário pode proteger, admirar ou esperar dos outros antes das dimensões mais profundas estarem disponíveis.",
-        "Este card resume los valores seleccionados que más organizan la autopercepción actual del usuario. Los valores se interpretan como anclas de confianza, juicio y expectativas relacionales. En el report teaser, ayudan a identificar lo que el usuario puede proteger, admirar o esperar de otros antes de contar con dimensiones más profundas.",
-        "Cette card résume les valeurs sélectionnées qui structurent le plus l’auto-perception actuelle de l’utilisateur. Les valeurs sont interprétées comme des ancrages de confiance, de jugement et d’attentes relationnelles.",
-        "Diese Card fasst die ausgewählten Werte zusammen, die die aktuelle Selbstwahrnehmung des Nutzers am stärksten strukturieren. Werte gelten als Anker für Vertrauen, Urteil und Beziehungserwartungen.",
-      ),
-      pillars: obj(
-        "This card identifies the life areas the user currently relies on most. Pillars are more situational than values: they show where energy, attention and emotional support are being placed today. This makes the card useful for understanding current life structure, not only long-term identity.",
-        "Este card identifica as áreas da vida nas quais o usuário mais se apoia atualmente. Pilares são mais situacionais do que valores: mostram onde energia, atenção e suporte emocional estão sendo colocados hoje. Isso torna o card útil para compreender a estrutura de vida atual, não apenas a identidade de longo prazo.",
-        "Este card identifica las áreas de la vida en las que el usuario se apoya más actualmente. Los pilares son más situacionales que los valores: muestran dónde se colocan hoy la energía, la atención y el apoyo emocional.",
-        "Cette card identifie les domaines de vie sur lesquels l’utilisateur s’appuie le plus actuellement. Les piliers sont plus situationnels que les valeurs : ils montrent où l’énergie et le soutien émotionnel sont placés aujourd’hui.",
-        "Diese Card identifiziert die Lebensbereiche, auf die sich der Nutzer derzeit am stärksten stützt. Säulen sind situationsbezogener als Werte: Sie zeigen, wo Energie, Aufmerksamkeit und emotionale Unterstützung heute liegen.",
-      ),
-      worldview: obj(
-        "This card describes the perspective that currently guides how the user interprets life, choices and meaning. Worldview is important because it shapes the narrative behind decisions: two people can share similar behaviors but explain them through very different lenses. In Budhi Lite, worldview gives depth to the first-layer profile.",
-        "Este card descreve a perspectiva que atualmente guia como o usuário interpreta a vida, as escolhas e o sentido. A visão de mundo é importante porque molda a narrativa por trás das decisões: duas pessoas podem ter comportamentos semelhantes, mas explicá-los por lentes muito diferentes. No Budhi Lite, a visão de mundo dá profundidade à primeira camada do perfil.",
-        "Este card describe la perspectiva que actualmente guía cómo el usuario interpreta la vida, las elecciones y el sentido. La visión de mundo es importante porque moldea la narrativa detrás de las decisiones.",
-        "Cette card décrit la perspective qui guide actuellement la manière dont l’utilisateur interprète la vie, les choix et le sens. La vision du monde donne de la profondeur à cette première couche du profil.",
-        "Diese Card beschreibt die Perspektive, die derzeit steuert, wie der Nutzer Leben, Entscheidungen und Bedeutung interpretiert. Die Weltanschauung verleiht der ersten Profilebene Tiefe.",
-      ),
-    }[key] ||
-    obj(
-      "Profile detail.",
-      "Detalhe do perfil.",
-      "Detalle del perfil.",
-      "Détail du profil.",
-      "Profildetail.",
-    );
+  const message = phase1AIFallbackMessage();
   return {
-    title,
-    description: ml(desc),
-    strengths: [
-      ml(
-        obj(
-          "Provides an immediate first-layer reading.",
-          "Oferece uma leitura imediata de primeira camada.",
-          "Ofrece una lectura inmediata de primera capa.",
-          "Fournit une lecture immédiate de première couche.",
-          "Bietet eine unmittelbare erste Profilebene.",
-        ),
-      ),
-      ml(
-        obj(
-          "Can be compared later in Match Lite.",
-          "Pode ser comparado depois no Match Lite.",
-          "Puede compararse luego en Match Lite.",
-          "Peut être comparé ensuite dans Match Lite.",
-          "Kann später in Match Lite verglichen werden.",
-        ),
-      ),
-      ml(
-        obj(
-          "Works as a teaser before full character results.",
-          "Funciona como teaser antes dos resultados completos de character.",
-          "Funciona como teaser antes de los resultados completos de character.",
-          "Fonctionne comme teaser avant les résultats complets de character.",
-          "Funktioniert als Teaser vor vollständigen character-Ergebnissen.",
-        ),
-      ),
-    ],
-    challenges: [
-      ml(
-        obj(
-          "It should not be interpreted as a final diagnosis.",
-          "Não deve ser interpretado como diagnóstico final.",
-          "No debe interpretarse como diagnóstico final.",
-          "Ne doit pas être interprété comme un diagnostic final.",
-          "Sollte nicht als endgültige Diagnose interpretiert werden.",
-        ),
-      ),
-      ml(
-        obj(
-          "The full Self-Profile is needed for deeper classification.",
-          "O Self-Profile completo é necessário para uma classificação mais profunda.",
-          "Se necesita el Self-Profile completo para una clasificación más profunda.",
-          "Le Self-Profile complet est nécessaire pour une classification plus profonde.",
-          "Das vollständige Self-Profile ist für eine tiefere Klassifikation nötig.",
-        ),
-      ),
-      ml(
-        obj(
-          "Context may change how this pattern appears.",
-          "O contexto pode mudar como esse padrão aparece.",
-          "El contexto puede cambiar cómo aparece este patrón.",
-          "Le contexte peut modifier l’expression de ce modèle.",
-          "Der Kontext kann verändern, wie dieses Muster erscheint.",
-        ),
-      ),
-    ],
+    title: message,
+    description: message,
+    strengths: [],
+    challenges: [],
+    _error: true,
+    error: true,
+    message,
+    _source: 'ai_fallback_error',
+    _note: ''
   };
 }
+
 function buildPhase1Profile({
   username,
   display_name,
@@ -489,11 +412,11 @@ function buildPhase1Profile({
       "Weltanschauung",
     );
   const overview = obj(
-    "This first profile layer summarizes how the user currently acts, what values guide the user, which life pillars support the user today and which worldview frames the user’s life journey. It is intentionally a teaser: it offers enough structure for a first report and Match Lite, while leaving deeper character classification for the complete Self-Profile.",
-    "Esta primeira camada de perfil resume como o usuário age atualmente, quais valores o guiam, quais pilares da vida o sustentam hoje e qual visão de mundo enquadra sua jornada. É propositalmente um teaser: oferece estrutura suficiente para um primeiro report e para o Match Lite, deixando a classificação mais profunda de character para o Self-Profile completo.",
-    "Esta primera capa de perfil resume cómo actúa actualmente el usuario, qué valores lo guían, qué pilares de vida lo sostienen hoy y qué visión de mundo enmarca su recorrido. Es intencionalmente un teaser: ofrece estructura suficiente para un primer report y Match Lite, dejando la clasificación más profunda de character para el Self-Profile completo.",
-    "Cette première couche de profil résume comment l’utilisateur agit actuellement, quelles valeurs le guident, quels piliers de vie le soutiennent aujourd’hui et quelle vision du monde encadre son parcours. Elle est volontairement un teaser.",
-    "Diese erste Profilebene fasst zusammen, wie der Nutzer derzeit handelt, welche Werte ihn leiten, welche Lebenssäulen ihn heute stützen und welche Weltanschauung seine Reise rahmt. Sie ist bewusst ein Teaser.",
+    "Welcome to your Profile Snapshot. This result gathers four signals of your current journey: your decision-making pace, the values that illuminate your path, the life pillars that sustain you today, and the worldview through which you make sense of your experiences. Read this analysis as an invitation to observe patterns with curiosity, not as a fixed definition of who you are.",
+    "Boas-vindas ao seu Profile Snapshot. Este resultado reúne quatro sinais da sua jornada atual: seu ritmo de decisão, os valores que iluminam o seu caminho, os pilares de vida que sustentam você hoje e a visão de mundo pela qual você dá sentido às suas experiências. Leia esta análise como um convite para observar padrões com curiosidade, não como uma definição fixa de quem você é.",
+    "Te damos la bienvenida a tu Profile Snapshot. Este resultado reúne cuatro señales de tu viaje actual: tu ritmo de decisión, los valores que iluminan tu camino, los pilares de vida que te sostienen hoy y la visión del mundo a través de la cual das sentido a tus experiencias. Lee este análisis como una invitación a observar patrones con curiosidad, no como una definición fija de quién eres.",
+    "Bienvenue dans votre Profile Snapshot. Ce résultat rassemble quatre signaux de votre parcours actuel : votre rythme de décision, les valeurs qui éclairent votre chemin, les piliers de vie qui vous soutiennent aujourd'hui, et la vision du monde par laquelle vous donnez du sens à vos expériences. Lisez cette analyse comme une invitation à observer des schémas avec curiosité, et non comme une définition figée de qui vous êtes.",
+    "Willkommen bei Ihrem Profile Snapshot. Dieses Ergebnis fasst vier Signale Ihrer aktuellen Reise zusammen: Ihr Entscheidungstempo, die Werte, die Ihren Weg erhellen, die Lebenspfeiler, die Sie heute tragen, und die Weltanschauung, durch die Sie Ihren Erfahrungen einen Sinn geben. Lesen Sie diese Analyse als Einladung, Muster mit Neugier zu beobachten, nicht als feste Definition dessen, wer Sie sind.",
   );
   const cards = [
     {
@@ -537,11 +460,11 @@ function buildPhase1Profile({
       ),
       bar: pct(values.length * 20),
       description: obj(
-        "These values indicate the moral and relational anchors that currently feel most aligned with the user.",
-        "Esses valores indicam as âncoras morais e relacionais que atualmente parecem mais alinhadas com o usuário.",
-        "Estos valores indican las anclas morales y relacionales que actualmente se sienten más alineadas con el usuario.",
-        "Ces valeurs indiquent les ancrages moraux et relationnels actuellement les plus alignés avec l’utilisateur.",
-        "Diese Werte zeigen die moralischen und relationalen Anker, die derzeit am stärksten zum Nutzer passen.",
+        "These values signal what feels meaningful, reliable, and worthy of care on your current path.",
+        "Esses valores sinalizam o que parece significativo, confiável e digno de cuidado no seu caminho atual.",
+        "Estos valores señalan lo que parece significativo, confiable y digno de cuidado en tu camino actual.",
+        "Ces valeurs signalent ce qui semble significatif, fiable et digne d'attention sur votre chemin actuel.",
+        "Diese Werte signalisieren, was sich auf Ihrem aktuellen Weg bedeutungsvoll, verlässlich und pflegenswert anfühlt.",
       ),
       tags: values.map(valueLabel),
     },
@@ -572,11 +495,12 @@ function buildPhase1Profile({
       ),
       bar: pct(pillars.length * 20),
       description: obj(
-        "These pillars show where the user is currently placing energy, stability and life support.",
-        "Esses pilares mostram onde o usuário está atualmente colocando energia, estabilidade e suporte de vida.",
-        "Estos pilares muestran dónde el usuario está colocando actualmente energía, estabilidad y apoyo vital.",
-        "Ces piliers montrent où l’utilisateur place actuellement son énergie, sa stabilité et son soutien de vie.",
-        "Diese Säulen zeigen, wo der Nutzer derzeit Energie, Stabilität und Lebensunterstützung platziert.",
+        "These pillars constitute the foundations that sustain your journey today and shape your sense of direction.",
+        "Esses pilares constituem as bases que sustentam a sua jornada hoje e dão forma ao seu senso de direção.",
+        "Estos pilares constituyen las bases que sostienen tu viaje hoy y dan forma a tu sentido de dirección.",
+        "Ces piliers constituent les bases qui soutiennent votre parcours aujourd'hui et façonnent votre sens de l'orientation.",
+        "Diese Pfeiler bilden die Grundlagen, die Ihre heutige Reise stützen und Ihren Orientierungssinn formen.",
+
       ),
       tags: pillars.map(pillarLabel),
     },
@@ -652,20 +576,14 @@ function buildPhase1Profile({
       dimensions,
       cards,
       character_teaser: obj(
-        "This is just an initial view. Discover your Character and access deep behavioral mapping in the full version of the BUDHI App.",
-        "Esta é apenas uma visão inicial. Descubra seu Character e acesse o mapeamento comportamental profundo na versão completa do BUDHI App.",
-        "Esta es solo una visión inicial. Descubra su Character y acceda al mapeo de comportamiento profundo en la versión completa de BUDHI App.",
-        "Ceci n'est qu'un aperçu initial. Découvrez votre Character et accédez à une cartographie comportementale approfondie dans la version complète de BUDHI App.",
-        "Dies ist nur ein erster Einblick. Entdecken Sie Ihren Character und greifen Sie auf tiefgreifendes Verhaltens-Mapping in der Vollversion der BUDHI App zu."
+        "Continue your self-discovery journey in the full version of the CheckMatch App to discover your complete Self Profile and access a deeper map of your behavioral patterns.",
+        "Continue sua jornada de autoconhecimento na versão completa do CheckMatch App para descobrir seu Self Profile completo e acessar um mapa mais profundo dos seus padrões comportamentais.",
+        "Continúa tu viaje de autoconocimiento en la versión completa de CheckMatch App para descubrir tu Self Profile completo y acceder a un mapa más profundo de tus patrones de comportamiento.",
+        "Poursuivez votre parcours de découverte de soi dans la version complète de la CheckMatch App pour découvrir votre Self Profile complet et accéder à une cartographie plus approfondie de vos modèles de comportement.",
+        "Setzen Sie Ihre Reise der Selbsterkenntnis in der Vollversion der CheckMatch App fort, um Ihr komplettes Self Profile zu entdecken und auf eine tiefere Karte Ihrer Verhaltensmuster zuzugreifen.",
+
       ),
-      // NOVA SESSÃO GOLD TIP AQUI:
-      golden_tip: obj(
-        "Use Match Lite as an opportunity to reflect on your current momentum and priorities. This pause for self-observation will help you better understand the motivations that guide your daily choices.",
-        "Use o Match Lite como uma oportunidade de refletir sobre o seu momento e suas prioridades. Essa pausa para auto-observação ajudará a compreender melhor as motivações que guiam as suas escolhas diárias.",
-        "Utilice Match Lite como una oportunidad para reflexionar sobre su momento y sus prioridades. Esta pausa para la autoobservación le ayudará a comprender mejor las motivaciones que guían sus elecciones diarias.",
-        "Utilisez Match Lite comme une opportunité de réfléchir à votre dynamique et à vos priorités. Cette pause d'auto-observation vous aidera à mieux comprendre les motivations qui guident vos choix quotidiens.",
-        "Nutzen Sie Match Lite als Gelegenheit, um über Ihre aktuelle Dynamik und Ihre Prioritäten nachzudenken. Diese Pause zur Selbstbeobachtung wird Ihnen helfen, die Motivationen, die Ihre täglichen Entscheidungen leiten, besser zu verstehen.",
-      ),
+      golden_tip: phase1AIFallbackML(),
     },
   };
   return profile;

@@ -121,18 +121,13 @@ function goldenTipDomId(scope){
   return `${scope}GoldenTipText`;
 }
 
-function goldenTipFallbackText(scope, subject){
-  return ml(subject?.results_app?.golden_tip) || '';
-}
-
 function goldenTipCardHtml(scope, subject){
   const id = goldenTipDomId(scope);
-  const fallback = goldenTipFallbackText(scope, subject) || t("loadingAI");
   return `<article class="card golden-tip-card" data-golden-tip-scope="${scope}">
         <h2 class="section-title">
           <span class="icon navy">💬</span>${t("goldenTip")}
         </h2>
-        <p class="summary-text" id="${id}">${fallback}</p>
+        <p class="summary-text" id="${id}">${t("loadingAI")}</p>
       </article>`;
 }
 
@@ -141,11 +136,10 @@ async function hydrateGoldenTip(scope, subject){
   if(!el || !subject) return;
 
   if(typeof getOrCreateGoldenTip !== "function"){
-    el.textContent = goldenTipFallbackText(scope, subject);
+    el.textContent = t("ai_fallback_error");
     return;
   }
 
-  const fallback = goldenTipFallbackText(scope, subject);
   el.innerHTML = `<span class="loader"></span> ${t("loadingAI")}`;
 
   try{
@@ -154,10 +148,10 @@ async function hydrateGoldenTip(scope, subject){
       profile: scope === "profile" ? subject : null,
       match: scope === "match" ? subject : null
     });
-    el.textContent = data?.text || fallback || "";
+    el.textContent = data?.text || t("ai_fallback_error");
   }catch(err){
     console.warn("[Budhi Lite] Golden Tip generation failed.", err);
-    el.textContent = fallback || "";
+    el.textContent = t("ai_fallback_error");
   }
 }
 

@@ -143,51 +143,29 @@ function typeLabel(type) {
   return map[type] || map.different;
 }
 
+function matchAIFallbackMessage() {
+  if (typeof aiFallbackError === 'function') return aiFallbackError();
+  return typeof t === 'function' ? t('ai_fallback_error') : 'ai_fallback_error';
+}
+
+function matchAIFallbackML() {
+  const source = typeof I18N === 'object' && I18N ? I18N : null;
+  const value = lang => source?.[lang]?.ai_fallback_error || 'ai_fallback_error';
+  return obj(value('en'), value('pt'), value('es'), value('fr'), value('de'));
+}
+
 function fallbackDetailsMatch(key, match) {
-  const dim = match.results_app.dimensions[key] || {};
-  const desc = {
-    decision: obj(
-      'This match dimension compares the rhythm of action between the two people. It looks at how each person moves, waits, adapts or balances timing. In Match Lite, this is especially important because a strong score can still hide friction if one person expects immediate movement while the other needs context before acting.',
-      'Esta dimensão do match compara o ritmo de ação entre as duas pessoas. Ela observa como cada pessoa avança, espera, adapta ou equilibra o timing. No Match Lite, isso é especialmente importante porque uma boa pontuação ainda pode esconder atrito se uma pessoa espera movimento imediato enquanto a outra precisa de contexto antes de agir.',
-      'Esta dimensión del match compara el ritmo de acción entre las dos personas. Observa cómo cada persona avanza, espera, se adapta o equilibra el timing.',
-      'Cette dimension du match compare le rythme d\'action entre les deux personnes. Elle observe comment chacune avance, attend, s\'adapte ou équilibre le timing.',
-      'Diese Match-Dimension vergleicht den Handlungsrhythmus zwischen den beiden Personen. Sie zeigt, wie jede Person handelt, wartet, sich anpasst oder Timing ausbalanciert.'
-    ),
-    values: obj(
-      'This match dimension compares the values selected by both people. Shared values indicate direct overlap, while convergent values suggest compatible moral directions even when the exact choices differ. Divergent values are not treated as failure, but as areas where expectations and judgments may need more explicit conversation.',
-      'Esta dimensão do match compara os valores selecionados pelas duas pessoas. Valores compartilhados indicam sobreposição direta, enquanto valores convergentes sugerem direções morais compatíveis mesmo quando as escolhas exatas diferem. Valores divergentes não são tratados como falha, mas como áreas em que expectativas e julgamentos podem precisar de conversa mais explícita.',
-      'Esta dimensión del match compara los valores seleccionados por ambas personas. Los valores compartidos indican superposición directa, mientras que los valores convergentes sugieren direcciones morales compatibles.',
-      'Cette dimension compare les valeurs sélectionnées par les deux personnes. Les valeurs partagées indiquent un chevauchement direct, tandis que les valeurs convergentes suggèrent des directions morales compatibles.',
-      'Diese Dimension vergleicht die ausgewählten Werte beider Personen. Gemeinsame Werte zeigen direkte Überschneidung; konvergente Werte zeigen kompatible moralische Richtungen.'
-    ),
-    pillars: obj(
-      'This match dimension compares the life pillars currently supporting each person. Pillars are treated as present-life priorities rather than permanent traits. When pillars overlap, the relationship may feel easier to organize; when they diverge, the pair may need to coordinate time, attention and emotional investment more intentionally.',
-      'Esta dimensão do match compara os pilares da vida que atualmente sustentam cada pessoa. Pilares são tratados como prioridades do momento de vida, não como traços permanentes. Quando os pilares se sobrepõem, a relação pode parecer mais fácil de organizar; quando divergem, o par pode precisar coordenar tempo, atenção e investimento emocional de forma mais intencional.',
-      'Esta dimensión compara los pilares de vida que actualmente sostienen a cada persona. Los pilares se tratan como prioridades del momento, no como rasgos permanentes.',
-      'Cette dimension compare les piliers de vie qui soutiennent actuellement chaque personne. Les piliers sont des priorités du moment, non des traits permanents.',
-      'Diese Dimension vergleicht die Lebenssäulen, die jede Person derzeit stützen. Säulen sind aktuelle Prioritäten, keine dauerhaften Merkmale.'
-    ),
-    worldview: obj(
-      'This match dimension compares the perspectives through which both people interpret life and meaning. Worldviews can be aligned, complementary or divergent. Complementarity can be very positive when each person respects the other\'s lens; divergence becomes a challenge when one perspective invalidates the other.',
-      'Esta dimensão do match compara as perspectivas pelas quais as duas pessoas interpretam vida e sentido. Visões de mundo podem ser alinhadas, complementares ou divergentes. A complementaridade pode ser muito positiva quando cada pessoa respeita a lente da outra; a divergência se torna um desafio quando uma perspectiva invalida a outra.',
-      'Esta dimensión compara las perspectivas con las que ambas personas interpretan la vida y el sentido. Las visiones de mundo pueden estar alineadas, ser complementarias o divergentes.',
-      'Cette dimension compare les perspectives à travers lesquelles les deux personnes interprètent la vie et le sens.',
-      'Diese Dimension vergleicht die Perspektiven, durch die beide Personen Leben und Bedeutung interpretieren.'
-    )
-  };
+  const message = matchAIFallbackMessage();
   return {
-    title: ml(dim.title) || key,
-    description: ml(desc[key]),
-    strengths: [
-      ml(obj('Makes compatibility visible beyond a single score.', 'Torna a compatibilidade visível além de uma pontuação única.', 'Hace visible la compatibilidad más allá de una sola puntuación.', 'Rend la compatibilité visible au-delà d\'un score unique.', 'Macht Kompatibilität über einen einzelnen Score hinaus sichtbar.')),
-      ml(obj('Helps identify where the pair naturally aligns.', 'Ajuda a identificar onde o par se alinha naturalmente.', 'Ayuda a identificar dónde la pareja se alinea naturalmente.', 'Aide à identifier où le duo s\'aligne naturellement.', 'Hilft zu erkennen, wo das Paar sich natürlich ausrichtet.')),
-      ml(obj('Can guide future conversations or activities.', 'Pode orientar conversas ou atividades futuras.', 'Puede guiar conversaciones o actividades futuras.', 'Peut guider de futures conversations ou activités.', 'Kann zukünftige Gespräche oder Aktivitäten leiten.'))
-    ],
-    challenges: [
-      ml(obj('It is a surface-level interpretation only.', 'É apenas uma interpretação de primeira camada.', 'Es solo una interpretación de primera capa.', 'Ce n\'est qu\'une interprétation de première couche.', 'Es ist nur eine Interpretation der ersten Ebene.')),
-      ml(obj('The full profile may change the deeper match reading.', 'O perfil completo pode mudar a leitura mais profunda do match.', 'El perfil completo puede cambiar la lectura más profunda del match.', 'Le profil complet peut modifier la lecture plus profonde du match.', 'Das vollständige Profil kann die tiefere Match-Lesart verändern.')),
-      ml(obj('Context should be considered before making conclusions.', 'O contexto deve ser considerado antes de tirar conclusões.', 'El contexto debe considerarse antes de sacar conclusiones.', 'Le contexte doit être considéré avant de conclure.', 'Der Kontext sollte vor Schlussfolgerungen berücksichtigt werden.'))
-    ]
+    title: message,
+    description: message,
+    strengths: [],
+    challenges: [],
+    _error: true,
+    error: true,
+    message,
+    _source: 'ai_fallback_error',
+    _note: ''
   };
 }
 
@@ -392,11 +370,11 @@ function buildMatchLite(profileA, profileB) {
   });
 
   const overview = obj(
-    `${profileA.display_name} and ${profileB.display_name} have a ${score}% compatibility score in this first-layer Match Lite report. The reading combines action rhythm, values, current life pillars and worldview to show where the pair naturally aligns and where conversation may be needed.`,
-    ` ${profileA.display_name} e ${profileB.display_name} têm ${score}% de compatibility score neste report Match Lite de primeira camada. A leitura combina ritmo de ação, valores, pilares de vida atuais e visão de mundo para mostrar onde o par se alinha naturalmente e onde pode ser necessária conversa.`,
-    `${profileA.display_name} y ${profileB.display_name} tienen ${score}% de compatibility score en este report Match Lite de primera capa. La lectura combina ritmo de acción, valores, pilares de vida actuales y visión de mundo.`,
-    `${profileA.display_name} et ${profileB.display_name} ont un compatibility score de ${score}% dans ce report Match Lite de première couche. La lecture combine rythme d'action, valeurs, piliers de vie actuels et vision du monde.`,
-    `${profileA.display_name} und ${profileB.display_name} haben in diesem Match Lite Report der ersten Ebene einen Compatibility Score von ${score}%. Die Lesart kombiniert Handlungsrhythmus, Werte, aktuelle Lebenssäulen und Weltanschauung.`
+    `${profileA.display_name} and ${profileB.display_name} have a ${score}% compatibility score in this CheckMatch Lite result. This reading brings together action rhythm, values, current life pillars, and worldview to show where the pair naturally connects and where a clearer conversation may support the journey.`,
+    `${profileA.display_name} e ${profileB.display_name} têm ${score}% de compatibility score neste resultado CheckMatch Lite. Esta leitura reúne ritmo de ação, valores, pilares de vida atuais e visão de mundo para mostrar onde o par se conecta naturalmente e onde uma conversa mais clara pode apoiar a jornada.`,
+    `${profileA.display_name} y ${profileB.display_name} tienen ${score}% de compatibility score en este resultado CheckMatch Lite. Esta lectura reúne ritmo de acción, valores, pilares de vida actuales y visión del mundo para mostrar dónde la pareja se conecta naturalmente y dónde una conversación más clara puede apoyar el recorrido.`,
+    `${profileA.display_name} et ${profileB.display_name} ont un compatibility score de ${score}% dans ce résultat CheckMatch Lite. Cette lecture réunit rythme d’action, valeurs, piliers de vie actuels et vision du monde pour montrer où le duo se connecte naturellement et où une conversation plus claire peut soutenir le parcours.`,
+    `${profileA.display_name} und ${profileB.display_name} haben in diesem CheckMatch Lite Ergebnis einen Compatibility Score von ${score}%. Diese Lesart verbindet Handlungsrhythmus, Werte, aktuelle Lebenssäulen und Weltanschauung, um zu zeigen, wo das Paar natürlich in Verbindung steht und wo ein klareres Gespräch die Reise unterstützen kann.`
   );
 
   return {
@@ -413,13 +391,7 @@ function buildMatchLite(profileA, profileB) {
       strengths:  strengths.slice(0, 3),
       challenges: challenges.slice(0, 3),
       gaps:       gaps.slice(0, 3), // redução para 1
-      golden_tip: obj(
-        'Use the Match Lite as a conversation starter: first agree on decision timing, then compare values and life priorities before drawing conclusions about compatibility.',
-        'Use o Match Lite como ponto de partida para conversa: primeiro combinem o timing das decisões, depois comparem valores e prioridades de vida antes de tirar conclusões sobre compatibilidade.',
-        'Use Match Lite como punto de partida para conversar: primero acuerden el timing de decisiones, luego comparen valores y prioridades de vida antes de sacar conclusiones sobre compatibilidad.',
-        'Utilisez Match Lite comme point de départ de conversation : accordez d\'abord le timing des décisions, puis comparez valeurs et priorités de vie.',
-        'Nutzen Sie Match Lite als Gesprächseinstieg: Stimmen Sie zuerst Entscheidungs-Timing ab und vergleichen Sie dann Werte und Lebensprioritäten.'
-      )
+      golden_tip: matchAIFallbackML()
     }
   };
 }

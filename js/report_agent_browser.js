@@ -15,32 +15,54 @@ function reportMl(obj, fallback) {
   try { return ml(obj) || fallback; } catch(_) { return fallback; }
 }
 
-function cleanText(value, fallback) {
-  fallback = fallback || '';
+function cleanText(value) {
   const s = (value === null || value === undefined) ? '' : String(value).trim();
-  return s || fallback;
+  return s;
 }
 
 function cleanArray(arr, fallback, count) {
   count = count || 3;
-  const base    = Array.isArray(arr) ? arr : [];
+  const base = Array.isArray(arr) ? arr : [];
   const cleaned = base.map(x => cleanText(x)).filter(Boolean);
-  const fb      = Array.isArray(fallback) ? fallback.map(x => cleanText(x)).filter(Boolean) : [];
-  const merged  = [...cleaned, ...fb].filter(Boolean);
   const out = [];
   const seen = new Set();
-  merged.forEach(item => {
-    const key = item.toLowerCase();
-    if (!seen.has(key) && out.length < count) { seen.add(key); out.push(item); }
+  cleaned.forEach(item => {
+    const marker = item.toLowerCase();
+    if (!seen.has(marker) && out.length < count) {
+      seen.add(marker);
+      out.push(item);
+    }
   });
-  while (out.length < count) {
-    out.push([
-      'This point should be interpreted as a first-layer Budhi Lite insight.',
-      'Use this result as a prompt for reflection rather than as a fixed conclusion.',
-      'The full Self-Profile may refine this interpretation later.',
-    ][out.length] || '');
-  }
-  return out.slice(0, count);
+  return out;
+}
+
+
+function reportFallbackMessage() {
+  if (typeof aiFallbackError === 'function') return aiFallbackError();
+  return typeof t === 'function' ? t('ai_fallback_error') : 'ai_fallback_error';
+}
+
+function reportErrorFallback({scope, profile, match}) {
+  const message = reportFallbackMessage();
+  return {
+    title: message,
+    subtitle: '',
+    description: message,
+    strengths: [],
+    challenges: [],
+    cross_analysis: {
+      title: '',
+      description: '',
+      bullets: []
+    },
+    sections: [],
+    _error: true,
+    error: true,
+    message,
+    _source: 'ai_fallback_error',
+    _note: '',
+    generated_at: reportNow()
+  };
 }
 
 /* ─────────────────────────────────────────────
@@ -98,345 +120,85 @@ function extractProfileContext(profile) {
 }
 
 /* ─────────────────────────────────────────────
-   RICH FALLBACK SECTIONS
-   Per-dimension fallback text for the report
-   accordion — uses actual profile data so even
-   the no-API-key experience feels personalized.
+   CENTRALIZED AI ERROR FALLBACKS
+   Preserve the report shape expected by the UI,
+   but use only the standard i18n error message.
 ───────────────────────────────────────────── */
 
 function buildFallbackSection(cardKey, cardResolved, ctx) {
-  const name = ctx?.display_name || 'the user';
-  const vals = ctx?.selected_values?.length  ? ctx.selected_values.join(', ')  : '';
-  const pils = ctx?.selected_pillars?.length ? ctx.selected_pillars.join(', ') : '';
-  const dec  = ctx?.decision_style || '';
-  const wv   = ctx?.worldview || '';
-
-  const descriptionByKey = {
-    values:
-      vals
-        ? `${name} selected ${vals} as their guiding values. These anchors define the moral and relational standards that filter what is worth protecting, pursuing, and expecting from others. In the Budhi Lite first-layer reading, values describe not just what a person says they care about, but what they implicitly use as a standard when evaluating decisions, relationships, and commitments.`
-        : cardResolved.description,
-    pillars:
-      pils
-        ? `${name} is currently drawing the most consistent life support from ${pils}. These pillars describe where attention, energy, and emotional investment are being directed right now. Unlike values — which tend to be more stable — pillars are situational: they reflect the current structure of daily life, and they shift as circumstances, priorities, and relationships evolve.`
-        : cardResolved.description,
-    decision:
-      dec
-        ? `${name}'s current decision style is ${dec}. This pattern describes how this person characteristically moves from reflection to action — including the tempo of deliberation, the weight given to information versus intuition, and the degree of risk tolerance that feels natural. Decision style is one of the most visible dimensions in collaborative contexts, shaping how others experience ${name} when choices are being made.`
-        : cardResolved.description,
-    worldview:
-      wv
-        ? `${name} currently frames life experience through a ${wv} perspective. Worldview is the interpretive lens through which events acquire meaning, choices feel significant, and relationships are understood. In the Budhi Lite framework, worldview is often the most stable first-layer dimension — it acts as the background against which values are held and decisions are made.`
-        : cardResolved.description,
-  };
-
-  const ctxValsArr = ctx?.selected_values  || [];
-  const ctxPilsArr = ctx?.selected_pillars || [];
-  const strengthsByKey = {
-    values: [
-      vals ? `Value clusters like ${ctxValsArr.slice(0,2).join(' and ') || vals} create a concrete moral filter that reduces noise in high-stakes decisions.` : `Named values create a concrete moral filter that reduces noise in high-stakes decisions.`,
-      `A visible value set gives partners and collaborators a reliable map of what ${name} genuinely protects.`,
-      `Named values enable a concrete Match Lite comparison rather than a generic compatibility reading.`,
-    ],
-    pillars: [
-      pils ? `Current pillars show where ${name} directs consistent energy — a practical map for protecting what is load-bearing.` : `Current pillars show where consistent energy is being directed.`,
-      `Knowing the pillar structure helps ${name} evaluate new commitments against what is already under load.`,
-      `Pillar data generates a direct structural comparison in Match Lite — aligned pillars signal compatible life demands.`,
-    ],
-    decision: [
-      dec ? `A ${dec} style creates a recognizable rhythm that others can learn to coordinate with rather than work against.` : `This decision style creates a recognizable rhythm that others can coordinate with.`,
-      `Understanding this pattern helps identify contexts where the natural tempo is an asset and where adjustment adds value.`,
-      `Decision style is one of the most actionable Match Lite dimensions — rhythm pairing shapes day-to-day coordination.`,
-    ],
-    worldview: [
-      wv ? `A ${wv} perspective adds interpretive coherence that makes values and decisions read as a consistent profile.` : `This worldview adds interpretive coherence across values and decisions.`,
-      `Naming this perspective helps recognize when a different worldview is in dialogue rather than in opposition.`,
-      `Worldview alignment is one of the deepest compatibility levers — shared perspectives support lasting relational resonance.`,
-    ],
-  };
-
-  const challengesByKey = {
-    values: [
-      `Value labels carry personal meanings — what ${name} intends by any one of them may differ from how others interpret the same word.`,
-      `Values function as implicit expectations; friction arises when those standards are not made explicit with others.`,
-      `The full Self-Profile will reveal how these values interact with character patterns not visible in this first layer.`,
-    ],
-    pillars: [
-      pils ? `Concentration in ${ctxPilsArr[0] || 'current pillars'} may mask under-investment elsewhere — gaps that surface under stress or transition.` : `Strong pillar concentration may mask under-investment in other areas.`,
-      `Pillars describe today's structure — they shift as relationships and circumstances evolve, requiring periodic recalibration.`,
-      `The full Self-Profile will distinguish genuine strengths from situational or compensatory patterns.`,
-    ],
-    decision: [
-      dec ? `A ${dec} style can create friction with people whose natural tempo differs — especially under time pressure.` : `This decision style can create friction with people whose natural tempo differs.`,
-      `Decision patterns shift under stress and in emotionally charged situations — this result captures the current surface layer.`,
-      `The full Self-Profile will clarify whether this style is a stable trait or a situational adaptation.`,
-    ],
-    worldview: [
-      wv ? `A ${wv} perspective may generate blind spots when engaging with fundamentally different interpretive frameworks.` : `This worldview may generate blind spots with fundamentally different perspectives.`,
-      `Worldview labels are broad anchors — useful starting points, not precise identities.`,
-      `The full Self-Profile will reveal how this perspective connects to deeper motivational and relational patterns.`,
-    ],
-  };
-
-  const defaultStr = [`${cardResolved.title} gives ${name} a clear first-layer reference point.`, `This result supports more intentional self-observation.`, `It establishes a foundation for the Match Lite comparison.`];
-  const defaultCha = [`This is a first-layer signal — context can shift how it expresses.`, `The full Self-Profile will add character-level depth.`, `Labels here are starting points, not final classifications.`];
-
+  const message = reportFallbackMessage();
   return {
-    key:         cardKey,
-    title:       cardResolved.title,
-    subtitle:    cardResolved.metric,
-    description: descriptionByKey[cardKey] || cardResolved.description || '',
-    strengths:   strengthsByKey[cardKey]   || defaultStr,
-    challenges:  challengesByKey[cardKey]  || defaultCha,
+    key: cardKey || '',
+    title: message,
+    subtitle: '',
+    description: message,
+    strengths: [],
+    challenges: [],
+    _error: true,
+    error: true,
+    message,
+    _source: 'ai_fallback_error',
+    _note: ''
   };
 }
 
-/* ─────────────────────────────────────────────
-   FALLBACK REPORTS
-   Full structured fallback used when no API
-   key is present — data-rich, never generic.
-───────────────────────────────────────────── */
-
 function fallbackProfileReport(profile) {
-  const displayName = profile?.display_name || profile?.username || 'User';
-  const ctx         = extractProfileContext(profile);
-  const cards       = profile?.results_app?.cards || [];
-  const ctxValsArr  = ctx?.selected_values  || [];
-  const vals        = ctxValsArr.length ? ctxValsArr.join(', ') : '';
-  const pils        = ctx?.selected_pillars?.length ? ctx.selected_pillars.join(', ') : '';
-  const dec         = ctx?.decision_style || '';
-  const wv          = ctx?.worldview || '';
-
-  const descParts = [
-    dec && vals
-      ? `${displayName}'s first-layer Budhi Lite profile combines a ${dec} decision style with guiding values of ${vals}.`
-      : `${displayName}'s first-layer Budhi Lite profile captures a first map of current behavioral direction.`,
-    pils
-      ? `The life pillars currently providing the most structural support are ${pils} — areas where energy and attention are being consistently invested right now.`
-      : '',
-    wv
-      ? `A ${wv} worldview frames how ${displayName} interprets meaning, choice, and direction, adding a narrative layer that connects the other three dimensions into a coherent picture.`
-      : '',
-    `This report presents a first-layer reading designed for reflection and Match Lite comparison. It describes the current configuration — not a fixed character classification — and is most useful as a starting point for self-understanding and conversation, rather than a final answer.`,
-  ].filter(Boolean).join(' ');
-
-  const sections = cards.map(c => {
-    const cardResolved = (ctx?.cards_resolved || []).find(r => r.key === c.key) || {
-      key: c.key, title: rptResolveLabel(c.title), metric: rptResolveLabel(c.metric_value),
-      bar: c.bar, description: rptResolveLabel(c.description), tags: [],
-    };
-    return buildFallbackSection(c.key, cardResolved, ctx);
-  });
-
-  return {
-    title:    `${displayName} · Budhi Lite Profile Report`,
-    subtitle: 'Individual first-layer profile report',
-    description: descParts,
-    strengths: [
-      vals ? `Named values like ${ctxValsArr[0] || vals} create a moral filter that reduces noise in high-stakes decisions.` : `Named values create a concrete moral filter for high-stakes decisions.`,
-      pils ? `Active pillars make it easy to see where ${displayName} is investing consistently — a map for protecting load-bearing areas.` : `Active life pillars make consistent investments visible and easier to protect.`,
-      dec  ? `A ${dec} style creates a recognizable rhythm that others can coordinate with.` : `The decision style result creates a recognizable behavioral rhythm.`,
-    ],
-    challenges: [
-      vals ? `Values function as implicit expectations — friction arises when others don't share the same standards without being told.` : `Named values can create implicit expectations that require explicit communication.`,
-      pils ? `Concentration in current pillars may reveal under-investment elsewhere — gaps that surface under stress.` : `Current pillar concentration may reveal under-investment that becomes visible under stress.`,
-      `This first-layer reading captures the current configuration — the full Self-Profile will add the character layer that explains why these patterns express as they do.`,
-    ],
-    cross_analysis: {
-      title:       'Integrated reading',
-      description: [
-        dec && vals
-          ? `${displayName}'s ${dec} style, operating through values like ${vals}, describes a person with a recognizable direction and clear standards that filter what feels worth acting on.`
-          : 'Decision style and values together describe direction and the standards that filter where energy is applied.',
-        pils && wv
-          ? `The current pillars (${pils}) and a ${wv} worldview work in tandem to shape both the structure and the meaning layer of ${displayName}'s daily life — not just how they act, but what makes those actions feel significant.`
-          : 'Life pillars and worldview together shape both the structure and meaning of daily life.',
-        `Reading these four dimensions together is more useful than any single result: a decision style is interpreted differently depending on which values it serves, and values carry different weight depending on the life structure and worldview that frame them.`,
-      ].filter(Boolean).join(' '),
-      bullets: [
-        `Decision style describes the behavioral rhythm; values describe the compass that determines where that rhythm is applied.`,
-        `Life pillars show the current structure of investment; worldview provides the narrative that makes that structure feel meaningful and directional.`,
-        vals
-          ? `Together, these four dimensions describe the first visible layer of ${displayName}'s current configuration — organized around ${vals} and expressed through a ${dec || 'recognizable'} action style.`
-          : `Together, these four dimensions describe the first visible layer of the current behavioral and interpretive configuration.`,
-      ],
-    },
-    sections,
-  };
+  return reportErrorFallback({ scope: 'profile', profile, match: null });
 }
 
 function fallbackMatchReport(match) {
-  const userA   = match?.user_a || (match?.usernames || [])[0] || '';
-  const userB   = match?.user_b || (match?.usernames || [])[1] || '';
-  const profA   = typeof getProfile === 'function' ? getProfile(userA) : null;
-  const profB   = typeof getProfile === 'function' ? getProfile(userB) : null;
-  const ctxA    = extractProfileContext(profA);
-  const ctxB    = extractProfileContext(profB);
-  const app     = match?.results_app || {};
-  const nameA   = ctxA?.display_name || (match?.users || [])[0] || userA || 'Person A';
-  const nameB   = ctxB?.display_name || (match?.users || [])[1] || userB || 'Person B';
-  const pairStr = `${nameA} & ${nameB}`;
-  const score   = app.score;
-
-  const valsA = ctxA?.selected_values?.length  ? ctxA.selected_values.join(', ')  : '';
-  const valsB = ctxB?.selected_values?.length  ? ctxB.selected_values.join(', ')  : '';
-  const pilsA = ctxA?.selected_pillars?.length ? ctxA.selected_pillars.join(', ') : '';
-  const pilsB = ctxB?.selected_pillars?.length ? ctxB.selected_pillars.join(', ') : '';
-  const decA  = ctxA?.decision_style || '';
-  const decB  = ctxB?.decision_style || '';
-  const wvA   = ctxA?.worldview || '';
-  const wvB   = ctxB?.worldview || '';
-
-  const descParts = [
-    score !== undefined
-      ? `${pairStr} achieved a first-layer compatibility score of ${score}% in this Budhi Lite Match Lite reading.`
-      : `This first-layer Match Lite reading compares the profiles of ${pairStr}.`,
-    valsA && valsB
-      ? `${nameA} is guided by values of ${valsA}, while ${nameB} is guided by ${valsB} — a comparison that defines much of the moral and relational common ground the pair shares, and where implicit expectation gaps may need to be made explicit.`
-      : '',
-    decA && decB
-      ? `Their decision styles — ${decA} for ${nameA} and ${decB} for ${nameB} — describe the rhythm pairing that shapes how the pair coordinates or creates friction when moving from reflection to action.`
-      : '',
-    wvA && wvB
-      ? `A ${wvA} worldview meeting a ${wvB} perspective is often where the deepest resonance or the most persistent misunderstanding between the pair originates.`
-      : '',
-    `This report is a first-layer reading designed to start a conversation, not to deliver a final compatibility verdict. First-layer data captures current configurations — both profiles can evolve, and the full Self-Profile from both people would significantly refine this reading.`,
-  ].filter(Boolean).join(' ');
-
-  const matchCards = app.cards || [];
-  const sections = matchCards.map(c => {
-    const cardTitle    = rptResolveLabel(c.title) || c.key;
-    const cardSubtitle = rptResolveLabel(c.metric_value) || '';
-    const cardDesc     = rptResolveLabel(c.description) || '';
-
-    const specificDesc = {
-      values:
-        valsA && valsB
-          ? `${nameA} selected ${valsA} as guiding values, while ${nameB} selected ${valsB}. The overlap between these sets defines the moral and relational common ground the pair shares; the divergence points to areas where implicit expectations may differ — and where explicit conversation can prevent recurring friction.`
-          : cardDesc,
-      pillars:
-        pilsA && pilsB
-          ? `${nameA} is currently drawing life support from ${pilsA}, while ${nameB} relies on ${pilsB}. These pillar structures reveal whether the pair's current life investments run in parallel, complement each other, or pull in different directions — a meaningful signal for understanding availability, energy management, and mutual support.`
-          : cardDesc,
-      decision:
-        decA && decB
-          ? `${nameA}'s ${decA} decision style meets ${nameB}'s ${decB} style — a rhythm pairing that is often the most visible source of day-to-day coordination ease or friction. When the styles are understood by both people, the pair can design how they approach shared decisions intentionally, rather than letting style differences feel like character incompatibilities.`
-          : cardDesc,
-      worldview:
-        wvA && wvB
-          ? `${nameA} holds a ${wvA} worldview while ${nameB} operates from a ${wvB} perspective. Worldview shapes how each person assigns meaning to the same event, which makes this dimension one of the deepest sources of both resonance and misunderstanding. A shared or genuinely complementary worldview pairing tends to produce a sense that the pair "speaks the same language" even when they disagree on specifics.`
-          : cardDesc,
-    };
-
-    return {
-      key:         c.key,
-      title:       cardTitle,
-      subtitle:    cardSubtitle,
-      description: specificDesc[c.key] || cardDesc,
-      strengths: [
-        `This dimension gives ${pairStr} a concrete and named reference point for conversation about how they compare.`,
-        `Understanding the specific overlap and divergence here allows both people to engage differences directly rather than feeling them as vague incompatibility.`,
-        `Named elements in this dimension can become an explicit shared vocabulary the pair develops over time.`,
-      ],
-      challenges: [
-        `Divergences in this dimension may generate implicit friction if treated as shared without confirmation from both people.`,
-        `First-layer data captures the current configuration — both profiles can evolve, and this comparison should be revisited as circumstances change.`,
-        `A complete Self-Profile from both ${nameA} and ${nameB} would significantly refine and deepen this dimension's reading.`,
-      ],
-    };
-  });
-
-  const appStrengths = (app.strengths || [])
-    .map(s => cleanText(rptResolveLabel(s.description) || rptResolveLabel(s.title)))
-    .filter(Boolean);
-  const appchallenges = (app.challenges || [])
-    .map(t => cleanText(rptResolveLabel(t.description) || rptResolveLabel(t.title)))
-    .filter(Boolean);
-
-  return {
-    title:       `${pairStr} · Match Lite Report`,
-    subtitle:    'Compatibility first-layer report',
-    description: descParts,
-    strengths: cleanArray(appStrengths, [
-      `Named value overlap gives the pair a concrete vocabulary to use explicitly rather than assuming alignment.`,
-      `Knowing where pillars align makes it easier for each person to support the other's most consistent investments.`,
-      `Understanding both profiles simultaneously lets the pair calibrate expectations based on actual data, not projection.`,
-    ], 3),
-    challenges: cleanArray(appchallenges, [
-      valsA && valsB ? `Values exclusive to one list are implicit expectations the other person may not share — a friction zone if left unnamed.` : `Diverging values create implicit expectations that may generate friction if not surfaced.`,
-      decA && decB && decA !== decB ? `A ${decA} and ${decB} rhythm pairing requires an explicit shared protocol — especially under time pressure.` : `Divergent decision rhythms require an explicit shared protocol for collaborative choices.`,
-      `First-layer data captures today's configuration — both profiles can evolve, and full Self-Profile data would refine this reading.`,
-    ], 3),
-    cross_analysis: {
-      title:       'Integrated compatibility reading',
-      description: [
-        decA && decB ? `The ${decA} × ${decB} decision pairing is typically where the most visible day-to-day coordination or friction originates — it shapes how the pair experiences joint action in real time.` : 'Decision rhythm pairing is where the most visible day-to-day coordination or friction originates.',
-        wvA && wvB   ? `The ${wvA} × ${wvB} worldview combination is the deepest layer: it determines whether the pair finds each other's reasoning legible even in moments of strong disagreement.` : 'Worldview pairing is the deepest layer — it shapes whether each person finds the other´s reasoning legible.',
-        `Compatibility is a pattern across all four dimensions, not a score on any one — reading values, pillars, decision style, and worldview together reveals dynamics that no single result shows.`,
-      ].filter(Boolean).join(' '),
-      bullets: [
-        `Decision rhythm describes real-time coordination; worldview describes interpretive compatibility — together they set the floor and ceiling of the relationship's natural ease.`,
-        valsA && valsB ? `Value overlap defines common moral ground; pillar alignment shows whether current life structures support or compete with each other.` : `Value overlap defines common moral ground; pillar comparison shows whether life structures align or compete.`,
-        `The interaction between all four dimensions reveals whether differences are complementary — and therefore productive — or genuinely divergent and requiring explicit negotiation.`,
-      ],
-    },
-    sections,
-  };
+  return reportErrorFallback({ scope: 'match', profile: null, match });
 }
 
 /* ─────────────────────────────────────────────
    NORMALIZE AI RESPONSE
-   Merges AI output with the rich fallback,
-   ensuring every field is filled.
+   Keeps only the fields returned by the AI.
+   Missing text fields remain empty; no local fallback
+   content is injected.
 ───────────────────────────────────────────── */
 
-function normalizeReport(raw, fallback) {
-  const data          = raw && typeof raw === 'object' ? raw : {};
-  const fallbackCross = fallback.cross_analysis || {};
-  const sectionsRaw   = Array.isArray(data.result_sections) ? data.result_sections
+function normalizeReport(raw) {
+  const data = raw && typeof raw === 'object' ? raw : {};
+  const sectionsRaw = Array.isArray(data.result_sections) ? data.result_sections
     : (Array.isArray(data.sections) ? data.sections : []);
-  const fallbackSects = Array.isArray(fallback.sections) ? fallback.sections : [];
 
-  const sections = fallbackSects.map((fb, index) => {
-    const candidate = sectionsRaw[index]
-      || sectionsRaw.find(s => s && (
-        s.key === fb.key ||
-        String(s.title || '').toLowerCase() === String(fb.title || '').toLowerCase()
-      ))
-      || {};
-    return {
-      key:         cleanText(candidate.key,         fb.key         || `section_${index + 1}`),
-      title:       cleanText(candidate.title,       fb.title       || `Result ${index + 1}`),
-      subtitle:    cleanText(candidate.subtitle,    fb.subtitle    || ''),
-      description: cleanText(candidate.description, fb.description || ''),
-      strengths:   cleanArray(candidate.strengths,  fb.strengths,  3),
-      challenges:  cleanArray(candidate.challenges, fb.challenges, 3),
-    };
-  });
+  const sections = sectionsRaw.map(candidate => ({
+    key:         cleanText(candidate?.key),
+    title:       cleanText(candidate?.title),
+    subtitle:    cleanText(candidate?.subtitle),
+    description: cleanText(candidate?.description),
+    strengths:   cleanArray(candidate?.strengths,  null, 3),
+    challenges:  cleanArray(candidate?.challenges, null, 3),
+  }));
 
   return {
-    title:       cleanText(data.title,       fallback.title    || 'Budhi Lite Report'),
-    subtitle:    cleanText(data.subtitle,    fallback.subtitle || ''),
-    description: cleanText(data.description, fallback.description || ''),
-    strengths:   cleanArray(data.strengths,  fallback.strengths, 3),
-    challenges:  cleanArray(data.challenges, fallback.challenges, 3),
+    title:       cleanText(data.title),
+    subtitle:    cleanText(data.subtitle),
+    description: cleanText(data.description),
+    strengths:   cleanArray(data.strengths,  null, 3),
+    challenges:  cleanArray(data.challenges, null, 3),
     cross_analysis: {
-      title:       cleanText(
-        data.cross_analysis?.title || data.integrated_analysis?.title,
-        fallbackCross.title || 'Integrated Analysis'
-      ),
-      description: cleanText(
-        data.cross_analysis?.description || data.integrated_analysis?.description,
-        fallbackCross.description || ''
-      ),
-      bullets: cleanArray(
-        data.cross_analysis?.bullets || data.integrated_analysis?.bullets,
-        fallbackCross.bullets, 3
-      ),
+      title:       cleanText(data.cross_analysis?.title || data.integrated_analysis?.title),
+      description: cleanText(data.cross_analysis?.description || data.integrated_analysis?.description),
+      bullets:     cleanArray(data.cross_analysis?.bullets || data.integrated_analysis?.bullets, null, 3),
     },
     sections,
-    generated_at: new Date().toISOString(),
+    generated_at: reportNow(),
   };
+}
+
+function hasUsableReport(raw) {
+  if (!raw || typeof raw !== 'object') return false;
+  const sectionsRaw = Array.isArray(raw.result_sections) ? raw.result_sections
+    : (Array.isArray(raw.sections) ? raw.sections : []);
+  return Boolean(
+    cleanText(raw.description) ||
+    cleanArray(raw.strengths, null, 3).length ||
+    cleanArray(raw.challenges, null, 3).length ||
+    cleanText(raw.cross_analysis?.description || raw.integrated_analysis?.description) ||
+    cleanArray(raw.cross_analysis?.bullets || raw.integrated_analysis?.bullets, null, 3).length ||
+    sectionsRaw.some(section => cleanText(section?.description) || cleanArray(section?.strengths, null, 3).length || cleanArray(section?.challenges, null, 3).length)
+  );
 }
 
 /* ─────────────────────────────────────────────
@@ -453,7 +215,7 @@ async function generatePersonalizedReport({ scope, profile, match }) {
   const apiKey = getAPIKey();
 
   if (!apiKey) {
-    return { ...fallback, _source: 'fallback', _note: t('fallbackUsed'), generated_at: new Date().toISOString() };
+    return fallback;
   }
 
   const language = reportLang();
@@ -529,7 +291,6 @@ async function generatePersonalizedReport({ scope, profile, match }) {
       pair:                pairStr,
       compatibility_score: app.score,
       match_type:          rptResolveLabel(app.match_type?.label),
-      golden_tip:            rptResolveLabel(app.golden_tip),
       person_a: { name: nameA, decision_style: ctxA?.decision_style, worldview: ctxA?.worldview },
       person_b: { name: nameB, decision_style: ctxB?.decision_style, worldview: ctxB?.worldview },
       /* The relational formula analysis — core input for the report */
@@ -609,7 +370,6 @@ Required JSON schema:
       scope,
       language,
       display_name: name,
-      golden_tip:     ctx?.golden_tip, // <-- INSERIDO golden_tip
       profile: {
         selected_values:  ctx?.selected_values,
         selected_pillars: ctx?.selected_pillars,
@@ -677,7 +437,7 @@ Required JSON schema:
         model,
         messages: [
           { role: 'system', content: system },
-          { role: 'user',   content: JSON.stringify({ payload, fallback_structure: fallback }) },
+          { role: 'user',   content: JSON.stringify({ payload }) },
         ],
         temperature:     0.62,
         response_format: { type: 'json_object' },
@@ -685,18 +445,15 @@ Required JSON schema:
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data?.error?.message || 'OpenAI request failed');
+    if (!res.ok) throw new Error(data?.error?.message || reportFallbackMessage());
     const raw    = data?.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(raw);
-    return { ...normalizeReport(parsed, fallback), _source: 'ai', _note: t('aiGenerated') };
+    if (!hasUsableReport(parsed)) return fallback;
+    return { ...normalizeReport(parsed), _source: 'ai', _note: t('aiGenerated') };
 
   } catch(err) {
-    return {
-      ...fallback,
-      _source: 'fallback_error',
-      _note:   `${t('aiFailed')} ${err.message || ''}`.trim(),
-      generated_at: new Date().toISOString(),
-    };
+    console.warn('[Budhi Lite] Personalized report generation failed.', err);
+    return fallback;
   }
 }
 
@@ -747,8 +504,8 @@ function getPersonalizedReportCacheStatus({scope, profile, match, lang}){
   return {
     targetLang,
     bucketName,
-    has_current_language: Boolean(currentEntry?.content),
-    has_original: Boolean(original?.content),
+    has_current_language: Boolean(currentEntry?.content && !currentEntry.content._error),
+    has_original: Boolean(original?.content && !original.content._error),
     original_language: original?.language || null,
     current_source: currentEntry?.source || null,
     updated_at: currentEntry?.updated_at || original?.generated_at || null
@@ -789,14 +546,9 @@ function reportSetOriginal(bucket, lang, content){
 
 async function translatePersonalizedReport({scope, sourceReport, sourceLanguage, targetLanguage, profile, match}){
   const apiKey = getAPIKey();
-  const fallback = sourceReport || (scope === 'match' ? fallbackMatchReport(match) : fallbackProfileReport(profile));
+  const fallback = scope === 'match' ? fallbackMatchReport(match) : fallbackProfileReport(profile);
   if(!apiKey){
-    return {
-      ...fallback,
-      _source:'source_language_cache',
-      _note:`${t('fallbackUsed')} Translation requires an API key.`,
-      generated_at: reportNow()
-    };
+    return fallback;
   }
 
   const model = getOpenAIModel();
@@ -822,16 +574,13 @@ Never leave fields empty. Return valid JSON only.`;
       })
     });
     const data = await res.json();
-    if(!res.ok) throw new Error(data?.error?.message || 'OpenAI translation failed');
+    if(!res.ok) throw new Error(data?.error?.message || reportFallbackMessage());
     const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
-    return {...normalizeReport(parsed, fallback), _source:'translation', _note:t('aiGenerated')};
+    if (!hasUsableReport(parsed)) return fallback;
+    return {...normalizeReport(parsed), _source:'translation', _note:t('aiGenerated')};
   }catch(err){
-    return {
-      ...fallback,
-      _source:'translation_error_source_language',
-      _note:`${t('aiFailed')} ${err.message || ''}`.trim(),
-      generated_at: reportNow()
-    };
+    console.warn('[Budhi Lite] Personalized report translation failed.', err);
+    return fallback;
   }
 }
 
@@ -843,7 +592,7 @@ async function getOrCreatePersonalizedReport({scope, profile, match, force}){
 
   const bucket = reportEnsureBucket(subject, bucketName);
   const cached = reportGetLanguageContent(bucket, targetLang);
-  if(cached && !force){
+  if(cached && !cached._error && !force){
     return {...cached, _source: bucket.by_language?.[targetLang]?.source || 'cache', _note:t('aiGenerated')};
   }
 
@@ -859,26 +608,32 @@ async function getOrCreatePersonalizedReport({scope, profile, match, force}){
       profile,
       match
     });
-    reportSetLanguageContent(bucket, targetLang, report, {
-      source:'translation',
-      translated_from:original.language,
-      generated_for:reportViewerUsername(),
-      generated_at:reportNow()
-    });
+    if(!report._error){
+      reportSetLanguageContent(bucket, targetLang, report, {
+        source:'translation',
+        translated_from:original.language,
+        generated_for:reportViewerUsername(),
+        generated_at:reportNow()
+      });
+    }
   } else {
     report = await generatePersonalizedReport({scope,profile,match});
-    if(!original || !original.language || original.language === targetLang || force){
-      reportSetOriginal(bucket, targetLang, report);
-    } else {
-      reportSetLanguageContent(bucket, targetLang, report, {source:'original_independent', generated_by:reportViewerUsername(), generated_at:reportNow()});
+    if(!report._error){
+      if(!original || !original.language || original.language === targetLang || force){
+        reportSetOriginal(bucket, targetLang, report);
+      } else {
+        reportSetLanguageContent(bucket, targetLang, report, {source:'original_independent', generated_by:reportViewerUsername(), generated_at:reportNow()});
+      }
     }
   }
 
-  try{
-    if(scope === 'match') await saveMatch(subject);
-    else await saveProfile(subject.username, subject);
-  }catch(err){
-    console.warn('[Budhi Lite] Full report generated but cache save failed.', err);
+  if(!report?._error){
+    try{
+      if(scope === 'match') await saveMatch(subject);
+      else await saveProfile(subject.username, subject);
+    }catch(err){
+      console.warn('[Budhi Lite] Full report generated but cache save failed.', err);
+    }
   }
 
   return report;
