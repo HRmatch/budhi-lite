@@ -79,14 +79,22 @@ function buildProfileContext(profile) {
   const decCard = get('decision');
   const wvCard  = get('worldview');
 
+  // NOVO: Extrai a cor e busca o significado completo na constante QT2_MEANINGS
+  const colorKey = profile.answers?.Qt2 || '';
+  let colorMeaning = ''; // Fallback vazio para não enviar a cor literal
+  if (colorKey && typeof QT2_MEANINGS !== 'undefined' && QT2_MEANINGS[colorKey]) {
+    colorMeaning = resolveLabel(QT2_MEANINGS[colorKey]);
+  }
+
   return {
     display_name: profile.display_name || profile.username || "User",
+    current_mood: profile.answers?.Qt1 || '',
+    symbolic_traits: colorMeaning, // <- Chave renomeada para ocultar a palavra "cor"
     selected_values: (valCard?.tags || []).map(resolveLabel).filter(Boolean),
     selected_pillars: (pilCard?.tags || []).map(resolveLabel).filter(Boolean),
     decision_style: resolveLabel(decCard?.metric_value),
     worldview: resolveLabel(wvCard?.metric_value),
     decision_bar: decCard?.bar || 0,
-    // Full card list for cross-dimension references
     all_cards: cards.map((c) => ({
       key: c.key,
       title: resolveLabel(c.title),
@@ -97,7 +105,6 @@ function buildProfileContext(profile) {
     })),
   };
 }
-
 /* ─────────────────────────────────────────────
    MATCH CONTEXT EXTRACTION
    Pulls both profiles' actual selections plus
@@ -299,12 +306,10 @@ async function generateAIDetails({ scope, key, profile, match }) {
         metric:      cardCtx.metric_value,
         score:       cardCtx.bar,
       },
-      person_a: { name: pA.display_name, decision_style: pA.decision_style, worldview: pA.worldview },
-      person_b: { name: pB.display_name, decision_style: pB.decision_style, worldview: pB.worldview },
+      person_a: { name: pA.display_name, current_mood: pA.current_mood, symbolic_traits: pA.symbolic_traits, decision_style: pA.decision_style, worldview: pA.worldview },
+      person_b: { name: pB.display_name, current_mood: pB.current_mood, symbolic_traits: pB.symbolic_traits, decision_style: pB.decision_style, worldview: pB.worldview },
       /* Formula-computed relational data — the core of the analysis */
       formula_analysis: fa,
-     // overall_strengths: ctx.strengths,
-     // overall_challenges:  ctx.challenges, * REMOVIDO: overall_strengths e overall_challenges para forçar a IA a criar novos
     };
 
     systemPrompt = `You are CheckMatch Lite's compatibility analyst. Return ONLY valid JSON: { "title": string, "description": string, "strengths": [string, string, string], "challenges": [string, string, string] }
@@ -324,18 +329,18 @@ The "description" field MUST begin with a welcoming phrase anchored in the resul
 After this opening, continue with the specific analysis of the "${key}" dimension.
 
 ━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
-The payload.formula_analysis contains pre-computed relational data you MUST use:
+The payload.formula_analysis contains pre-computed relational data you MUST use. Additionally, explicitly use the current mood and the symbolic traits of each person (from payload.person_a and payload.person_b) to understand the emotional undertone and behavioral tendencies of their interaction.
 
 For values and pillars:
 • "shared" = items BOTH people selected. Name these as established shared ground — not generically, but by explaining which specific items create common direction in practice.
-• "convergent_pairs" = semantically compatible items from different selections. For each connection (format "A ↔ B"), explain the specific compatible dynamic: what do A and B share beneath the surface that makes them complementary?
-• "potential_frictions" = semantically opposed items. For each connection, explain the SPECIFIC attention point: what does each item imply for behavior, and where do those implications pull in different directions? (e.g., "Autonomy ↔ Solidarity" means one profile orients toward self-direction while the other leans toward collective responsibility — this can affect group-vs-individual decisions, not just "they differ".)
+• "convergent_pairs" = semantically compatible items from different selections. For each connection (format "A ↔ B"), explain the specific compatible dynamic.
+• "potential_frictions" = semantically opposed items. For each connection, explain the SPECIFIC attention point.
 
 For decision:
-• style_a and style_b are the specific rhythm labels. Analyze what this SPECIFIC combination of styles creates in practice — when it flows, when it asks for clearer coordination.
+• Analyze what this SPECIFIC combination of styles creates in practice — when it flows, when it asks for clearer coordination. Include how their moods or symbolic traits influence this pace.
 
 For worldview:
-• label_a, label_b, and alignment_type together tell you whether this is aligned, complementary, or divergent. Explain what this SPECIFIC combination of worldviews produces for the interaction between the profiles.
+• Explain what this SPECIFIC combination of worldviews produces for the interaction between the profiles, utilizing their moods and symbolic traits for context.
 
 ━━━ ANTI-PATTERN — NEVER WRITE THIS ━━━
 ✗ "Decision rhythm and worldview together set the relationship's natural ease."
@@ -346,13 +351,13 @@ For worldview:
 
 ━━━ QUALITY RULES ━━━
 1. STRICT DIMENSION FOCUS: Your output MUST be exclusively about the "${key}" dimension.
-2. ANALYZE — do not inventory. Lead with the lived pattern, not with "A has X and B has Y."
+2. ANALYZE — do not inventory. Lead with the lived pattern.
 3. Name specific items only to anchor useful insights, not to list them.
 4. "description": 160–200 words. Start with the mandatory opening and then describe the dominant dynamic this dimension reveals for this combination.
-5. Each "strengths" item: 20–35 words. One clear, helpful insight about a specific alignment or complementarity.
-6. Each "challenges" item: 20–35 words. One specific attention point — name what creates it and why it matters in interaction.
+5. Each "strengths" item: 20–35 words. One clear, helpful insight.
+6. Each "challenges" item: 20–35 words. One specific attention point.
 7. Exactly 3 strengths and 3 challenges.
-8. Tone: Empathetic, elegant, and directly useful. Avoid clinical, diagnostic, or overly analytical jargon. Make the reader feel seen and understood.
+8. Tone: Empathetic, elegant, and directly useful.
 9. NO EMPTY RESULTS: You must always generate the complete JSON structure with populated content.`;
 
   /* ── PROFILE scope ── */
@@ -380,7 +385,10 @@ For worldview:
         description: resolveLabel(card.description),
         tags:        (card.tags || []).map(resolveLabel).filter(Boolean),
       },
+     
       profile: {
+        current_mood:     ctx?.current_mood,
+        symbolic_traits:  ctx?.symbolic_traits,
         selected_values:  ctx?.selected_values,
         selected_pillars: ctx?.selected_pillars,
         decision_style:   ctx?.decision_style,
@@ -407,15 +415,15 @@ The "description" field MUST begin with a warm phrase anchored in the result, wr
 After this opening, continue with a conversational, useful analysis of the "${key}" dimension.
 
 ━━━ ANALYSIS RULES ━━━
-1. STRICT DIMENSION FOCUS: Your output MUST be exclusively about the "${key}" dimension. Do NOT write general summaries of the entire profile. If you write generic statements, the outputs will repeat across different cards.
+1. STRICT DIMENSION FOCUS: Your output MUST be exclusively about the "${key}" dimension. Do NOT write general summaries of the entire profile.
 2. ANALYZE — do not enumerate. Reveal what this specific combination of selections creates for you: a pattern, a growth edge, or a distinctive way of moving through daily choices. Do NOT structure the description as "You selected X, Y, Z and this means..."
-3. Reference specific items only when they serve an analytical point. Name one or two to anchor an insight; do not list all selections in sequence.
-4. Connect dimensions when it deepens the analysis: how does your decision style interact with your values? What does your worldview suggest about how you experience your life pillars? These connections should feel practical and human, not technical.
+3. Reference specific items only when they serve an analytical point.
+4. Connect dimensions when it deepens the analysis: how does your decision style interact with your values? What does your worldview suggest about how you experience your life pillars? Use the user's current mood and symbolic traits to give emotional texture and context to this specific dimension. These connections should feel practical and human, not technical.
 5. "description": 160–200 words of conversational analytical prose. NO line breaks inside the string. Start with the mandatory opening.
-6. Each "strengths" item: 20–35 words. One focused insight — a practical benefit, clarity, or advantage this combination can create for you. No re-listing.
-7. Each "challenges" item: 20–35 words. One focused growth edge or attention point — a specific practical implication, not a general caveat.
+6. Each "strengths" item: 20–35 words. One focused insight.
+7. Each "challenges" item: 20–35 words. One focused growth edge.
 8. Exactly 3 strengths and 3 challenges.
-9. Tone: Empathetic, elegant, and directly useful. Avoid clinical, diagnostic, or overly analytical jargon. Make the user feel seen and understood.
+9. Tone: Empathetic, elegant, and directly useful.
 10. NO EMPTY RESULTS: You must always generate the complete JSON structure with populated content.`; 
   }
 
@@ -677,9 +685,10 @@ The golden_tip MUST begin with a natural target-language equivalent of one of th
 • "In practice, this combination..."
 • "Together, these profiles tend to..."
 • "This connection..."
-The tip must synthesize the match's decision rhythm, values, life pillars, and worldview into one actionable recommendation. It should be 30–45 words, specific, non-diagnostic, and useful as a next-step conversation prompt. Do not repeat the compatibility score unless it is analytically necessary.
+The tip must sinthesize the match's decision rhythm, values, life pillars, worldview, and current emotional tone (mood and symbolic traits) into one actionable recommendation. It should be 45–60 words, specific, non-diagnostic, and useful as a next-step conversation prompt. Do not repeat the compatibility score unless it is analytically necessary.
 Tone: Empathetic, elegant, and directly useful. Avoid clinical, diagnostic, or overly analytical jargon. Make the reader feel seen and understood.
 Never leave the field empty.`
+
     : `You are CheckMatch Lite's Golden Tip agent for an individual Self-Profile result. Return ONLY valid JSON with this exact schema: {"golden_tip": string}.
 Language: ${language}. Write the golden_tip in this language.
 Create one elegant, practical, and highly personalized golden tip for the person. Speak directly to the person in second person throughout the text, using the natural target-language equivalent of "you", "your", "você", "seu", or "sua".
@@ -688,7 +697,7 @@ The golden_tip MUST begin with a natural target-language equivalent of one of th
 • "Stay..."
 • "Your profile shows that..."
 • "Try being more..."
-The tip must synthesize decision style, values, life pillars, and worldview into one actionable recommendation. It should be 30–45 words, specific, non-diagnostic, and useful as a next step for self-observation.
+The tip must sinthesize decision style, values, life pillars, worldview, and your current mood and symbolic traits into one actionable recommendation. It should be 45–60 words, specific, non-diagnostic, and useful as a next step for self-observation.
 Tone: Empathetic, elegant, and directly useful. Avoid clinical, diagnostic, or overly analytical jargon. Make the user feel seen and understood.
 Never leave the field empty.`;
 

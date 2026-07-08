@@ -100,9 +100,18 @@ function extractProfileContext(profile) {
   const decCard = get('decision');
   const wvCard  = get('worldview');
 
+  // NOVO: Extrai a cor e busca o significado completo
+const colorKey = profile.answers?.Qt2 || '';
+  let colorMeaning = ''; 
+  if (colorKey && typeof QT2_MEANINGS !== 'undefined' && QT2_MEANINGS[colorKey]) {
+    colorMeaning = rptResolveLabel(QT2_MEANINGS[colorKey]);
+  }
+
   return {
     display_name:    profile.display_name || profile.username || 'User',
     language:        profile.language || reportLang(),
+    current_mood:    profile.answers?.Qt1 || '',
+    symbolic_traits: colorMeaning, // <- Chave renomeada
     selected_values: (valCard?.tags  || []).map(rptResolveLabel).filter(Boolean),
     selected_pillars:(pilCard?.tags  || []).map(rptResolveLabel).filter(Boolean),
     decision_style:  rptResolveLabel(decCard?.metric_value),
@@ -291,8 +300,8 @@ async function generatePersonalizedReport({ scope, profile, match }) {
       pair:                pairStr,
       compatibility_score: app.score,
       match_type:          rptResolveLabel(app.match_type?.label),
-      person_a: { name: nameA, decision_style: ctxA?.decision_style, worldview: ctxA?.worldview },
-      person_b: { name: nameB, decision_style: ctxB?.decision_style, worldview: ctxB?.worldview },
+      person_a: { name: nameA, current_mood: ctxA?.current_mood, symbolic_traits: ctxA?.symbolic_traits, decision_style: ctxA?.decision_style, worldview: ctxA?.worldview },
+      person_b: { name: nameB, current_mood: ctxB?.current_mood, symbolic_traits: ctxB?.symbolic_traits, decision_style: ctxB?.decision_style, worldview: ctxB?.worldview },
       /* The relational formula analysis — core input for the report */
       formula_analysis: formulaAnalysis,
       match_dynamics:  (app.dynamics  || []).map(d => `${rptResolveLabel(d.title)}: ${rptResolveLabel(d.description)}`).filter(Boolean),
@@ -307,7 +316,8 @@ You are writing a full compatibility report for ${pairStr}.
 For MATCH reports, write neutrally about the pair in third person. Do not address the viewer as "you" and do not write from only one participant's perspective.
 
 ━━━ FORMULA DATA — USE THIS, DO NOT IGNORE IT ━━━
-payload.formula_analysis contains pre-computed relational data from the match engine:
+payload.formula_analysis contains pre-computed relational data from the match engine. Additionally, incorporate their current moods and symbolic traits to explain the emotional atmosphere and behavioral tendencies of the relationship:
+
 
 values / pillars (same structure):
 • "shared": items BOTH people selected. These are established common ground. Name them and explain what that specific shared base creates for the pair — not "they share values" generically.
@@ -316,7 +326,7 @@ values / pillars (same structure):
 
 decision: style_a and style_b are the specific rhythm labels. Analyze what THIS SPECIFIC pairing creates — when does it flow, when does it create friction?
 
-worldview: label_a, label_b, and alignment_type. Analyze what this SPECIFIC combination of worldviews produces for the pair.
+worldview: label_a, label_b, and alignment_type. Analyze what this SPECIFIC combination of worldviews produces for the pair, keeping in mind the underlying emotional tone of their current moods and symbolic traits.
 
 ━━━ ANTI-PATTERN — BANNED ━━━
 ✗ "Decision rhythm and worldview together set the relationship's natural ease."
@@ -327,7 +337,7 @@ worldview: label_a, label_b, and alignment_type. Analyze what this SPECIFIC comb
 ━━━ QUALITY RULES ━━━
 1. STRICT SECTION FOCUS: The top-level strengths/challenges must be about the relationship as a whole. However, inside the "result_sections" array, the strengths and challenges MUST be 100% exclusive and specific to that exact dimension (e.g., the "values" section must ONLY contain insights about their values overlap). DO NOT repeat top-level insights inside the result_sections.
 2. ANALYZE — do not inventory. Lead every section with the pattern, not with "A has X and B has Y."
-3. For friction pairs: name the specific pair AND explain WHY that combination creates challenges (what each item implies for behavior and where those implications conflict).
+3. For friction pairs: name the specific pair AND explain WHY that combination creates challenges (what each item imply for behavior and where those implications conflict).
 4. "description" (top-level): 200–260 words. Dominant compatibility pattern, key alignments and their practical implications, main friction/complementarity sources and their relational meaning.
 5. "sections[].description": 120–150 words per section. Pattern-led, analytical. What does this dimension reveal for this specific pair?
 6. Strength/challenge items (all levels): 25–40 words. One sharp specific insight. No generalities.
@@ -371,6 +381,8 @@ Required JSON schema:
       language,
       display_name: name,
       profile: {
+        current_mood:     ctx?.current_mood,
+        symbolic_traits:  ctx?.symbolic_traits,
         selected_values:  ctx?.selected_values,
         selected_pillars: ctx?.selected_pillars,
         decision_style:   ctx?.decision_style,
@@ -395,8 +407,8 @@ You are writing a full personalized report for ${name}.
 ━━━ ANALYSIS RULES — APPLY TO EVERY SINGLE FIELD ━━━
 1. STRICT SECTION FOCUS: The top-level strengths and challenges must summarize the person's overall profile. However, inside the "result_sections" array, the text, strengths, and challenges MUST focus exclusively on that specific dimension. Do NOT repeat top-level insights inside the individual dimension cards.
 2. ANALYZE — do not enumerate. NEVER structure a description as "User selected X, Y, Z." Reveal what the combination of selections creates: a pattern, a challenges, a distinctive profile characteristic.
-3. Reference specific items only when they serve an analytical point — to anchor an insight, not to create a list. One or two items named per analytical claim is sufficient; listing all of them adds length without depth.
-4. Connect dimensions: how does the decision style interact with the values? What does the worldview imply about how life pillars are experienced? What does the combination of values and pillars reveal about where motivation and structure meet? These connections are the analysis.
+3. Reference specific items only when they serve an analytical point.
+4. Connect dimensions: how does the decision style interact with your values? What does the worldview imply about how life pillars are experienced? Integrate their current mood and symbolic traits to add emotional resonance to the analysis. What does the combination of values and pillars reveal about where motivation and structure meet?
 5. "description" (top-level): 200–260 words of analytical prose covering all four dimensions as a coherent profile — what the combination creates, not what each dimension contains.
 6. "sections[].description": 120–150 words per section of analytical prose. Answer: what does this specific dimension create for ${name}, given their other dimensions?
 7. All strength and challenge items (top-level and per-section): 25–40 words each. One sharp, specific insight — a practical implication, not a general observation. No re-listing.

@@ -19,9 +19,8 @@ const VALUE_REL = {
   humility:    { conv: ['respect','solidarity','tolerance','empathy','compassion'], div: [] },
   wisdom:      { conv: ['resilience','humility'], div: [] },
   transparency: { conv: ['honesty','integrity','trust','responsibility','justice'], div: [] },
-  creativity:  { conv: ['freedom','autonomy','courage','joy'], div: [] },
-  resilience:  { conv: ['perseverance','discipline','courage','wisdom'], div: [] }
-};
+  creativity:  { conv: ['freedom','autonomy','courage','joy'], div: [] }
+  };
 
 const PILLAR_REL = {
   work:                { conv: ['money','recognition','entrepreneurship','purpose','education'], div: ['hobbies','leisure'] },
@@ -91,6 +90,7 @@ function setScore(A, B, map) {
   return { score, shared, convergent, divergent };
 }
 
+// Atualizado para incluir a opção 23 (Perfectionist) como 'rational'
 const WORLDVIEW_GROUP = {
   1: 'material',        2: 'survival_action', 3: 'survival_action',
   4: 'meaning',         5: 'sensory',          6: 'sensory',
@@ -99,7 +99,7 @@ const WORLDVIEW_GROUP = {
   13: 'human_people',   14: 'rational',        15: 'emotional',
   16: 'ideal_future',   17: 'practical',       18: 'self',
   19: 'human_people',   20: 'ideal_future',    21: 'human_people',
-  22: 'ideal_future'
+  22: 'ideal_future',   23: 'rational' 
 };
 
 const WORLDVIEW_COMPLEMENT = new Set([
@@ -143,6 +143,10 @@ function typeLabel(type) {
   return map[type] || map.different;
 }
 
+function obj(en, pt, es, fr, de) {
+  return { en, pt, es, fr, de };
+}
+
 function matchAIFallbackMessage() {
   if (typeof aiFallbackError === 'function') return aiFallbackError();
   return typeof t === 'function' ? t('ai_fallback_error') : 'ai_fallback_error';
@@ -171,10 +175,14 @@ function fallbackDetailsMatch(key, match) {
 
 function buildMatchLite(profileA, profileB) {
   const a = profileA.results_app.dimensions, b = profileB.results_app.dimensions;
-  const d = (decisionPairScore(profileA.answers.Qt4, profileB.answers.Qt4) + decisionPairScore(profileA.answers.Qt5, profileB.answers.Qt5)) / 2;
+  
+  // Atualizado: Utiliza apenas Qt9 para calcular o ritmo de decisão. 
+  const d = decisionPairScore(profileA.answers.Qt9, profileB.answers.Qt9);
+  
   const v = setScore(a.values.selected, b.values.selected, VALUE_REL);
   const p = setScore(a.pillars.selected, b.pillars.selected, PILLAR_REL);
   const w = worldviewScore(profileA.answers.Qt8, profileB.answers.Qt8);
+  
   const score = Math.round(d * 25 + v.score * 35 + p.score * 20 + w.score * 20);
 
   let type = 'misaligned';
@@ -202,7 +210,7 @@ function buildMatchLite(profileA, profileB) {
         'Comparaison du mouvement, du timing et du rythme décisionnel.',
         'Vergleich von Bewegung, Timing und Entscheidungsrhythmus.'
       ),
-      tags: [a.decision.label, b.decision.label]
+      tags: [a.decision.label, b.decision.label] // Puxa do buildPhase1Profile de forma automática
     },
     values: {
       title:       obj('Values', 'Values', 'Values', 'Values', 'Values'),
@@ -219,7 +227,7 @@ function buildMatchLite(profileA, profileB) {
       shared:     v.shared,
       convergent: v.convergent,
       divergent:  v.divergent,
-      tags:       v.shared.map(valueLabel)
+      tags:       a.values.labels.filter(lbl => v.shared.includes(lbl.en)) // Puxado automaticamente das respostas se ajustado na UI
     },
     pillars: {
       title:       obj('Life Pillars', 'Life Pillars', 'Life Pillars', 'Life Pillars', 'Life Pillars'),
@@ -236,7 +244,7 @@ function buildMatchLite(profileA, profileB) {
       shared:     p.shared,
       convergent: p.convergent,
       divergent:  p.divergent,
-      tags:       p.shared.map(pillarLabel)
+      tags:       a.pillars.labels.filter(lbl => p.shared.includes(lbl.en))
     },
     worldview: {
       title:       obj('Worldview', 'Worldview', 'Worldview', 'Worldview', 'Worldview'),
@@ -276,7 +284,7 @@ function buildMatchLite(profileA, profileB) {
       metric_value: obj(`${v.shared.length} / 5`, `${v.shared.length} / 5`, `${v.shared.length} / 5`, `${v.shared.length} / 5`, `${v.shared.length} / 5`),
       bar:          dimensions.values.score,
       description:  dimensions.values.description,
-      tags:         dimensions.values.tags
+      tags:         dimensions.values.tags // se necessário repassar objeto
     },
     {
       key:          'pillars',
@@ -333,7 +341,7 @@ function buildMatchLite(profileA, profileB) {
   if (p.shared.length >= 2) {
     strengths.push({
       title:       obj('Compatible life structure', 'Estrutura de vida compatível', 'Estructura de vida compatible', 'Structure de vie compatible', 'Kompatible Lebensstruktur'),
-      description: obj('Shared pillars make daily priorities easier to understand.', 'Pilares compartilhados facilitam compreender prioridades diárias.', 'Los pilares compartidos facilitan comprender prioridades diarias.', 'Les piliers partagés facilitent la compréhension des priorités quotidiennes.', 'Gemeinsame Säulen erleichtern das Verständnis täglicher Prioritäten.')
+      description: obj('Shared pillars make daily priorities easier to understand.', 'Pilares compartilhados facilitam compreender prioridades diárias.', 'Los pilares compartidos facilitan compreender prioridades diarias.', 'Les piliers partagés facilitent la compréhension des priorités quotidiennes.', 'Gemeinsame Säulen erleichtern das Verständnis täglicher Prioritäten.')
     });
   } else {
     challenges.push({
@@ -390,7 +398,7 @@ function buildMatchLite(profileA, profileB) {
       dynamics:   dynamics.slice(0, 3),
       strengths:  strengths.slice(0, 3),
       challenges: challenges.slice(0, 3),
-      gaps:       gaps.slice(0, 3), // redução para 1
+      gaps:       gaps.slice(0, 3),
       golden_tip: matchAIFallbackML()
     }
   };
