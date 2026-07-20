@@ -1128,12 +1128,42 @@ select option { background: #fff; color: var(--text-main); }
   font-size: 0.92rem;
 }
 
+.free-text-wrap {
+  max-width: 880px;
+}
+
+.free-text-answer {
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  padding: 1rem 1.05rem;
+  border: 0.5px solid var(--border-mid);
+  border-radius: 14px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font: inherit;
+  line-height: 1.65;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.free-text-answer:focus {
+  border-color: var(--teal);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(17,123,131,0.10);
+}
+
+.free-text-answer::placeholder {
+  color: var(--text-muted);
+  opacity: 0.72;
+}
+
 .wizard-actions {
   margin-top: 1.4rem;
   padding-top: 1rem;
   border-top: 0.5px solid var(--border);
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 1rem;
 }
@@ -1141,6 +1171,10 @@ select option { background: #fff; color: var(--text-main); }
 .wizard-actions .status-line {
   text-align: center;
   color: var(--text-muted);
+}
+
+.wizard-actions [hidden] {
+  display: none;
 }
 
 @media (max-width: 960px) {
