@@ -478,9 +478,26 @@ function aiEnsureRoot(subject){
   return subject.results_ai.ai_content;
 }
 
+function aiSubjectRevision(subject, bucketName){
+  if(!String(bucketName || '').startsWith('profile_')) return null;
+  return subject?.results_app?.profile_revision || subject?.profile_revision || null;
+}
+
 function aiEnsureBucket(subject, bucketName){
   const root = aiEnsureRoot(subject);
-  root[bucketName] = root[bucketName] || { original:null, by_language:{} };
+  const currentRevision = aiSubjectRevision(subject, bucketName);
+  const existingBucket = root[bucketName];
+  const cachedRevision = existingBucket?.subject_revision || null;
+
+  // Once a questionnaire has a revision, any unversioned or differently
+  // versioned AI cache belongs to an older response cycle and is discarded.
+  if(currentRevision && cachedRevision !== currentRevision){
+    root[bucketName] = { original:null, by_language:{}, subject_revision:currentRevision };
+  } else {
+    root[bucketName] = existingBucket || { original:null, by_language:{} };
+    if(currentRevision) root[bucketName].subject_revision = currentRevision;
+  }
+
   root[bucketName].by_language = root[bucketName].by_language || {};
   return root[bucketName];
 }

@@ -38,6 +38,41 @@ function mergeResultsAI(existingAI, incomingAI){
   return deepMergeObjects(existingAI || {}, incomingAI || {});
 }
 
+function profileRevision(profile){
+  return profile?.results_app?.profile_revision || profile?.profile_revision || null;
+}
+
+function recordTimestamp(record){
+  const value = record?.updated_at || record?.created_at || '';
+  const time = Date.parse(value);
+  return Number.isFinite(time) ? time : 0;
+}
+
+function mergeSyncedProfile(localProfile, cloudProfile){
+  if(!localProfile) return cloudProfile || null;
+  if(!cloudProfile) return localProfile;
+
+  const localRevision = profileRevision(localProfile);
+  const cloudRevision = profileRevision(cloudProfile);
+
+  // AI caches may only be merged while both records represent the same form
+  // submission. Across revisions, the newest complete profile wins as a unit.
+  if(localRevision && cloudRevision && localRevision !== cloudRevision){
+    return recordTimestamp(localProfile) > recordTimestamp(cloudProfile)
+      ? localProfile
+      : cloudProfile;
+  }
+
+  if(localRevision && !cloudRevision) return localProfile;
+  if(cloudRevision && !localRevision) return cloudProfile;
+
+  return {
+    ...localProfile,
+    ...cloudProfile,
+    results_ai: mergeResultsAI(localProfile.results_ai, cloudProfile.results_ai)
+  };
+}
+
 function loadProfiles(){
   if(!BUDHI_PROFILE_CACHE) BUDHI_PROFILE_CACHE = loadProfilesLocal();
   return BUDHI_PROFILE_CACHE || {};
@@ -57,15 +92,13 @@ async function syncProfilesFromCloud(){
   try{
     const cloudProfiles = await supabaseFetchProfiles();
     const localProfiles = loadProfilesLocal();
-    const merged = {...localProfiles, ...cloudProfiles};
-    Object.keys(localProfiles || {}).forEach(username => {
-      if(cloudProfiles?.[username]){
-        merged[username] = {
-          ...localProfiles[username],
-          ...cloudProfiles[username],
-          results_ai: mergeResultsAI(localProfiles[username]?.results_ai, cloudProfiles[username]?.results_ai)
-        };
-      }
+    const merged = {};
+    const usernames = new Set([
+      ...Object.keys(localProfiles || {}),
+      ...Object.keys(cloudProfiles || {})
+    ]);
+    usernames.forEach(username => {
+      merged[username] = mergeSyncedProfile(localProfiles?.[username], cloudProfiles?.[username]);
     });
     saveProfiles(merged);
     return merged;
@@ -79,13 +112,15 @@ async function syncProfilesFromCloud(){
 async function saveProfile(username, profile){
   const profiles = loadProfiles();
   const existing = profiles[username] || {};
+  const replaceAI = profile.__replace_results_ai === true;
+  const {__replace_results_ai, ...cleanProfile} = profile;
   const record = {
     ...existing,
-    ...profile,
+    ...cleanProfile,
     username,
-    lang: profile.lang || profile.language || existing.lang || existing.language || getLang(),
-    language: profile.language || profile.lang || existing.language || existing.lang || getLang(),
-    results_ai: mergeResultsAI(existing.results_ai, profile.results_ai),
+    lang: cleanProfile.lang || cleanProfile.language || existing.lang || existing.language || getLang(),
+    language: cleanProfile.language || cleanProfile.lang || existing.language || existing.lang || getLang(),
+    results_ai: replaceAI ? (cleanProfile.results_ai || {}) : mergeResultsAI(existing.results_ai, cleanProfile.results_ai),
     updated_at: new Date().toISOString()
   };
 
@@ -94,7 +129,8 @@ async function saveProfile(username, profile){
 
   if(typeof supabaseUpsertProfile === 'function'){
     try{
-      await supabaseUpsertProfile(username, record);
+      const payload = replaceAI ? {...record, __replace_results_ai:true} : record;
+      await supabaseUpsertProfile(username, payload);
       await syncProfilesFromCloud();
     }catch(err){
       console.warn('[Budhi Lite] Profile saved locally, but Supabase write failed.', err);

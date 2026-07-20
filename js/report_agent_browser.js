@@ -491,9 +491,24 @@ function reportEnsureRoot(subject){
   return subject.results_ai.ai_content;
 }
 
+function reportSubjectRevision(subject, bucketName){
+  if(!String(bucketName || '').startsWith('profile_')) return null;
+  return subject?.results_app?.profile_revision || subject?.profile_revision || null;
+}
+
 function reportEnsureBucket(subject, bucketName){
   const root = reportEnsureRoot(subject);
-  root[bucketName] = root[bucketName] || { original:null, by_language:{} };
+  const currentRevision = reportSubjectRevision(subject, bucketName);
+  const existingBucket = root[bucketName];
+  const cachedRevision = existingBucket?.subject_revision || null;
+
+  if(currentRevision && cachedRevision !== currentRevision){
+    root[bucketName] = { original:null, by_language:{}, subject_revision:currentRevision };
+  } else {
+    root[bucketName] = existingBucket || { original:null, by_language:{} };
+    if(currentRevision) root[bucketName].subject_revision = currentRevision;
+  }
+
   root[bucketName].by_language = root[bucketName].by_language || {};
   return root[bucketName];
 }
@@ -503,7 +518,10 @@ function reportGetLanguageContent(bucket, lang){
 }
 
 function reportReadBucket(subject, bucketName){
-  return subject?.results_ai?.ai_content?.[bucketName] || null;
+  const bucket = subject?.results_ai?.ai_content?.[bucketName] || null;
+  const currentRevision = reportSubjectRevision(subject, bucketName);
+  if(currentRevision && bucket?.subject_revision !== currentRevision) return null;
+  return bucket;
 }
 
 function getPersonalizedReportCacheStatus({scope, profile, match, lang}){

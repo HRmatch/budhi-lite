@@ -99,6 +99,7 @@ async function supabaseFetchProfiles() {
 }
 
 async function supabaseUpsertProfile(username, profile) {
+  const replaceAI = profile.__replace_results_ai === true;
   let existing = null;
   try{ existing = await supabaseFetchProfile(username); }catch(err){ console.warn('[Budhi Lite] Could not prefetch profile before upsert.', err); }
 
@@ -108,7 +109,7 @@ async function supabaseUpsertProfile(username, profile) {
     lang: profile.lang || profile.language || existing?.lang || getLang(),
     answers: profile.answers || existing?.answers || {},
     results_app: profile.results_app || existing?.results_app || {},
-    results_ai: supabaseDeepMerge(existing?.results_ai || {}, profile.results_ai || {}),
+    results_ai: replaceAI ? (profile.results_ai || {}) : supabaseDeepMerge(existing?.results_ai || {}, profile.results_ai || {}),
     updated_at: new Date().toISOString()
   };
 

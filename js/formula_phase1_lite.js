@@ -239,15 +239,31 @@ function buildPhase1Profile({
   username,
   display_name,
   answers,
+  questionDefinitions = [],
   language = "en",
   source = "user_form",
 }) {
-  const values = (Array.isArray(answers.Qt6) ? answers.Qt6 : []).slice(0, 5);
-  const pillars = (Array.isArray(answers.Qt7) ? answers.Qt7 : []).slice(0, 5);
-  const worldview = Number(answers.Qt8);
+  const persistedAnswers = { ...(answers || {}) };
+  const profileCreatedAt = new Date().toISOString();
+  const profileRevision = `${profileCreatedAt}::${Math.random().toString(36).slice(2, 10)}`;
+  const availableQuestionDefinitions = Array.isArray(questionDefinitions) && questionDefinitions.length
+    ? questionDefinitions
+    : (typeof questionnaire !== 'undefined' && Array.isArray(questionnaire?.questions) ? questionnaire.questions : []);
+  const formulaExcludedIds = new Set(
+    availableQuestionDefinitions
+      .filter(question => question && question.formula_excluded === true)
+      .map(question => question.id)
+  );
+  const formulaAnswers = Object.fromEntries(
+    Object.entries(persistedAnswers).filter(([questionId]) => !formulaExcludedIds.has(questionId))
+  );
+
+  const values = (Array.isArray(formulaAnswers.Qt6) ? formulaAnswers.Qt6 : []).slice(0, 5);
+  const pillars = (Array.isArray(formulaAnswers.Qt7) ? formulaAnswers.Qt7 : []).slice(0, 5);
+  const worldview = Number(formulaAnswers.Qt8);
   
   // Utilizando a nova Qt9 para ações
-  const decisionLabel = actionLabelFromCode(Number(answers.Qt9));
+  const decisionLabel = actionLabelFromCode(Number(formulaAnswers.Qt9));
   
   const worldLabel = WORLDVIEW_LABELS[worldview] || obj("Worldview", "Visão de mundo", "Visión del mundo", "Vision du monde", "Weltanschauung");
   
@@ -268,8 +284,8 @@ function buildPhase1Profile({
       metric_label: obj("Profile", "Perfil", "Perfil", "Profil", "Profil"),
       metric_value: decisionLabel,
       bar: 70,
-      description: decisionDescription(Number(answers.Qt9)),
-      tags: [QT9_LABELS[Number(answers.Qt9)]]
+      description: decisionDescription(Number(formulaAnswers.Qt9)),
+      tags: [QT9_LABELS[Number(formulaAnswers.Qt9)]]
     },
     {
       key: "values",
@@ -314,7 +330,7 @@ function buildPhase1Profile({
       metric_value: worldLabel,
       bar: 72,
       // Passando as respostas de Qt1 e Qt2 para compor o parágrafo da Visão de Mundo
-      description: worldviewDescription(worldview, answers.Qt1, answers.Qt2),
+      description: worldviewDescription(worldview, formulaAnswers.Qt1, formulaAnswers.Qt2),
       tags: [worldLabel],
     },
   ];
@@ -322,8 +338,8 @@ function buildPhase1Profile({
   const dimensions = {
     decision: {
       title: cards[0].title,
-      code: Number(answers.Qt9),
-      activation: decisionActivation(answers.Qt9),
+      code: Number(formulaAnswers.Qt9),
+      activation: decisionActivation(formulaAnswers.Qt9),
       label: decisionLabel,
       tags: cards[0].tags,
       description: cards[0].description,
@@ -352,10 +368,11 @@ function buildPhase1Profile({
     username,
     display_name,
     language,
-    answers,
+    answers: persistedAnswers,
     source,
-    created_at: new Date().toISOString(),
+    created_at: profileCreatedAt,
     results_app: {
+      profile_revision: profileRevision,
       title: obj(
         `${display_name || username}'s Profile Snapshot`,
         `Profile Snapshot de ${display_name || username}`,
