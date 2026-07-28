@@ -100,18 +100,28 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt2_reason_text",
       "text": {
         "en": "What makes this color represent you or your life?",
         "pt": "O que faz essa cor representar você ou sua vida?",
-        "es": "¿Qué hace que este color te represente a ti o a tu vida?",
-        "fr": "Qu'est-ce qui fait que cette couleur vous représente, vous ou votre vie ?",
-        "de": "Was macht, dass diese Farbe Sie oder Ihr Leben repräsentiert?"
+        "es": "¿Qué hace que este color lo represente a usted o a su vida?",
+        "fr": "Qu’est-ce qui fait que cette couleur vous représente, vous ou votre vie ?",
+        "de": "Was macht diese Farbe zu einem Bild für Sie oder Ihr Leben?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "Qt1"
     },
     {
       "id": "Qt1",
-      "type": "single_choice",
+      "type": "free_text",
       "text": {
         "en": "What single word best captures how you feel right now?",
         "pt": "Qual palavra melhor expressa como você se sente agora?",
@@ -119,130 +129,817 @@
         "fr": "Quel mot décrit le mieux ce que vous ressentez en ce moment ?",
         "de": "Welches einzelne Wort beschreibt am besten, wie Sie sich gerade fühlen?"
       },
-      "options": [
-        {
-          "value": "Hopeful",
-          "label": {
-            "en": "Hopeful",
-            "pt": "Esperançoso",
-            "es": "Esperanzado",
-            "fr": "Plein d'espoir",
-            "de": "Hoffnungsvoll"
+      "placeholder": {
+        "en": "Example: calm, hopeful, anxious...",
+        "pt": "Exemplo: calmo, esperançoso, ansioso...",
+        "es": "Ejemplo: tranquilo, esperanzado, ansioso...",
+        "fr": "Exemple : calme, optimiste, anxieux...",
+        "de": "Beispiel: ruhig, hoffnungsvoll, ängstlich..."
+      },
+      "min_chars": 2,
+      "max_chars": 80,
+      "min_values": 1,
+      "max_values": 1,
+      "max_select": 1,
+      "std_next_question": "Qt1_reason",
+      "nlp": {
+        "mode": "current_mood_association",
+        "association_threshold": 0.6,
+        "invalid_scope_threshold": 0.12,
+        "strong_lock_threshold": 0.72,
+        "ai_review_enabled": true,
+        "ai_provider": "openai",
+        "ai_review_below_score": 82,
+        "ai_association_threshold": 0.6,
+        "ai_lock_threshold": 0.72,
+        "min_values": 1,
+        "max_values": 1,
+        "min_select": 1,
+        "max_select": 1,
+        "store_raw_answer_as": "Qt1_text",
+        "store_score_as": "Qt1_score",
+        "categories": {
+          "Hopeful": {
+            "value": "Hopeful",
+            "label": {
+              "en": "Hopeful",
+              "pt": "Esperançoso",
+              "es": "Esperanzado",
+              "fr": "Plein d'espoir",
+              "de": "Hoffnungsvoll"
+            },
+            "base_terms": {
+              "en": [
+                "Hopeful"
+              ],
+              "pt": [
+                "Esperançoso",
+                "Hopeful"
+              ],
+              "es": [
+                "Esperanzado",
+                "Hopeful"
+              ],
+              "fr": [
+                "Plein d'espoir",
+                "Hopeful"
+              ],
+              "de": [
+                "Hoffnungsvoll",
+                "Hopeful"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Hopeful",
+                "hopeful",
+                "optimistic",
+                "hope",
+                "positive"
+              ],
+              "pt": [
+                "Esperançoso",
+                "esperançoso",
+                "esperancoso",
+                "otimista",
+                "esperança",
+                "esperanca"
+              ],
+              "es": [
+                "Esperanzado",
+                "esperanzado",
+                "optimista",
+                "esperanza"
+              ],
+              "fr": [
+                "Plein d'espoir",
+                "plein d’espoir",
+                "optimiste",
+                "espoir"
+              ],
+              "de": [
+                "Hoffnungsvoll",
+                "hoffnungsvoll",
+                "optimistisch",
+                "hoffnung"
+              ]
+            }
           },
-          "redirect": null
+          "Anxious": {
+            "value": "Anxious",
+            "label": {
+              "en": "Anxious",
+              "pt": "Ansioso",
+              "es": "Ansioso",
+              "fr": "Anxieux",
+              "de": "Ängstlich"
+            },
+            "base_terms": {
+              "en": [
+                "Anxious"
+              ],
+              "pt": [
+                "Ansioso",
+                "Anxious"
+              ],
+              "es": [
+                "Ansioso",
+                "Anxious"
+              ],
+              "fr": [
+                "Anxieux",
+                "Anxious"
+              ],
+              "de": [
+                "Ängstlich",
+                "Anxious"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Anxious",
+                "anxious",
+                "worried",
+                "nervous",
+                "uneasy"
+              ],
+              "pt": [
+                "Ansioso",
+                "ansioso",
+                "ansiosa",
+                "preocupado",
+                "preocupada",
+                "nervoso",
+                "nervosa"
+              ],
+              "es": [
+                "Ansioso",
+                "ansioso",
+                "ansiosa",
+                "preocupado",
+                "nervioso"
+              ],
+              "fr": [
+                "Anxieux",
+                "anxieux",
+                "anxieuse",
+                "inquiet",
+                "nerveux"
+              ],
+              "de": [
+                "Ängstlich",
+                "ängstlich",
+                "aengstlich",
+                "besorgt",
+                "nervös",
+                "nervoes"
+              ]
+            }
+          },
+          "Calm": {
+            "value": "Calm",
+            "label": {
+              "en": "Calm",
+              "pt": "Calmo",
+              "es": "Tranquilo",
+              "fr": "Calme",
+              "de": "Ruhig"
+            },
+            "base_terms": {
+              "en": [
+                "Calm"
+              ],
+              "pt": [
+                "Calmo",
+                "Calm"
+              ],
+              "es": [
+                "Tranquilo",
+                "Calm"
+              ],
+              "fr": [
+                "Calme",
+                "Calm"
+              ],
+              "de": [
+                "Ruhig",
+                "Calm"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Calm",
+                "calm",
+                "relaxed",
+                "serene",
+                "tranquil"
+              ],
+              "pt": [
+                "Calmo",
+                "calmo",
+                "calma",
+                "relaxado",
+                "sereno",
+                "tranquilo"
+              ],
+              "es": [
+                "Tranquilo",
+                "calmado",
+                "calmada",
+                "relajado",
+                "sereno",
+                "tranquilo"
+              ],
+              "fr": [
+                "Calme",
+                "calme",
+                "serein",
+                "tranquille",
+                "relaxé",
+                "apaisé"
+              ],
+              "de": [
+                "Ruhig",
+                "ruhig",
+                "entspannt",
+                "gelassen"
+              ]
+            }
+          },
+          "Restless": {
+            "value": "Restless",
+            "label": {
+              "en": "Restless",
+              "pt": "Inquieto",
+              "es": "Inquieto",
+              "fr": "Agité",
+              "de": "Unruhig"
+            },
+            "base_terms": {
+              "en": [
+                "Restless"
+              ],
+              "pt": [
+                "Inquieto",
+                "Restless"
+              ],
+              "es": [
+                "Inquieto",
+                "Restless"
+              ],
+              "fr": [
+                "Agité",
+                "Restless"
+              ],
+              "de": [
+                "Unruhig",
+                "Restless"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Restless",
+                "restless",
+                "agitated",
+                "fidgety",
+                "unsettled"
+              ],
+              "pt": [
+                "Inquieto",
+                "inquieto",
+                "inquieta",
+                "agitado",
+                "agitada",
+                "impaciente"
+              ],
+              "es": [
+                "Inquieto",
+                "inquieto",
+                "inquieta",
+                "agitado",
+                "impaciente"
+              ],
+              "fr": [
+                "Agité",
+                "agité",
+                "agitee",
+                "impatient"
+              ],
+              "de": [
+                "Unruhig",
+                "unruhig",
+                "aufgewühlt",
+                "aufgewuehlt",
+                "rastlos"
+              ]
+            }
+          },
+          "Joyful": {
+            "value": "Joyful",
+            "label": {
+              "en": "Joyful",
+              "pt": "Alegre",
+              "es": "Alegre",
+              "fr": "Joyeux",
+              "de": "Freudig"
+            },
+            "base_terms": {
+              "en": [
+                "Joyful"
+              ],
+              "pt": [
+                "Alegre",
+                "Joyful"
+              ],
+              "es": [
+                "Alegre",
+                "Joyful"
+              ],
+              "fr": [
+                "Joyeux",
+                "Joyful"
+              ],
+              "de": [
+                "Freudig",
+                "Joyful"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Joyful",
+                "joyful",
+                "happy",
+                "cheerful",
+                "delighted"
+              ],
+              "pt": [
+                "Alegre",
+                "alegre",
+                "feliz",
+                "contente",
+                "animado"
+              ],
+              "es": [
+                "Alegre",
+                "alegre",
+                "feliz",
+                "contento",
+                "animado"
+              ],
+              "fr": [
+                "Joyeux",
+                "joyeux",
+                "joyeuse",
+                "heureux",
+                "heureuse",
+                "content"
+              ],
+              "de": [
+                "Freudig",
+                "freudig",
+                "glücklich",
+                "gluecklich",
+                "fröhlich",
+                "froehlich"
+              ]
+            }
+          },
+          "Uncertain": {
+            "value": "Uncertain",
+            "label": {
+              "en": "Uncertain",
+              "pt": "Incerto",
+              "es": "Incierto",
+              "fr": "Incertain",
+              "de": "Unsicher"
+            },
+            "base_terms": {
+              "en": [
+                "Uncertain"
+              ],
+              "pt": [
+                "Incerto",
+                "Uncertain"
+              ],
+              "es": [
+                "Incierto",
+                "Uncertain"
+              ],
+              "fr": [
+                "Incertain",
+                "Uncertain"
+              ],
+              "de": [
+                "Unsicher",
+                "Uncertain"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Uncertain",
+                "uncertain",
+                "unsure",
+                "doubtful",
+                "confused"
+              ],
+              "pt": [
+                "Incerto",
+                "incerto",
+                "incerta",
+                "inseguro",
+                "insegura",
+                "em dúvida",
+                "duvida"
+              ],
+              "es": [
+                "Incierto",
+                "incierto",
+                "inseguro",
+                "dudoso",
+                "confundido"
+              ],
+              "fr": [
+                "Incertain",
+                "incertain",
+                "incertaine",
+                "indécis",
+                "indecis",
+                "dans le doute"
+              ],
+              "de": [
+                "Unsicher",
+                "unsicher",
+                "zweifelnd",
+                "unschlüssig",
+                "unschluessig"
+              ]
+            }
+          },
+          "Motivated": {
+            "value": "Motivated",
+            "label": {
+              "en": "Motivated",
+              "pt": "Motivado",
+              "es": "Motivado",
+              "fr": "Motivé",
+              "de": "Motiviert"
+            },
+            "base_terms": {
+              "en": [
+                "Motivated"
+              ],
+              "pt": [
+                "Motivado",
+                "Motivated"
+              ],
+              "es": [
+                "Motivado",
+                "Motivated"
+              ],
+              "fr": [
+                "Motivé",
+                "Motivated"
+              ],
+              "de": [
+                "Motiviert",
+                "Motivated"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Motivated",
+                "motivated",
+                "driven",
+                "inspired",
+                "determined"
+              ],
+              "pt": [
+                "Motivado",
+                "motivado",
+                "motivada",
+                "inspirado",
+                "determinado",
+                "disposto"
+              ],
+              "es": [
+                "Motivado",
+                "motivado",
+                "inspirado",
+                "determinado"
+              ],
+              "fr": [
+                "Motivé",
+                "motivé",
+                "motive",
+                "inspiré",
+                "inspire",
+                "déterminé",
+                "determine"
+              ],
+              "de": [
+                "Motiviert",
+                "motiviert",
+                "inspiriert",
+                "entschlossen"
+              ]
+            }
+          },
+          "Overwhelmed": {
+            "value": "Overwhelmed",
+            "label": {
+              "en": "Overwhelmed",
+              "pt": "Sobrecarregado",
+              "es": "Abrumado",
+              "fr": "Débordé",
+              "de": "Überwältigt"
+            },
+            "base_terms": {
+              "en": [
+                "Overwhelmed"
+              ],
+              "pt": [
+                "Sobrecarregado",
+                "Overwhelmed"
+              ],
+              "es": [
+                "Abrumado",
+                "Overwhelmed"
+              ],
+              "fr": [
+                "Débordé",
+                "Overwhelmed"
+              ],
+              "de": [
+                "Überwältigt",
+                "Overwhelmed"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Overwhelmed",
+                "overwhelmed",
+                "overloaded",
+                "swamped",
+                "too much"
+              ],
+              "pt": [
+                "Sobrecarregado",
+                "sobrecarregado",
+                "sobrecarregada",
+                "sufocado",
+                "sufocada",
+                "cheio de coisas"
+              ],
+              "es": [
+                "Abrumado",
+                "abrumado",
+                "abrumada",
+                "sobrecargado",
+                "desbordado"
+              ],
+              "fr": [
+                "Débordé",
+                "débordé",
+                "deborde",
+                "dépassé",
+                "depasse",
+                "surchargé",
+                "surcharge"
+              ],
+              "de": [
+                "Überwältigt",
+                "überwältigt",
+                "ueberwaeltigt",
+                "überlastet",
+                "ueberlastet"
+              ]
+            }
+          },
+          "Stressed": {
+            "value": "Stressed",
+            "label": {
+              "en": "Stressed",
+              "pt": "Estressado",
+              "es": "Estresado",
+              "fr": "Stressé",
+              "de": "Gestresst"
+            },
+            "base_terms": {
+              "en": [
+                "Stressed"
+              ],
+              "pt": [
+                "Estressado",
+                "Stressed"
+              ],
+              "es": [
+                "Estresado",
+                "Stressed"
+              ],
+              "fr": [
+                "Stressé",
+                "Stressed"
+              ],
+              "de": [
+                "Gestresst",
+                "Stressed"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Stressed",
+                "stressed",
+                "tense",
+                "under pressure",
+                "strained"
+              ],
+              "pt": [
+                "Estressado",
+                "estressado",
+                "estressada",
+                "tenso",
+                "tensa",
+                "sob pressão",
+                "pressao"
+              ],
+              "es": [
+                "Estresado",
+                "estresado",
+                "tenso",
+                "bajo presión"
+              ],
+              "fr": [
+                "Stressé",
+                "stressé",
+                "stresse",
+                "tendu",
+                "sous pression"
+              ],
+              "de": [
+                "Gestresst",
+                "gestresst",
+                "angespannt",
+                "unter druck"
+              ]
+            }
+          },
+          "Peaceful": {
+            "value": "Peaceful",
+            "label": {
+              "en": "Peaceful",
+              "pt": "Pacífico",
+              "es": "Pacífico",
+              "fr": "Paisible",
+              "de": "Friedlich"
+            },
+            "base_terms": {
+              "en": [
+                "Peaceful"
+              ],
+              "pt": [
+                "Pacífico",
+                "Peaceful"
+              ],
+              "es": [
+                "Pacífico",
+                "Peaceful"
+              ],
+              "fr": [
+                "Paisible",
+                "Peaceful"
+              ],
+              "de": [
+                "Friedlich",
+                "Peaceful"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Peaceful",
+                "peaceful",
+                "at peace",
+                "balanced",
+                "inner peace",
+                "untroubled"
+              ],
+              "pt": [
+                "Pacífico",
+                "em paz",
+                "pacífico",
+                "pacifico",
+                "equilibrado",
+                "paz interior",
+                "sem conflitos"
+              ],
+              "es": [
+                "Pacífico",
+                "en paz",
+                "pacífico",
+                "equilibrado",
+                "paz interior",
+                "sin conflicto"
+              ],
+              "fr": [
+                "Paisible",
+                "paisible",
+                "en paix",
+                "équilibré",
+                "equilibre",
+                "paix intérieure",
+                "sans conflit"
+              ],
+              "de": [
+                "Friedlich",
+                "friedlich",
+                "in frieden",
+                "ausgeglichen"
+              ]
+            }
+          },
+          "Grateful": {
+            "value": "Grateful",
+            "label": {
+              "en": "Grateful",
+              "pt": "Grato",
+              "es": "Agradecido",
+              "fr": "Reconnaissant",
+              "de": "Dankbar"
+            },
+            "base_terms": {
+              "en": [
+                "Grateful"
+              ],
+              "pt": [
+                "Grato",
+                "Grateful"
+              ],
+              "es": [
+                "Agradecido",
+                "Grateful"
+              ],
+              "fr": [
+                "Reconnaissant",
+                "Grateful"
+              ],
+              "de": [
+                "Dankbar",
+                "Grateful"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Grateful",
+                "grateful",
+                "thankful",
+                "appreciative",
+                "blessed"
+              ],
+              "pt": [
+                "Grato",
+                "grato",
+                "grata",
+                "agradecido",
+                "agradecida",
+                "gratidao",
+                "gratidão"
+              ],
+              "es": [
+                "Agradecido",
+                "agradecido",
+                "agradecida",
+                "gratitud"
+              ],
+              "fr": [
+                "Reconnaissant",
+                "reconnaissant",
+                "reconnaissante",
+                "gratitude"
+              ],
+              "de": [
+                "Dankbar",
+                "dankbar",
+                "dankbarkeit"
+              ]
+            }
+          }
         },
-        {
-          "value": "Anxious",
-          "label": {
-            "en": "Anxious",
-            "pt": "Ansioso",
-            "es": "Ansioso",
-            "fr": "Anxieux",
-            "de": "Ängstlich"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Calm",
-          "label": {
-            "en": "Calm",
-            "pt": "Calmo",
-            "es": "Tranquilo",
-            "fr": "Calme",
-            "de": "Ruhig"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Restless",
-          "label": {
-            "en": "Restless",
-            "pt": "Inquieto",
-            "es": "Inquieto",
-            "fr": "Agité",
-            "de": "Unruhig"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Joyful",
-          "label": {
-            "en": "Joyful",
-            "pt": "Alegre",
-            "es": "Alegre",
-            "fr": "Joyeux",
-            "de": "Freudig"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Uncertain",
-          "label": {
-            "en": "Uncertain",
-            "pt": "Incerto",
-            "es": "Incierto",
-            "fr": "Incertain",
-            "de": "Unsicher"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Motivated",
-          "label": {
-            "en": "Motivated",
-            "pt": "Motivado",
-            "es": "Motivado",
-            "fr": "Motivé",
-            "de": "Motiviert"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Overwhelmed",
-          "label": {
-            "en": "Overwhelmed",
-            "pt": "Sobrecarregado",
-            "es": "Abrumado",
-            "fr": "Débordé",
-            "de": "Überwältigt"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Stressed",
-          "label": {
-            "en": "Stressed",
-            "pt": "Estressado",
-            "es": "Estresado",
-            "fr": "Stressé",
-            "de": "Gestresst"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Peaceful",
-          "label": {
-            "en": "Peaceful",
-            "pt": "Pacífico",
-            "es": "Pacífico",
-            "fr": "Paisible",
-            "de": "Friedlich"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Grateful",
-          "label": {
-            "en": "Grateful",
-            "pt": "Grato",
-            "es": "Agradecido",
-            "fr": "Reconnaissant",
-            "de": "Dankbar"
-          },
-          "redirect": null
-        }
-      ],
-      "std_next_question": "Qt1_reason"
+        "supplemental_screen": {}
+      },
+      "manual_selection_enabled": true,
+      "manual_selection_label": {
+        "en": "Choose from a list",
+        "pt": "Escolher em uma lista",
+        "es": "Elegir de una lista",
+        "fr": "Choisir dans une liste",
+        "de": "Aus einer Liste auswählen"
+      },
+      "manual_selection_help": {
+        "en": "Not sure what to write or unable to complete every field? Continue or choose from the list of available options.",
+        "pt": "Não sabe o que escrever ou não consegue preencher todos os campos? Continue ou escolha na lista de opções disponíveis.",
+        "es": "¿No sabe qué escribir o no puede completar todos los campos? Continúe o elija de la lista de opciones disponibles.",
+        "fr": "Vous ne savez pas quoi écrire ou ne pouvez pas remplir tous les champs ? Continuez ou choisissez dans la liste des options disponibles.",
+        "de": "Sie wissen nicht, was Sie schreiben sollen, oder können nicht alle Felder ausfüllen? Fahren Sie fort oder wählen Sie aus der Liste der verfügbaren Optionen."
+      }
     },
     {
       "id": "Qt1_reason",
@@ -252,249 +949,1281 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt1_reason_text",
       "text": {
         "en": "Why does that word feel true to you in this moment?",
         "pt": "Por que essa palavra parece verdadeira para você neste momento?",
-        "es": "¿Por qué esa palabra se siente verdadera para ti en este momento?",
-        "fr": "Pourquoi ce mot vous semble-t-il vrai en ce moment ?",
-        "de": "Warum fühlt sich dieses Wort in diesem Moment für Sie wahr an?"
+        "es": "¿Por qué esa palabra se siente verdadera para usted en este momento?",
+        "fr": "Pourquoi ce mot vous semble-t-il juste en ce moment ?",
+        "de": "Warum fühlt sich dieses Wort in diesem Moment für Sie stimmig an?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "Qt6"
     },
     {
       "id": "Qt6",
-      "type": "multi_choice",
-      "max_select": 5,
+      "type": "free_text",
       "text": {
-        "en": "What are the core values that define who you are?",
-        "pt": "Quais são os valores centrais que definem quem você é?",
-        "es": "¿Cuáles son los valores fundamentales que definen quién eres?",
-        "fr": "Quelles sont les valeurs fondamentales qui définissent qui vous êtes ?",
-        "de": "Was sind die Grundwerte, die definieren, wer Sie sind?"
+        "en": "What are the core values that define who you are? Write exactly 5 values, one in each box.",
+        "pt": "Quais são os valores centrais que definem quem você é? Escreva exatamente 5 valores, um em cada caixa.",
+        "es": "¿Cuáles son los valores centrales que definen quién es usted? Escriba exactamente 5 valores, uno en cada casilla.",
+        "fr": "Quelles sont les valeurs fondamentales qui définissent qui vous êtes ? Écrivez exactement 5 valeurs, une dans chaque case.",
+        "de": "Welche zentralen Werte definieren, wer Sie sind? Schreiben Sie genau 5 Werte, einen in jedes Feld."
       },
-      "options": [
-        {
-          "value": "Honesty",
-          "label": {
-            "en": "Honesty",
-            "pt": "Honestidade",
-            "es": "Honestidad",
-            "fr": "Honnêteté",
-            "de": "Ehrlichkeit"
+      "placeholder": {
+        "en": "Example: honesty, empathy, justice, courage, gratitude",
+        "pt": "Exemplo: honestidade, empatia, justiça, coragem, gratidão",
+        "es": "Ejemplo: honestidad, empatía, justicia, coraje, gratitud",
+        "fr": "Exemple : honnêteté, empathie, justice, courage, gratitude",
+        "de": "Beispiel: Ehrlichkeit, Empathie, Gerechtigkeit, Mut, Dankbarkeit"
+      },
+      "max_chars": 220,
+      "nlp": {
+        "mode": "human_value_association",
+        "association_threshold": 0.6,
+        "invalid_scope_threshold": 0.12,
+        "store_raw_answer_as": "Qt6_text",
+        "store_score_as": "Qt6_score",
+        "categories": {
+          "Honesty": {
+            "label": {
+              "en": "Honesty",
+              "pt": "Honestidade",
+              "es": "Honestidad",
+              "fr": "Honnêteté",
+              "de": "Ehrlichkeit"
+            },
+            "synonyms": {
+              "en": [
+                "truth",
+                "truthfulness",
+                "sincerity",
+                "being honest",
+                "telling the truth",
+                "frankness",
+                "uprightness",
+                "candor"
+              ],
+              "pt": [
+                "verdade",
+                "veracidade",
+                "sinceridade",
+                "ser honesto",
+                "falar a verdade",
+                "franqueza",
+                "retidão",
+                "honesto"
+              ],
+              "es": [
+                "verdad",
+                "veracidad",
+                "sinceridad",
+                "ser honesto",
+                "decir la verdad",
+                "franqueza",
+                "rectitud"
+              ],
+              "fr": [
+                "vérité",
+                "sincérité",
+                "dire la vérité",
+                "franchise",
+                "droiture",
+                "honnête"
+              ],
+              "de": [
+                "wahrheit",
+                "aufrichtigkeit",
+                "ehrlich sein",
+                "die wahrheit sagen",
+                "rechtschaffenheit",
+                "ehrliche offenheit"
+              ]
+            }
           },
-          "redirect": null
+          "Respect": {
+            "label": {
+              "en": "Respect",
+              "pt": "Respeito",
+              "es": "Respeto",
+              "fr": "Respect",
+              "de": "Respekt"
+            },
+            "synonyms": {
+              "en": [
+                "consideration",
+                "regard",
+                "dignity",
+                "courtesy",
+                "politeness",
+                "recognition",
+                "boundaries",
+                "admiration",
+                "self-respect",
+                "self respect",
+                "self-worth",
+                "self worth",
+                "self-esteem",
+                "self esteem",
+                "self dignity",
+                "loving myself",
+                "love myself",
+                "love my self",
+                "self-love",
+                "self love"
+              ],
+              "pt": [
+                "consideração",
+                "dignidade",
+                "cortesia",
+                "educação",
+                "reconhecimento",
+                "limites",
+                "respeitar",
+                "admiração",
+                "amor-próprio",
+                "amor proprio",
+                "autoestima",
+                "auto-estima",
+                "respeito próprio",
+                "respeito proprio",
+                "dignidade própria",
+                "dignidade propria",
+                "valor próprio",
+                "valor proprio",
+                "me amar",
+                "amar a mim mesmo",
+                "amar a mim mesma"
+              ],
+              "es": [
+                "consideración",
+                "dignidad",
+                "cortesía",
+                "educación",
+                "reconocimiento",
+                "límites",
+                "respetar",
+                "amor propio",
+                "autoestima",
+                "respeto propio",
+                "dignidad propia",
+                "valor propio",
+                "amarme",
+                "amar a mí mismo",
+                "amar a mí misma"
+              ],
+              "fr": [
+                "considération",
+                "dignité",
+                "courtoisie",
+                "politesse",
+                "reconnaissance",
+                "limites",
+                "respecter",
+                "amour-propre",
+                "amour propre",
+                "estime de soi",
+                "respect de soi",
+                "dignité personnelle",
+                "s’aimer",
+                "s aimer"
+              ],
+              "de": [
+                "achtung",
+                "rücksicht",
+                "würde",
+                "höflichkeit",
+                "anerkennung",
+                "grenzen",
+                "respektieren",
+                "selbstachtung",
+                "selbstrespekt",
+                "selbstwert",
+                "selbstwertgefühl",
+                "sich selbst lieben"
+              ]
+            }
+          },
+          "Empathy": {
+            "label": {
+              "en": "Empathy",
+              "pt": "Empatia",
+              "es": "Empatía",
+              "fr": "Empathie",
+              "de": "Empathie"
+            },
+            "synonyms": {
+              "en": [
+                "understanding",
+                "putting myself in others shoes",
+                "sensitivity",
+                "listening",
+                "emotional understanding",
+                "perspective taking"
+              ],
+              "pt": [
+                "entender o outro",
+                "se colocar no lugar do outro",
+                "sensibilidade",
+                "escuta",
+                "compreensão emocional",
+                "acolhimento"
+              ],
+              "es": [
+                "entender al otro",
+                "ponerse en el lugar del otro",
+                "sensibilidad",
+                "escucha",
+                "comprensión emocional"
+              ],
+              "fr": [
+                "comprendre l'autre",
+                "se mettre à la place de l'autre",
+                "sensibilité",
+                "écoute",
+                "compréhension émotionnelle"
+              ],
+              "de": [
+                "verständnis",
+                "sich in andere hineinversetzen",
+                "sensibilität",
+                "zuhören",
+                "emotionales verständnis"
+              ]
+            }
+          },
+          "Responsibility": {
+            "label": {
+              "en": "Responsibility",
+              "pt": "Responsabilidade",
+              "es": "Responsabilidad",
+              "fr": "Responsabilité",
+              "de": "Verantwortung"
+            },
+            "synonyms": {
+              "en": [
+                "accountability",
+                "commitment",
+                "duty",
+                "obligation",
+                "ownership",
+                "reliability",
+                "being responsible",
+                "answerability"
+              ],
+              "pt": [
+                "compromisso",
+                "dever",
+                "obrigação",
+                "assumir consequências",
+                "confiabilidade",
+                "ser responsável",
+                "prestação de contas"
+              ],
+              "es": [
+                "compromiso",
+                "deber",
+                "obligación",
+                "asumir consecuencias",
+                "confiabilidad",
+                "ser responsable"
+              ],
+              "fr": [
+                "engagement",
+                "devoir",
+                "obligation",
+                "assumer les conséquences",
+                "fiabilité",
+                "être responsable"
+              ],
+              "de": [
+                "verantwortlichkeit",
+                "verpflichtung",
+                "pflicht",
+                "zuverlässigkeit",
+                "verantwortlich sein",
+                "rechenschaft"
+              ]
+            }
+          },
+          "Perseverance": {
+            "label": {
+              "en": "Perseverance",
+              "pt": "Perseverança",
+              "es": "Perseverancia",
+              "fr": "Persévérance",
+              "de": "Ausdauer"
+            },
+            "synonyms": {
+              "en": [
+                "persistence",
+                "determination",
+                "not giving up",
+                "tenacity",
+                "endurance",
+                "steadfastness",
+                "keep going"
+              ],
+              "pt": [
+                "persistência",
+                "determinação",
+                "não desistir",
+                "tenacidade",
+                "constância",
+                "seguir em frente",
+                "insistência"
+              ],
+              "es": [
+                "persistencia",
+                "determinación",
+                "no rendirse",
+                "tenacidad",
+                "constancia",
+                "seguir adelante"
+              ],
+              "fr": [
+                "persistance",
+                "détermination",
+                "ne pas abandonner",
+                "ténacité",
+                "constance",
+                "continuer"
+              ],
+              "de": [
+                "beharrlichkeit",
+                "entschlossenheit",
+                "nicht aufgeben",
+                "ausdauernd",
+                "standhaftigkeit",
+                "weitermachen"
+              ]
+            }
+          },
+          "Courage": {
+            "label": {
+              "en": "Courage",
+              "pt": "Coragem",
+              "es": "Coraje",
+              "fr": "Courage",
+              "de": "Mut"
+            },
+            "synonyms": {
+              "en": [
+                "bravery",
+                "boldness",
+                "facing fear",
+                "daring",
+                "nerve",
+                "initiative",
+                "taking risks"
+              ],
+              "pt": [
+                "bravura",
+                "ousadia",
+                "enfrentar o medo",
+                "atrevimento",
+                "iniciativa",
+                "arriscar",
+                "corajoso"
+              ],
+              "es": [
+                "valentía",
+                "osadía",
+                "enfrentar el miedo",
+                "atrevimiento",
+                "iniciativa",
+                "arriesgar"
+              ],
+              "fr": [
+                "bravoure",
+                "audace",
+                "affronter la peur",
+                "initiative",
+                "prendre des risques"
+              ],
+              "de": [
+                "tapferkeit",
+                "kühnheit",
+                "angst begegnen",
+                "wagemut",
+                "initiative",
+                "risiko eingehen"
+              ]
+            }
+          },
+          "Gratitude": {
+            "label": {
+              "en": "Gratitude",
+              "pt": "Gratidão",
+              "es": "Gratitud",
+              "fr": "Gratitude",
+              "de": "Dankbarkeit"
+            },
+            "synonyms": {
+              "en": [
+                "thankfulness",
+                "appreciation",
+                "being grateful",
+                "recognizing good",
+                "thank you",
+                "blessing"
+              ],
+              "pt": [
+                "agradecimento",
+                "apreciação",
+                "ser grato",
+                "reconhecer o bem",
+                "obrigado",
+                "bênção"
+              ],
+              "es": [
+                "agradecimiento",
+                "aprecio",
+                "ser agradecido",
+                "reconocer lo bueno",
+                "gracias"
+              ],
+              "fr": [
+                "remerciement",
+                "appréciation",
+                "être reconnaissant",
+                "reconnaître le bien",
+                "merci"
+              ],
+              "de": [
+                "dank",
+                "wertschätzung",
+                "dankbar sein",
+                "das gute erkennen",
+                "danke"
+              ]
+            }
+          },
+          "Compassion": {
+            "label": {
+              "en": "Compassion",
+              "pt": "Compaixão",
+              "es": "Compasión",
+              "fr": "Compassion",
+              "de": "Mitgefühl"
+            },
+            "synonyms": {
+              "en": [
+                "kindness",
+                "mercy",
+                "care",
+                "human warmth",
+                "helping those who suffer",
+                "tenderness",
+                "self-compassion",
+                "self compassion",
+                "self-kindness",
+                "self kindness",
+                "kindness to myself",
+                "being kind to myself"
+              ],
+              "pt": [
+                "bondade",
+                "misericórdia",
+                "cuidado",
+                "calor humano",
+                "ajudar quem sofre",
+                "ternura",
+                "autocompaixão",
+                "auto compaixão",
+                "compaixão por mim",
+                "gentileza comigo",
+                "ser gentil comigo"
+              ],
+              "es": [
+                "bondad",
+                "misericordia",
+                "cuidado",
+                "calidez humana",
+                "ayudar a quien sufre",
+                "ternura",
+                "autocompasión",
+                "auto compasión",
+                "compasión conmigo",
+                "ser amable conmigo"
+              ],
+              "fr": [
+                "bonté",
+                "miséricorde",
+                "soin",
+                "chaleur humaine",
+                "aider ceux qui souffrent",
+                "tendresse",
+                "autocompassion",
+                "auto compassion",
+                "compassion envers soi",
+                "être gentil avec soi"
+              ],
+              "de": [
+                "güte",
+                "barmherzigkeit",
+                "fürsorge",
+                "menschliche wärme",
+                "leidenden helfen",
+                "zärtlichkeit",
+                "selbstmitgefühl",
+                "selbst mitgefühl",
+                "mitgefühl mit mir selbst",
+                "freundlich zu mir selbst"
+              ]
+            }
+          },
+          "Integrity": {
+            "label": {
+              "en": "Integrity",
+              "pt": "Integridade",
+              "es": "Integridad",
+              "fr": "Intégrité",
+              "de": "Integrität"
+            },
+            "synonyms": {
+              "en": [
+                "ethics",
+                "moral coherence",
+                "principles",
+                "upright character",
+                "doing what is right",
+                "honor"
+              ],
+              "pt": [
+                "ética",
+                "coerência moral",
+                "princípios",
+                "caráter reto",
+                "fazer o certo",
+                "honra"
+              ],
+              "es": [
+                "ética",
+                "coherencia moral",
+                "principios",
+                "carácter recto",
+                "hacer lo correcto",
+                "honor"
+              ],
+              "fr": [
+                "éthique",
+                "cohérence morale",
+                "principes",
+                "caractère droit",
+                "faire ce qui est juste",
+                "honneur"
+              ],
+              "de": [
+                "ethik",
+                "moralische konsequenz",
+                "prinzipien",
+                "aufrichtiger charakter",
+                "das richtige tun",
+                "ehre"
+              ]
+            }
+          },
+          "Solidarity": {
+            "label": {
+              "en": "Solidarity",
+              "pt": "Solidariedade",
+              "es": "Solidaridad",
+              "fr": "Solidarité",
+              "de": "Solidarität"
+            },
+            "synonyms": {
+              "en": [
+                "mutual support",
+                "community",
+                "helping others",
+                "togetherness",
+                "cooperation",
+                "social support"
+              ],
+              "pt": [
+                "apoio mútuo",
+                "comunidade",
+                "ajudar os outros",
+                "união",
+                "cooperação",
+                "suporte social"
+              ],
+              "es": [
+                "apoyo mutuo",
+                "comunidad",
+                "ayudar a otros",
+                "unión",
+                "cooperación",
+                "apoyo social"
+              ],
+              "fr": [
+                "soutien mutuel",
+                "communauté",
+                "aider les autres",
+                "union",
+                "coopération",
+                "soutien social"
+              ],
+              "de": [
+                "gegenseitige unterstützung",
+                "gemeinschaft",
+                "anderen helfen",
+                "zusammenhalt",
+                "kooperation",
+                "soziale unterstützung"
+              ]
+            }
+          },
+          "Justice": {
+            "label": {
+              "en": "Justice",
+              "pt": "Justiça",
+              "es": "Justicia",
+              "fr": "Justice",
+              "de": "Gerechtigkeit"
+            },
+            "synonyms": {
+              "en": [
+                "fairness",
+                "equity",
+                "rights",
+                "what is fair",
+                "social justice",
+                "impartiality"
+              ],
+              "pt": [
+                "justo",
+                "equidade",
+                "direitos",
+                "o que é justo",
+                "justiça social",
+                "imparcialidade"
+              ],
+              "es": [
+                "justo",
+                "equidad",
+                "derechos",
+                "lo justo",
+                "justicia social",
+                "imparcialidad"
+              ],
+              "fr": [
+                "équité",
+                "droits",
+                "ce qui est juste",
+                "justice sociale",
+                "impartialité"
+              ],
+              "de": [
+                "gerechtigkeitssinn",
+                "fairness",
+                "rechte",
+                "was gerecht ist",
+                "soziale gerechtigkeit",
+                "unparteilichkeit"
+              ]
+            }
+          },
+          "Freedom": {
+            "label": {
+              "en": "Freedom",
+              "pt": "Liberdade",
+              "es": "Libertad",
+              "fr": "Liberté",
+              "de": "Freiheit"
+            },
+            "synonyms": {
+              "en": [
+                "autonomy",
+                "independence",
+                "free choice",
+                "self-direction",
+                "liberty",
+                "being free"
+              ],
+              "pt": [
+                "autonomia",
+                "independência",
+                "livre escolha",
+                "autodireção",
+                "ser livre",
+                "libertação"
+              ],
+              "es": [
+                "autonomía",
+                "independencia",
+                "libre elección",
+                "autodirección",
+                "ser libre"
+              ],
+              "fr": [
+                "autonomie",
+                "indépendance",
+                "libre choix",
+                "autodirection",
+                "être libre"
+              ],
+              "de": [
+                "autonomie",
+                "unabhängigkeit",
+                "freie wahl",
+                "selbstbestimmung",
+                "frei sein"
+              ]
+            }
+          },
+          "Tolerance": {
+            "label": {
+              "en": "Tolerance",
+              "pt": "Tolerância",
+              "es": "Tolerancia",
+              "fr": "Tolérance",
+              "de": "Toleranz"
+            },
+            "synonyms": {
+              "en": [
+                "acceptance",
+                "patience with differences",
+                "plurality",
+                "respect for difference",
+                "inclusion",
+                "open-mindedness",
+                "openness to differences"
+              ],
+              "pt": [
+                "aceitação",
+                "paciência com diferenças",
+                "pluralidade",
+                "respeito à diferença",
+                "inclusão",
+                "mente aberta",
+                "abertura às diferenças"
+              ],
+              "es": [
+                "aceptación",
+                "paciencia con diferencias",
+                "pluralidad",
+                "respeto a la diferencia",
+                "inclusión",
+                "mentalidad abierta",
+                "apertura a las diferencias"
+              ],
+              "fr": [
+                "acceptation",
+                "patience face aux différences",
+                "pluralité",
+                "respect de la différence",
+                "inclusion",
+                "ouverture d'esprit",
+                "ouverture aux différences"
+              ],
+              "de": [
+                "akzeptanz",
+                "geduld mit unterschieden",
+                "pluralität",
+                "respekt vor unterschieden",
+                "inklusion",
+                "aufgeschlossenheit",
+                "offenheit für unterschiede"
+              ]
+            }
+          },
+          "Joy": {
+            "label": {
+              "en": "Joy",
+              "pt": "Alegria",
+              "es": "Alegría",
+              "fr": "Joie",
+              "de": "Freude"
+            },
+            "synonyms": {
+              "en": [
+                "happiness",
+                "lightness",
+                "cheerfulness",
+                "good mood",
+                "pleasure",
+                "celebration",
+                "delight"
+              ],
+              "pt": [
+                "felicidade",
+                "leveza",
+                "bom humor",
+                "prazer",
+                "celebração",
+                "contentamento",
+                "alegre"
+              ],
+              "es": [
+                "felicidad",
+                "ligereza",
+                "buen humor",
+                "placer",
+                "celebración",
+                "alegrarse"
+              ],
+              "fr": [
+                "bonheur",
+                "légèreté",
+                "bonne humeur",
+                "plaisir",
+                "célébration",
+                "joie de vivre"
+              ],
+              "de": [
+                "glück",
+                "leichtigkeit",
+                "gute laune",
+                "freude",
+                "feier",
+                "vergnügen"
+              ]
+            }
+          },
+          "Discipline": {
+            "label": {
+              "en": "Discipline",
+              "pt": "Disciplina",
+              "es": "Disciplina",
+              "fr": "Discipline",
+              "de": "Disziplin"
+            },
+            "synonyms": {
+              "en": [
+                "self-control",
+                "organization",
+                "consistency",
+                "routine",
+                "focus",
+                "method",
+                "commitment to practice"
+              ],
+              "pt": [
+                "autocontrole",
+                "organização",
+                "consistência",
+                "rotina",
+                "foco",
+                "método",
+                "regularidade"
+              ],
+              "es": [
+                "autocontrol",
+                "organización",
+                "consistencia",
+                "rutina",
+                "enfoque",
+                "método",
+                "regularidad"
+              ],
+              "fr": [
+                "maîtrise de soi",
+                "organisation",
+                "cohérence",
+                "routine",
+                "concentration",
+                "méthode",
+                "régularité"
+              ],
+              "de": [
+                "selbstkontrolle",
+                "organisation",
+                "beständigkeit",
+                "routine",
+                "fokus",
+                "methode",
+                "regelmäßigkeit"
+              ]
+            }
+          },
+          "Trust": {
+            "label": {
+              "en": "Trust",
+              "pt": "Confiança",
+              "es": "Confianza",
+              "fr": "Confiance",
+              "de": "Vertrauen"
+            },
+            "synonyms": {
+              "en": [
+                "confidence",
+                "faith in others",
+                "reliance",
+                "credibility",
+                "safe bond",
+                "believing",
+                "self-confidence",
+                "self confidence",
+                "confidence in myself",
+                "trusting myself",
+                "trust myself"
+              ],
+              "pt": [
+                "crer",
+                "fé no outro",
+                "segurança",
+                "credibilidade",
+                "vínculo seguro",
+                "acreditar",
+                "autoconfiança",
+                "auto confiança",
+                "confiança em mim",
+                "confiar em mim",
+                "confiar em mim mesmo",
+                "confiar em mim mesma"
+              ],
+              "es": [
+                "confianza en otros",
+                "seguridad",
+                "credibilidad",
+                "vínculo seguro",
+                "creer",
+                "autoconfianza",
+                "auto confianza",
+                "confianza en mí",
+                "confiar en mí",
+                "confiar en mí mismo",
+                "confiar en mí misma"
+              ],
+              "fr": [
+                "foi en l'autre",
+                "sécurité",
+                "crédibilité",
+                "lien sûr",
+                "croire",
+                "confiance en soi",
+                "me faire confiance",
+                "se faire confiance"
+              ],
+              "de": [
+                "vertrauen in andere",
+                "sicherheit",
+                "glaubwürdigkeit",
+                "sichere bindung",
+                "glauben",
+                "selbstvertrauen",
+                "vertrauen in mich selbst",
+                "mir selbst vertrauen"
+              ]
+            }
+          },
+          "Humility": {
+            "label": {
+              "en": "Humility",
+              "pt": "Humildade",
+              "es": "Humildad",
+              "fr": "Humilité",
+              "de": "Demut"
+            },
+            "synonyms": {
+              "en": [
+                "modesty",
+                "simplicity",
+                "learning posture",
+                "low ego",
+                "recognizing limits",
+                "being humble"
+              ],
+              "pt": [
+                "modéstia",
+                "simplicidade",
+                "postura de aprendiz",
+                "baixo ego",
+                "reconhecer limites",
+                "ser humilde"
+              ],
+              "es": [
+                "modestia",
+                "simplicidad",
+                "actitud de aprendiz",
+                "poco ego",
+                "reconocer límites",
+                "ser humilde"
+              ],
+              "fr": [
+                "modestie",
+                "simplicité",
+                "posture d'apprentissage",
+                "peu d'ego",
+                "reconnaître ses limites",
+                "être humble"
+              ],
+              "de": [
+                "bescheidenheit",
+                "einfachheit",
+                "lernhaltung",
+                "wenig ego",
+                "grenzen erkennen",
+                "demütig sein"
+              ]
+            }
+          },
+          "Wisdom": {
+            "label": {
+              "en": "Wisdom",
+              "pt": "Sabedoria",
+              "es": "Sabiduría",
+              "fr": "Sagesse",
+              "de": "Weisheit"
+            },
+            "synonyms": {
+              "en": [
+                "discernment",
+                "good judgment",
+                "maturity",
+                "learning from experience",
+                "prudence",
+                "insight"
+              ],
+              "pt": [
+                "discernimento",
+                "bom julgamento",
+                "maturidade",
+                "aprender com a experiência",
+                "prudência",
+                "lucidez"
+              ],
+              "es": [
+                "discernimiento",
+                "buen juicio",
+                "madurez",
+                "aprender de la experiencia",
+                "prudencia",
+                "lucidez"
+              ],
+              "fr": [
+                "discernement",
+                "bon jugement",
+                "maturité",
+                "apprendre de l'expérience",
+                "prudence",
+                "lucidité"
+              ],
+              "de": [
+                "urteilskraft",
+                "gutes urteilsvermögen",
+                "reife",
+                "aus erfahrung lernen",
+                "klugheit",
+                "einsicht"
+              ]
+            }
+          },
+          "Transparency": {
+            "label": {
+              "en": "Transparency",
+              "pt": "Transparência",
+              "es": "Transparencia",
+              "fr": "Transparence",
+              "de": "Transparenz"
+            },
+            "synonyms": {
+              "en": [
+                "clarity",
+                "no hidden agenda",
+                "being clear",
+                "straightforwardness",
+                "openness in communication",
+                "transparent communication"
+              ],
+              "pt": [
+                "clareza",
+                "sem segundas intenções",
+                "ser claro",
+                "objetividade",
+                "comunicação aberta",
+                "transparência na comunicação"
+              ],
+              "es": [
+                "claridad",
+                "sin doble intención",
+                "ser claro",
+                "comunicación abierta",
+                "transparencia en la comunicación",
+                "comunicación directa"
+              ],
+              "fr": [
+                "clarté",
+                "sans arrière-pensée",
+                "être clair",
+                "communication ouverte",
+                "transparence dans la communication"
+              ],
+              "de": [
+                "klarheit",
+                "keine versteckte absicht",
+                "klar sein",
+                "direktheit",
+                "offene kommunikation",
+                "transparenz in der kommunikation"
+              ]
+            }
+          },
+          "Creativity": {
+            "label": {
+              "en": "Creativity",
+              "pt": "Criatividade",
+              "es": "Creatividad",
+              "fr": "Créativité",
+              "de": "Kreativität"
+            },
+            "synonyms": {
+              "en": [
+                "imagination",
+                "innovation",
+                "originality",
+                "inventiveness",
+                "creating",
+                "new ideas",
+                "creative thinking"
+              ],
+              "pt": [
+                "imaginação",
+                "inovação",
+                "originalidade",
+                "inventividade",
+                "criar",
+                "novas ideias",
+                "pensamento criativo"
+              ],
+              "es": [
+                "imaginación",
+                "innovación",
+                "originalidad",
+                "inventiva",
+                "crear",
+                "nuevas ideas",
+                "pensamiento creativo"
+              ],
+              "fr": [
+                "imagination",
+                "innovation",
+                "originalité",
+                "inventivité",
+                "créer",
+                "nouvelles idées",
+                "pensée créative"
+              ],
+              "de": [
+                "vorstellungskraft",
+                "innovation",
+                "originalität",
+                "erfindergeist",
+                "erschaffen",
+                "neue ideen",
+                "kreatives denken"
+              ]
+            }
+          }
         },
-        {
-          "value": "Respect",
-          "label": {
-            "en": "Respect",
-            "pt": "Respeito",
-            "es": "Respeto",
-            "fr": "Respect",
-            "de": "Respekt"
-          },
-          "redirect": null
+        "min_values": 5,
+        "max_values": 5,
+        "strong_lock_threshold": 0.72,
+        "ai_review_enabled": true,
+        "ai_review_below_score": 82,
+        "ai_association_threshold": 0.6,
+        "ai_lock_threshold": 0.78,
+        "ai_provider": "openai",
+        "ai_result_contract": {
+          "selected_categories": "array of exactly 5 base categories with similarity 0-100",
+          "corrected_text": "text after likely spelling correction",
+          "keywords": "keywords extracted after stopword filtering",
+          "contextual_terms": "meaningful terms outside the 20 base categories",
+          "requires_manual_selection": "true when fewer than 5, more than 5, ambiguous, low-confidence, or outside the expected value pattern; the UI must open the supplemental multi-choice screen instead of showing a text fallback"
         },
-        {
-          "value": "Empathy",
-          "label": {
-            "en": "Empathy",
-            "pt": "Empatia",
-            "es": "Empatía",
-            "fr": "Empathie",
-            "de": "Empathie"
-          },
-          "redirect": null
+        "supplemental_screen": {
+          "type": "multi_choice",
+          "behavior": "full_screen",
+          "min_select": 5,
+          "max_select": 5,
+          "lock_validated_categories": true,
+          "open_when": [
+            "fewer_than_5_values_detected",
+            "ambiguous_similarity",
+            "low_confidence",
+            "no_semantic_match",
+            "text_outside_expected_value_pattern"
+          ]
         },
-        {
-          "value": "Responsibility",
-          "label": {
-            "en": "Responsibility",
-            "pt": "Responsabilidade",
-            "es": "Responsabilidad",
-            "fr": "Responsabilité",
-            "de": "Verantwortung"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Perseverance",
-          "label": {
-            "en": "Perseverance",
-            "pt": "Perseverança",
-            "es": "Perseverancia",
-            "fr": "Persévérance",
-            "de": "Ausdauer"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Courage",
-          "label": {
-            "en": "Courage",
-            "pt": "Coragem",
-            "es": "Coraje",
-            "fr": "Courage",
-            "de": "Mut"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Gratitude",
-          "label": {
-            "en": "Gratitude",
-            "pt": "Gratidão",
-            "es": "Gratitud",
-            "fr": "Gratitude",
-            "de": "Dankbarkeit"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Compassion",
-          "label": {
-            "en": "Compassion",
-            "pt": "Compaixão",
-            "es": "Compasión",
-            "fr": "Compassion",
-            "de": "Mitgefühl"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Integrity",
-          "label": {
-            "en": "Integrity",
-            "pt": "Integridade",
-            "es": "Integridad",
-            "fr": "Intégrité",
-            "de": "Integrität"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Solidarity",
-          "label": {
-            "en": "Solidarity",
-            "pt": "Solidariedade",
-            "es": "Solidaridad",
-            "fr": "Solidarité",
-            "de": "Solidarität"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Justice",
-          "label": {
-            "en": "Justice",
-            "pt": "Justiça",
-            "es": "Justicia",
-            "fr": "Justice",
-            "de": "Gerechtigkeit"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Freedom",
-          "label": {
-            "en": "Freedom",
-            "pt": "Liberdade",
-            "es": "Libertad",
-            "fr": "Liberté",
-            "de": "Freiheit"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Tolerance",
-          "label": {
-            "en": "Tolerance",
-            "pt": "Tolerância",
-            "es": "Tolerancia",
-            "fr": "Tolérance",
-            "de": "Toleranz"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Joy",
-          "label": {
-            "en": "Joy",
-            "pt": "Alegria",
-            "es": "Alegría",
-            "fr": "Joie",
-            "de": "Freude"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Discipline",
-          "label": {
-            "en": "Discipline",
-            "pt": "Disciplina",
-            "es": "Disciplina",
-            "fr": "Discipline",
-            "de": "Disziplin"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Trust",
-          "label": {
-            "en": "Trust",
-            "pt": "Confiança",
-            "es": "Confianza",
-            "fr": "Confiance",
-            "de": "Vertrauen"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Humility",
-          "label": {
-            "en": "Humility",
-            "pt": "Humildade",
-            "es": "Humildad",
-            "fr": "Humilité",
-            "de": "Demut"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Wisdom",
-          "label": {
-            "en": "Wisdom",
-            "pt": "Sabedoria",
-            "es": "Sabiduría",
-            "fr": "Sagesse",
-            "de": "Weisheit"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Transparency",
-          "label": {
-            "en": "Transparency",
-            "pt": "Transparência",
-            "es": "Transparencia",
-            "fr": "Transparence",
-            "de": "Transparenz"
-          },
-          "redirect": null
-        },
-        {
-          "value": "Creativity",
-          "label": {
-            "en": "Creativity",
-            "pt": "Criatividade",
-            "es": "Creatividad",
-            "fr": "Créativité",
-            "de": "Kreativität"
-          },
-          "redirect": null
-        }
-      ],
-      "std_next_question": "Qt6_reason"
+        "min_select": 5,
+        "max_select": 5
+      },
+      "std_next_question": "Qt6_reason",
+      "min_select": 5,
+      "max_select": 5,
+      "min_values": 5,
+      "max_values": 5,
+      "input_layout": "five_boxes",
+      "free_text_slots": 5,
+      "slot_placeholders": {
+        "en": [
+          "Value 1",
+          "Value 2",
+          "Value 3",
+          "Value 4",
+          "Value 5"
+        ],
+        "pt": [
+          "Valor 1",
+          "Valor 2",
+          "Valor 3",
+          "Valor 4",
+          "Valor 5"
+        ],
+        "es": [
+          "Valor 1",
+          "Valor 2",
+          "Valor 3",
+          "Valor 4",
+          "Valor 5"
+        ],
+        "fr": [
+          "Valeur 1",
+          "Valeur 2",
+          "Valeur 3",
+          "Valeur 4",
+          "Valeur 5"
+        ],
+        "de": [
+          "Wert 1",
+          "Wert 2",
+          "Wert 3",
+          "Wert 4",
+          "Wert 5"
+        ]
+      },
+      "unit_label": {
+        "en": "values required",
+        "pt": "valores obrigatórios",
+        "es": "valores requeridos",
+        "fr": "valeurs requises",
+        "de": "erforderliche Werte"
+      },
+      "manual_selection_enabled": true,
+      "manual_selection_label": {
+        "en": "Choose from a list",
+        "pt": "Escolher em uma lista",
+        "es": "Elegir de una lista",
+        "fr": "Choisir dans une liste",
+        "de": "Aus einer Liste auswählen"
+      },
+      "manual_selection_help": {
+        "en": "Not sure what to write or unable to complete every field? Continue or choose from the list of available options.",
+        "pt": "Não sabe o que escrever ou não consegue preencher todos os campos? Continue ou escolha na lista de opções disponíveis.",
+        "es": "¿No sabe qué escribir o no puede completar todos los campos? Continúe o elija de la lista de opciones disponibles.",
+        "fr": "Vous ne savez pas quoi écrire ou ne pouvez pas remplir tous les champs ? Continuez ou choisissez dans la liste des options disponibles.",
+        "de": "Sie wissen nicht, was Sie schreiben sollen, oder können nicht alle Felder ausfüllen? Fahren Sie fort oder wählen Sie aus der Liste der verfügbaren Optionen."
+      }
     },
     {
       "id": "Qt6_reason",
@@ -504,25 +2233,35 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt6_reason_text",
       "text": {
         "en": "Why are these values important to you?",
         "pt": "Por que esses valores são importantes para você?",
-        "es": "¿Por qué estos valores son importantes para ti?",
+        "es": "¿Por qué estos valores son importantes para usted?",
         "fr": "Pourquoi ces valeurs sont-elles importantes pour vous ?",
         "de": "Warum sind diese Werte für Sie wichtig?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "Qt7"
     },
     {
       "id": "Qt7",
-      "type": "multi_choice",
+      "type": "free_text",
       "max_select": 5,
       "text": {
-        "en": "What foundations or strengths give you stability in your life?",
-        "pt": "Quais bases ou forças dão estabilidade à sua vida?",
-        "es": "¿Qué bases o fortalezas te dan estabilidad en tu vida?",
-        "fr": "Quels fondements ou quelles forces vous apportent de la stabilité dans votre vie ?",
-        "de": "Welche Grundlagen oder Stärken geben Ihnen Stabilität in Ihrem Leben?"
+        "en": "What foundations or strengths give you stability in your life? Write exactly 5 pillars, one in each box.",
+        "pt": "Quais bases ou forças dão estabilidade à sua vida? Escreva exatamente 5 pilares, um em cada caixa.",
+        "es": "¿Qué bases o fortalezas dan estabilidad a su vida? Escriba exactamente 5 pilares, uno en cada casilla.",
+        "fr": "Quelles bases ou forces donnent de la stabilité à votre vie ? Écrivez exactement 5 piliers, un dans chaque case.",
+        "de": "Welche Grundlagen oder Stärken geben Ihrem Leben Stabilität? Schreiben Sie genau 5 Säulen, eine in jedes Feld."
       },
       "options": [
         {
@@ -621,6 +2360,17 @@
             "es": "Autoconocimiento",
             "fr": "Connaissance de soi",
             "de": "Selbsterkenntnis"
+          },
+          "redirect": null
+        },
+        {
+          "value": "Resilience",
+          "label": {
+            "en": "Resilience",
+            "pt": "Resiliência",
+            "es": "Resiliencia",
+            "fr": "Résilience",
+            "de": "Resilienz"
           },
           "redirect": null
         },
@@ -735,7 +2485,1821 @@
           "redirect": null
         }
       ],
-      "std_next_question": "Qt7_reason"
+      "std_next_question": "Qt7_reason",
+      "nlp": {
+        "mode": "life_pillar_association",
+        "association_threshold": 0.6,
+        "invalid_scope_threshold": 0.12,
+        "store_raw_answer_as": "Qt7_text",
+        "store_score_as": "Qt7_score",
+        "categories": {
+          "Work": {
+            "value": "Work",
+            "label": {
+              "en": "Work",
+              "pt": "Trabalho",
+              "es": "Trabajo",
+              "fr": "Travail",
+              "de": "Arbeit"
+            },
+            "base_terms": {
+              "en": [
+                "Work"
+              ],
+              "pt": [
+                "Trabalho",
+                "Work"
+              ],
+              "es": [
+                "Trabajo",
+                "Work"
+              ],
+              "fr": [
+                "Travail",
+                "Work"
+              ],
+              "de": [
+                "Arbeit",
+                "Work"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "work",
+                "career",
+                "job",
+                "profession",
+                "professional life",
+                "occupation",
+                "employment",
+                "productivity",
+                "work life",
+                "skilled trade"
+              ],
+              "pt": [
+                "trabalho",
+                "carreira",
+                "emprego",
+                "profissão",
+                "profissao",
+                "vida profissional",
+                "ocupação",
+                "ocupacao",
+                "produtividade",
+                "ofício",
+                "oficio"
+              ],
+              "es": [
+                "trabajo",
+                "carrera",
+                "empleo",
+                "profesión",
+                "vida profesional",
+                "ocupación",
+                "productividad",
+                "oficio"
+              ],
+              "fr": [
+                "travail",
+                "carriere",
+                "emploi",
+                "profession",
+                "vie professionnelle",
+                "occupation",
+                "productivite",
+                "metier"
+              ],
+              "de": [
+                "arbeit",
+                "karriere",
+                "beruf",
+                "job",
+                "berufsleben",
+                "beschäftigung",
+                "beschaeftigung",
+                "produktivität",
+                "produktivitaet"
+              ]
+            }
+          },
+          "Love": {
+            "value": "Love",
+            "label": {
+              "en": "Love",
+              "pt": "Amor",
+              "es": "Amor",
+              "fr": "Amour",
+              "de": "Liebe"
+            },
+            "base_terms": {
+              "en": [
+                "Love"
+              ],
+              "pt": [
+                "Amor",
+                "Love"
+              ],
+              "es": [
+                "Amor",
+                "Love"
+              ],
+              "fr": [
+                "Amour",
+                "Love"
+              ],
+              "de": [
+                "Liebe",
+                "Love"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "love",
+                "affection",
+                "romantic bond",
+                "caring relationship",
+                "partner",
+                "emotional bond",
+                "deep affection",
+                "loving connection"
+              ],
+              "pt": [
+                "amor",
+                "afeto",
+                "relação amorosa",
+                "relacao amorosa",
+                "parceiro",
+                "parceira",
+                "vínculo afetivo",
+                "vinculo afetivo",
+                "conexão amorosa"
+              ],
+              "es": [
+                "amor",
+                "afecto",
+                "relación amorosa",
+                "pareja",
+                "vínculo afectivo",
+                "conexión amorosa"
+              ],
+              "fr": [
+                "amour",
+                "affection",
+                "relation amoureuse",
+                "partenaire",
+                "lien affectif",
+                "connexion amoureuse"
+              ],
+              "de": [
+                "liebe",
+                "zuneigung",
+                "romantische beziehung",
+                "partner",
+                "partnerin",
+                "emotionale bindung",
+                "liebevolle verbindung"
+              ]
+            }
+          },
+          "Family": {
+            "value": "Family",
+            "label": {
+              "en": "Family",
+              "pt": "Família",
+              "es": "Familia",
+              "fr": "Famille",
+              "de": "Familie"
+            },
+            "base_terms": {
+              "en": [
+                "Family"
+              ],
+              "pt": [
+                "Família",
+                "Family"
+              ],
+              "es": [
+                "Familia",
+                "Family"
+              ],
+              "fr": [
+                "Famille",
+                "Family"
+              ],
+              "de": [
+                "Familie",
+                "Family"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "family",
+                "parents",
+                "children",
+                "home family",
+                "relatives",
+                "kinship",
+                "family bond",
+                "household",
+                "siblings"
+              ],
+              "pt": [
+                "família",
+                "familia",
+                "pais",
+                "filhos",
+                "parentes",
+                "laços familiares",
+                "lacos familiares",
+                "casa",
+                "irmãos",
+                "irmaos"
+              ],
+              "es": [
+                "familia",
+                "padres",
+                "hijos",
+                "parientes",
+                "lazos familiares",
+                "hogar",
+                "hermanos"
+              ],
+              "fr": [
+                "famille",
+                "parents",
+                "enfants",
+                "proches",
+                "liens familiaux",
+                "foyer",
+                "freres",
+                "soeurs"
+              ],
+              "de": [
+                "familie",
+                "eltern",
+                "kinder",
+                "verwandte",
+                "familienbindung",
+                "haushalt",
+                "geschwister",
+                "zuhause"
+              ]
+            }
+          },
+          "Friendships": {
+            "value": "Friendships",
+            "label": {
+              "en": "Friendships",
+              "pt": "Amizades",
+              "es": "Amistades",
+              "fr": "Amitiés",
+              "de": "Freundschaften"
+            },
+            "base_terms": {
+              "en": [
+                "Friendships"
+              ],
+              "pt": [
+                "Amizades",
+                "Friendships"
+              ],
+              "es": [
+                "Amistades",
+                "Friendships"
+              ],
+              "fr": [
+                "Amitiés",
+                "Friendships"
+              ],
+              "de": [
+                "Freundschaften",
+                "Friendships"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "friendships",
+                "friends",
+                "social circle",
+                "companionship",
+                "close friends",
+                "peer support",
+                "belonging with friends"
+              ],
+              "pt": [
+                "amizades",
+                "amigos",
+                "amigas",
+                "círculo social",
+                "circulo social",
+                "companheirismo",
+                "amigos próximos",
+                "apoio dos amigos",
+                "pertencimento"
+              ],
+              "es": [
+                "amistades",
+                "amigos",
+                "amigas",
+                "círculo social",
+                "compañerismo",
+                "amigos cercanos",
+                "apoyo de amigos"
+              ],
+              "fr": [
+                "amities",
+                "amis",
+                "amies",
+                "cercle social",
+                "compagnonnage",
+                "amis proches",
+                "soutien des amis"
+              ],
+              "de": [
+                "freundschaften",
+                "freunde",
+                "sozialer kreis",
+                "kameradschaft",
+                "enge freunde",
+                "unterstützung durch freunde"
+              ]
+            }
+          },
+          "Health": {
+            "value": "Health",
+            "label": {
+              "en": "Health",
+              "pt": "Saúde",
+              "es": "Salud",
+              "fr": "Santé",
+              "de": "Gesundheit"
+            },
+            "base_terms": {
+              "en": [
+                "Health"
+              ],
+              "pt": [
+                "Saúde",
+                "Health"
+              ],
+              "es": [
+                "Salud",
+                "Health"
+              ],
+              "fr": [
+                "Santé",
+                "Health"
+              ],
+              "de": [
+                "Gesundheit",
+                "Health"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "health",
+                "wellbeing",
+                "well-being",
+                "physical health",
+                "mental health",
+                "body",
+                "energy",
+                "healthy life",
+                "self-care"
+              ],
+              "pt": [
+                "saúde",
+                "saude",
+                "bem-estar",
+                "bem estar",
+                "saúde física",
+                "saude fisica",
+                "saúde mental",
+                "saude mental",
+                "corpo",
+                "energia",
+                "vida saudável",
+                "autocuidado"
+              ],
+              "es": [
+                "salud",
+                "bienestar",
+                "salud física",
+                "salud mental",
+                "cuerpo",
+                "energía",
+                "vida saludable",
+                "autocuidado"
+              ],
+              "fr": [
+                "sante",
+                "bien-etre",
+                "sante physique",
+                "sante mentale",
+                "corps",
+                "energie",
+                "vie saine",
+                "soin de soi"
+              ],
+              "de": [
+                "gesundheit",
+                "wohlbefinden",
+                "körperliche gesundheit",
+                "koerperliche gesundheit",
+                "mentale gesundheit",
+                "körper",
+                "koerper",
+                "energie",
+                "gesundes leben",
+                "selbstfürsorge"
+              ]
+            }
+          },
+          "Money": {
+            "value": "Money",
+            "label": {
+              "en": "Money",
+              "pt": "Dinheiro",
+              "es": "Dinero",
+              "fr": "Argent",
+              "de": "Geld"
+            },
+            "base_terms": {
+              "en": [
+                "Money"
+              ],
+              "pt": [
+                "Dinheiro",
+                "Money"
+              ],
+              "es": [
+                "Dinero",
+                "Money"
+              ],
+              "fr": [
+                "Argent",
+                "Money"
+              ],
+              "de": [
+                "Geld",
+                "Money"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "money",
+                "income",
+                "financial stability",
+                "wealth",
+                "salary",
+                "resources",
+                "financial security",
+                "economic life"
+              ],
+              "pt": [
+                "dinheiro",
+                "renda",
+                "estabilidade financeira",
+                "riqueza",
+                "salário",
+                "salario",
+                "recursos",
+                "segurança financeira",
+                "vida econômica"
+              ],
+              "es": [
+                "dinero",
+                "ingresos",
+                "estabilidad financiera",
+                "riqueza",
+                "salario",
+                "recursos",
+                "seguridad financiera",
+                "vida económica"
+              ],
+              "fr": [
+                "argent",
+                "revenu",
+                "stabilite financiere",
+                "richesse",
+                "salaire",
+                "ressources",
+                "securite financiere",
+                "vie economique"
+              ],
+              "de": [
+                "geld",
+                "einkommen",
+                "finanzielle stabilität",
+                "finanzielle stabilitaet",
+                "vermögen",
+                "vermoegen",
+                "gehalt",
+                "ressourcen",
+                "finanzielle sicherheit"
+              ]
+            }
+          },
+          "Purpose": {
+            "value": "Purpose",
+            "label": {
+              "en": "Purpose",
+              "pt": "Propósito",
+              "es": "Propósito",
+              "fr": "Raison d'être",
+              "de": "Bestimmung"
+            },
+            "base_terms": {
+              "en": [
+                "Purpose"
+              ],
+              "pt": [
+                "Propósito",
+                "Purpose"
+              ],
+              "es": [
+                "Propósito",
+                "Purpose"
+              ],
+              "fr": [
+                "Raison d'être",
+                "Purpose"
+              ],
+              "de": [
+                "Bestimmung",
+                "Purpose"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "purpose",
+                "meaning",
+                "life mission",
+                "direction",
+                "calling",
+                "reason to live",
+                "sense of direction",
+                "why I do things"
+              ],
+              "pt": [
+                "propósito",
+                "proposito",
+                "sentido",
+                "missão de vida",
+                "missao de vida",
+                "direção",
+                "direcao",
+                "vocação",
+                "vocacao",
+                "razão de viver",
+                "razao de viver"
+              ],
+              "es": [
+                "propósito",
+                "sentido",
+                "misión de vida",
+                "dirección",
+                "vocación",
+                "razón para vivir"
+              ],
+              "fr": [
+                "but",
+                "sens",
+                "mission de vie",
+                "direction",
+                "vocation",
+                "raison de vivre"
+              ],
+              "de": [
+                "zweck",
+                "sinn",
+                "lebensmission",
+                "richtung",
+                "berufung",
+                "grund zu leben",
+                "lebenssinn"
+              ]
+            }
+          },
+          "Social Contribution": {
+            "value": "Social Contribution",
+            "label": {
+              "en": "Social Contribution",
+              "pt": "Contribuição Social",
+              "es": "Contribución Social",
+              "fr": "Contribution Sociale",
+              "de": "Sozialer Beitrag"
+            },
+            "base_terms": {
+              "en": [
+                "Social Contribution"
+              ],
+              "pt": [
+                "Contribuição Social",
+                "Social Contribution"
+              ],
+              "es": [
+                "Contribución Social",
+                "Social Contribution"
+              ],
+              "fr": [
+                "Contribution Sociale",
+                "Social Contribution"
+              ],
+              "de": [
+                "Sozialer Beitrag",
+                "Social Contribution"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "social contribution",
+                "contribution",
+                "impact",
+                "help society",
+                "make a difference",
+                "social impact",
+                "community impact",
+                "serve others"
+              ],
+              "pt": [
+                "contribuição social",
+                "contribuicao social",
+                "contribuição",
+                "contribuicao",
+                "impacto",
+                "ajudar a sociedade",
+                "fazer diferença",
+                "fazer diferenca",
+                "impacto social",
+                "servir aos outros"
+              ],
+              "es": [
+                "contribución social",
+                "contribución",
+                "impacto",
+                "ayudar a la sociedad",
+                "marcar la diferencia",
+                "impacto social",
+                "servir a otros"
+              ],
+              "fr": [
+                "contribution sociale",
+                "contribution",
+                "impact",
+                "aider la societe",
+                "faire la difference",
+                "impact social",
+                "servir les autres"
+              ],
+              "de": [
+                "sozialer beitrag",
+                "beitrag",
+                "wirkung",
+                "gesellschaft helfen",
+                "einen unterschied machen",
+                "sozialer einfluss",
+                "anderen dienen"
+              ]
+            }
+          },
+          "Self-Knowledge": {
+            "value": "Self-Knowledge",
+            "label": {
+              "en": "Self-Knowledge",
+              "pt": "Autoconhecimento",
+              "es": "Autoconocimiento",
+              "fr": "Connaissance de soi",
+              "de": "Selbsterkenntnis"
+            },
+            "base_terms": {
+              "en": [
+                "Self-Knowledge"
+              ],
+              "pt": [
+                "Autoconhecimento",
+                "Self-Knowledge"
+              ],
+              "es": [
+                "Autoconocimiento",
+                "Self-Knowledge"
+              ],
+              "fr": [
+                "Connaissance de soi",
+                "Self-Knowledge"
+              ],
+              "de": [
+                "Selbsterkenntnis",
+                "Self-Knowledge"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "self-knowledge",
+                "self knowledge",
+                "self-awareness",
+                "knowing myself",
+                "inner understanding",
+                "personal insight",
+                "introspection",
+                "self-discovery"
+              ],
+              "pt": [
+                "autoconhecimento",
+                "auto conhecimento",
+                "autoconsciência",
+                "autoconsciencia",
+                "me conhecer",
+                "conhecer a mim mesmo",
+                "compreensão interna",
+                "introspecção",
+                "introspeccao",
+                "descoberta pessoal"
+              ],
+              "es": [
+                "autoconocimiento",
+                "auto conocimiento",
+                "autoconciencia",
+                "conocerme",
+                "comprensión interna",
+                "introspección",
+                "descubrimiento personal"
+              ],
+              "fr": [
+                "connaissance de soi",
+                "auto connaissance",
+                "conscience de soi",
+                "me connaitre",
+                "comprehension interieure",
+                "introspection",
+                "decouverte de soi"
+              ],
+              "de": [
+                "selbsterkenntnis",
+                "selbstkenntnis",
+                "selbstbewusstsein",
+                "mich selbst kennen",
+                "inneres verständnis",
+                "introspektion",
+                "selbstentdeckung"
+              ]
+            }
+          },
+          "Resilience": {
+            "value": "Resilience",
+            "label": {
+              "en": "Resilience",
+              "pt": "Resiliência",
+              "es": "Resiliencia",
+              "fr": "Résilience",
+              "de": "Resilienz"
+            },
+            "base_terms": {
+              "en": [
+                "Resilience"
+              ],
+              "pt": [
+                "Resiliência",
+                "Resilience"
+              ],
+              "es": [
+                "Resiliencia",
+                "Resilience"
+              ],
+              "fr": [
+                "Résilience",
+                "Resilience"
+              ],
+              "de": [
+                "Resilienz",
+                "Resilience"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "resilience",
+                "adaptability after setbacks",
+                "ability to recover",
+                "bouncing back",
+                "recovering from setbacks",
+                "emotional strength after difficulty",
+                "coping with adversity",
+                "flexibility under pressure"
+              ],
+              "pt": [
+                "resiliência",
+                "resiliencia",
+                "adaptação após dificuldades",
+                "adaptacao apos dificuldades",
+                "capacidade de recuperação",
+                "capacidade de recuperacao",
+                "dar a volta por cima",
+                "recuperar-se de dificuldades",
+                "força diante das adversidades",
+                "flexibilidade sob pressão"
+              ],
+              "es": [
+                "resiliencia",
+                "adaptación tras las dificultades",
+                "capacidad de recuperación",
+                "volver a levantarse",
+                "recuperarse de las dificultades",
+                "fortaleza ante la adversidad",
+                "flexibilidad bajo presión"
+              ],
+              "fr": [
+                "résilience",
+                "resilience",
+                "adaptation après les difficultés",
+                "capacité de rebondir",
+                "se relever",
+                "récupération après une difficulté",
+                "force face à l’adversité",
+                "flexibilité sous pression"
+              ],
+              "de": [
+                "resilienz",
+                "widerstandskraft",
+                "anpassungsfähigkeit nach rückschlägen",
+                "anpassungsfaehigkeit nach rueckschlaegen",
+                "sich von rückschlägen erholen",
+                "sich von rueckschlaegen erholen",
+                "wieder aufstehen",
+                "innere stärke nach schwierigkeiten",
+                "innere staerke nach schwierigkeiten"
+              ]
+            }
+          },
+          "Recognition": {
+            "value": "Recognition",
+            "label": {
+              "en": "Recognition",
+              "pt": "Reconhecimento",
+              "es": "Reconocimiento",
+              "fr": "Reconnaissance",
+              "de": "Anerkennung"
+            },
+            "base_terms": {
+              "en": [
+                "Recognition"
+              ],
+              "pt": [
+                "Reconhecimento",
+                "Recognition"
+              ],
+              "es": [
+                "Reconocimiento",
+                "Recognition"
+              ],
+              "fr": [
+                "Reconnaissance",
+                "Recognition"
+              ],
+              "de": [
+                "Anerkennung",
+                "Recognition"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "recognition",
+                "being valued",
+                "status",
+                "prestige",
+                "acknowledgment",
+                "visibility",
+                "being seen",
+                "appreciation by others"
+              ],
+              "pt": [
+                "reconhecimento",
+                "ser valorizado",
+                "status",
+                "prestígio",
+                "prestigio",
+                "validação",
+                "validacao",
+                "visibilidade",
+                "ser visto",
+                "apreciação dos outros"
+              ],
+              "es": [
+                "reconocimiento",
+                "ser valorado",
+                "estatus",
+                "prestigio",
+                "validación",
+                "visibilidad",
+                "ser visto",
+                "aprecio de otros"
+              ],
+              "fr": [
+                "reconnaissance",
+                "etre valorise",
+                "statut",
+                "prestige",
+                "validation",
+                "visibilite",
+                "etre vu",
+                "appreciation des autres"
+              ],
+              "de": [
+                "anerkennung",
+                "wertgeschätzt werden",
+                "wertgeschaetzt werden",
+                "status",
+                "prestige",
+                "bestätigung",
+                "bestaetigung",
+                "sichtbarkeit",
+                "gesehen werden"
+              ]
+            }
+          },
+          "Sustainability": {
+            "value": "Sustainability",
+            "label": {
+              "en": "Sustainability",
+              "pt": "Sustentabilidade",
+              "es": "Sostenibilidad",
+              "fr": "Durabilité",
+              "de": "Nachhaltigkeit"
+            },
+            "base_terms": {
+              "en": [
+                "Sustainability"
+              ],
+              "pt": [
+                "Sustentabilidade",
+                "Sustainability"
+              ],
+              "es": [
+                "Sostenibilidad",
+                "Sustainability"
+              ],
+              "fr": [
+                "Durabilité",
+                "Sustainability"
+              ],
+              "de": [
+                "Nachhaltigkeit",
+                "Sustainability"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "sustainability",
+                "environment",
+                "ecology",
+                "nature",
+                "planet",
+                "environmental care",
+                "sustainable future",
+                "climate care"
+              ],
+              "pt": [
+                "sustentabilidade",
+                "meio ambiente",
+                "ecologia",
+                "natureza",
+                "planeta",
+                "cuidado ambiental",
+                "futuro sustentável",
+                "futuro sustentavel",
+                "clima"
+              ],
+              "es": [
+                "sostenibilidad",
+                "medio ambiente",
+                "ecología",
+                "naturaleza",
+                "planeta",
+                "cuidado ambiental",
+                "futuro sostenible",
+                "clima"
+              ],
+              "fr": [
+                "durabilite",
+                "environnement",
+                "ecologie",
+                "nature",
+                "planete",
+                "soin environnemental",
+                "avenir durable",
+                "climat"
+              ],
+              "de": [
+                "nachhaltigkeit",
+                "umwelt",
+                "ökologie",
+                "oekologie",
+                "natur",
+                "planet",
+                "umweltschutz",
+                "nachhaltige zukunft",
+                "klima"
+              ]
+            }
+          },
+          "Entrepreneurship": {
+            "value": "Entrepreneurship",
+            "label": {
+              "en": "Entrepreneurship",
+              "pt": "Empreendedorismo",
+              "es": "Emprendimiento",
+              "fr": "Entrepreneuriat",
+              "de": "Unternehmertum"
+            },
+            "base_terms": {
+              "en": [
+                "Entrepreneurship"
+              ],
+              "pt": [
+                "Empreendedorismo",
+                "Entrepreneurship"
+              ],
+              "es": [
+                "Emprendimiento",
+                "Entrepreneurship"
+              ],
+              "fr": [
+                "Entrepreneuriat",
+                "Entrepreneurship"
+              ],
+              "de": [
+                "Unternehmertum",
+                "Entrepreneurship"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "entrepreneurship",
+                "business",
+                "startup",
+                "venture",
+                "creating business",
+                "innovation business",
+                "enterprise",
+                "own business"
+              ],
+              "pt": [
+                "empreendedorismo",
+                "negócio",
+                "negocio",
+                "startup",
+                "empreender",
+                "criar negócio",
+                "criar negocio",
+                "empresa",
+                "negócio próprio",
+                "negocio proprio"
+              ],
+              "es": [
+                "emprendimiento",
+                "negocio",
+                "startup",
+                "emprender",
+                "crear negocio",
+                "empresa",
+                "negocio propio"
+              ],
+              "fr": [
+                "entrepreneuriat",
+                "affaires",
+                "startup",
+                "entreprendre",
+                "creer une entreprise",
+                "entreprise",
+                "propre affaire"
+              ],
+              "de": [
+                "unternehmertum",
+                "geschäft",
+                "geschaeft",
+                "startup",
+                "unternehmen gründen",
+                "unternehmen gruenden",
+                "firma",
+                "eigenes geschäft"
+              ]
+            }
+          },
+          "Volunteering": {
+            "value": "Volunteering",
+            "label": {
+              "en": "Volunteering",
+              "pt": "Voluntariado",
+              "es": "Voluntariado",
+              "fr": "Bénévolat",
+              "de": "Ehrenamt"
+            },
+            "base_terms": {
+              "en": [
+                "Volunteering"
+              ],
+              "pt": [
+                "Voluntariado",
+                "Volunteering"
+              ],
+              "es": [
+                "Voluntariado",
+                "Volunteering"
+              ],
+              "fr": [
+                "Bénévolat",
+                "Volunteering"
+              ],
+              "de": [
+                "Ehrenamt",
+                "Volunteering"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "volunteering",
+                "volunteer work",
+                "charity",
+                "service",
+                "helping for free",
+                "community service",
+                "solidary action"
+              ],
+              "pt": [
+                "voluntariado",
+                "trabalho voluntário",
+                "trabalho voluntario",
+                "caridade",
+                "serviço",
+                "servico",
+                "ajudar de graça",
+                "ajudar de graca",
+                "serviço comunitário",
+                "acao solidaria"
+              ],
+              "es": [
+                "voluntariado",
+                "trabajo voluntario",
+                "caridad",
+                "servicio",
+                "ayudar gratis",
+                "servicio comunitario",
+                "acción solidaria"
+              ],
+              "fr": [
+                "benevolat",
+                "travail benevole",
+                "charite",
+                "service",
+                "aider gratuitement",
+                "service communautaire",
+                "action solidaire"
+              ],
+              "de": [
+                "ehrenamt",
+                "freiwilligenarbeit",
+                "wohltätigkeit",
+                "wohltaetigkeit",
+                "dienst",
+                "kostenlos helfen",
+                "gemeindedienst",
+                "solidarische aktion"
+              ]
+            }
+          },
+          "Ethics": {
+            "value": "Ethics",
+            "label": {
+              "en": "Ethics",
+              "pt": "Ética",
+              "es": "Ética",
+              "fr": "Éthique",
+              "de": "Ethik"
+            },
+            "base_terms": {
+              "en": [
+                "Ethics"
+              ],
+              "pt": [
+                "Ética",
+                "Ethics"
+              ],
+              "es": [
+                "Ética",
+                "Ethics"
+              ],
+              "fr": [
+                "Éthique",
+                "Ethics"
+              ],
+              "de": [
+                "Ethik",
+                "Ethics"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "ethics",
+                "morality",
+                "moral principles",
+                "doing what is right",
+                "ethical behavior",
+                "values in practice",
+                "right conduct"
+              ],
+              "pt": [
+                "ética",
+                "etica",
+                "moral",
+                "princípios morais",
+                "principios morais",
+                "fazer o certo",
+                "comportamento ético",
+                "conduta correta"
+              ],
+              "es": [
+                "ética",
+                "moral",
+                "principios morales",
+                "hacer lo correcto",
+                "comportamiento ético",
+                "conducta correcta"
+              ],
+              "fr": [
+                "ethique",
+                "morale",
+                "principes moraux",
+                "faire ce qui est juste",
+                "comportement ethique",
+                "conduite juste"
+              ],
+              "de": [
+                "ethik",
+                "moral",
+                "moralische prinzipien",
+                "das richtige tun",
+                "ethisches verhalten",
+                "richtiges handeln"
+              ]
+            }
+          },
+          "Spirituality": {
+            "value": "Spirituality",
+            "label": {
+              "en": "Spirituality",
+              "pt": "Espiritualidade",
+              "es": "Espiritualidad",
+              "fr": "Spiritualité",
+              "de": "Spiritualität"
+            },
+            "base_terms": {
+              "en": [
+                "Spirituality"
+              ],
+              "pt": [
+                "Espiritualidade",
+                "Spirituality"
+              ],
+              "es": [
+                "Espiritualidad",
+                "Spirituality"
+              ],
+              "fr": [
+                "Spiritualité",
+                "Spirituality"
+              ],
+              "de": [
+                "Spiritualität",
+                "Spirituality"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "spirituality",
+                "faith",
+                "spiritual life",
+                "transcendence",
+                "soul",
+                "inner connection",
+                "religion",
+                "sacred",
+                "meaning beyond material life"
+              ],
+              "pt": [
+                "espiritualidade",
+                "fé",
+                "fe",
+                "vida espiritual",
+                "transcendência",
+                "transcendencia",
+                "alma",
+                "conexão interior",
+                "conexao interior",
+                "religião",
+                "religiao",
+                "sagrado",
+                "sentido espiritual"
+              ],
+              "es": [
+                "espiritualidad",
+                "fe",
+                "vida espiritual",
+                "trascendencia",
+                "alma",
+                "conexión interior",
+                "religión",
+                "sagrado",
+                "sentido espiritual"
+              ],
+              "fr": [
+                "spiritualite",
+                "foi",
+                "vie spirituelle",
+                "transcendance",
+                "ame",
+                "connexion interieure",
+                "religion",
+                "sacre",
+                "sens spirituel"
+              ],
+              "de": [
+                "spiritualität",
+                "spiritualitaet",
+                "glaube",
+                "spirituelles leben",
+                "transzendenz",
+                "seele",
+                "innere verbindung",
+                "religion",
+                "heilig",
+                "spiritueller sinn"
+              ]
+            }
+          },
+          "Leisure": {
+            "value": "Leisure",
+            "label": {
+              "en": "Leisure",
+              "pt": "Lazer",
+              "es": "Ocio",
+              "fr": "Loisirs",
+              "de": "Freizeit"
+            },
+            "base_terms": {
+              "en": [
+                "Leisure"
+              ],
+              "pt": [
+                "Lazer",
+                "Leisure"
+              ],
+              "es": [
+                "Ocio",
+                "Leisure"
+              ],
+              "fr": [
+                "Loisirs",
+                "Leisure"
+              ],
+              "de": [
+                "Freizeit",
+                "Leisure"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "leisure",
+                "rest",
+                "free time",
+                "relaxation",
+                "fun",
+                "recreation",
+                "enjoyment",
+                "time off",
+                "pleasure time"
+              ],
+              "pt": [
+                "lazer",
+                "descanso",
+                "tempo livre",
+                "relaxamento",
+                "diversão",
+                "diversao",
+                "recreação",
+                "recreacao",
+                "aproveitar",
+                "folga"
+              ],
+              "es": [
+                "ocio",
+                "descanso",
+                "tiempo libre",
+                "relajación",
+                "diversión",
+                "recreación",
+                "disfrutar",
+                "tiempo de descanso"
+              ],
+              "fr": [
+                "loisirs",
+                "repos",
+                "temps libre",
+                "relaxation",
+                "divertissement",
+                "recreation",
+                "profiter",
+                "conge"
+              ],
+              "de": [
+                "freizeit",
+                "ruhe",
+                "freie zeit",
+                "entspannung",
+                "spaß",
+                "spass",
+                "erholung",
+                "genusszeit",
+                "auszeit"
+              ]
+            }
+          },
+          "Education": {
+            "value": "Education",
+            "label": {
+              "en": "Education",
+              "pt": "Educação",
+              "es": "Educación",
+              "fr": "Éducation",
+              "de": "Bildung"
+            },
+            "base_terms": {
+              "en": [
+                "Education"
+              ],
+              "pt": [
+                "Educação",
+                "Education"
+              ],
+              "es": [
+                "Educación",
+                "Education"
+              ],
+              "fr": [
+                "Éducation",
+                "Education"
+              ],
+              "de": [
+                "Bildung",
+                "Education"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "education",
+                "learning",
+                "study",
+                "school",
+                "college",
+                "university",
+                "training",
+                "courses",
+                "development",
+                "formal learning"
+              ],
+              "pt": [
+                "educação",
+                "educacao",
+                "aprendizagem",
+                "estudo",
+                "escola",
+                "faculdade",
+                "universidade",
+                "formação",
+                "formacao",
+                "cursos",
+                "aprendizado formal"
+              ],
+              "es": [
+                "educación",
+                "aprendizaje",
+                "estudio",
+                "escuela",
+                "facultad",
+                "universidad",
+                "formación",
+                "cursos",
+                "aprendizaje formal"
+              ],
+              "fr": [
+                "education",
+                "apprentissage",
+                "etude",
+                "ecole",
+                "universite",
+                "formation",
+                "cours",
+                "apprentissage formel"
+              ],
+              "de": [
+                "bildung",
+                "lernen",
+                "studium",
+                "schule",
+                "hochschule",
+                "universität",
+                "universitaet",
+                "ausbildung",
+                "kurse",
+                "fachwissen"
+              ]
+            }
+          },
+          "Dreams": {
+            "value": "Dreams",
+            "label": {
+              "en": "Dreams",
+              "pt": "Sonhos",
+              "es": "Sueños",
+              "fr": "Rêves",
+              "de": "Träume"
+            },
+            "base_terms": {
+              "en": [
+                "Dreams"
+              ],
+              "pt": [
+                "Sonhos",
+                "Dreams"
+              ],
+              "es": [
+                "Sueños",
+                "Dreams"
+              ],
+              "fr": [
+                "Rêves",
+                "Dreams"
+              ],
+              "de": [
+                "Träume",
+                "Dreams"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "dreams",
+                "aspirations",
+                "goals",
+                "life goals",
+                "future plans",
+                "desires",
+                "ambitions",
+                "what I want to become"
+              ],
+              "pt": [
+                "sonhos",
+                "aspirações",
+                "aspiracoes",
+                "metas",
+                "objetivos de vida",
+                "planos futuros",
+                "desejos",
+                "ambições",
+                "ambicoes",
+                "o que quero ser"
+              ],
+              "es": [
+                "sueños",
+                "aspiraciones",
+                "metas",
+                "objetivos de vida",
+                "planes futuros",
+                "deseos",
+                "ambiciones",
+                "lo que quiero ser"
+              ],
+              "fr": [
+                "reves",
+                "aspirations",
+                "objectifs",
+                "objectifs de vie",
+                "plans futurs",
+                "desirs",
+                "ambitions",
+                "ce que je veux devenir"
+              ],
+              "de": [
+                "träume",
+                "traeume",
+                "bestrebungen",
+                "ziele",
+                "lebensziele",
+                "zukunftspläne",
+                "zukunftsplaene",
+                "wünsche",
+                "wuensche",
+                "ambitionen"
+              ]
+            }
+          },
+          "Hobbies": {
+            "value": "Hobbies",
+            "label": {
+              "en": "Hobbies",
+              "pt": "Hobbies",
+              "es": "Pasatiempos",
+              "fr": "Hobbies",
+              "de": "Hobbys"
+            },
+            "base_terms": {
+              "en": [
+                "Hobbies"
+              ],
+              "pt": [
+                "Hobbies"
+              ],
+              "es": [
+                "Pasatiempos",
+                "Hobbies"
+              ],
+              "fr": [
+                "Hobbies"
+              ],
+              "de": [
+                "Hobbys",
+                "Hobbies"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "hobbies",
+                "interests",
+                "personal activities",
+                "pastimes",
+                "creative activities",
+                "sports as hobby",
+                "games",
+                "crafts",
+                "music as hobby"
+              ],
+              "pt": [
+                "hobbies",
+                "passatempos",
+                "interesses",
+                "atividades pessoais",
+                "atividades criativas",
+                "esportes como hobby",
+                "jogos",
+                "artesanato",
+                "música como hobby"
+              ],
+              "es": [
+                "hobbies",
+                "pasatiempos",
+                "intereses",
+                "actividades personales",
+                "actividades creativas",
+                "deportes como hobby",
+                "juegos",
+                "artesanía",
+                "música como hobby"
+              ],
+              "fr": [
+                "hobbies",
+                "passe-temps",
+                "interets",
+                "activites personnelles",
+                "activites creatives",
+                "sport comme hobby",
+                "jeux",
+                "artisanat",
+                "musique comme hobby"
+              ],
+              "de": [
+                "hobbys",
+                "interessen",
+                "freizeitbeschäftigungen",
+                "freizeitbeschaeftigungen",
+                "persönliche aktivitäten",
+                "persoenliche aktivitaeten",
+                "kreative aktivitäten",
+                "spiele",
+                "handwerk",
+                "musik als hobby"
+              ]
+            }
+          }
+        },
+        "ai_review_enabled": true,
+        "ai_review_below_score": 82,
+        "ai_association_threshold": 0.6,
+        "ai_lock_threshold": 0.78,
+        "ai_provider": "openai",
+        "ai_result_contract": {
+          "selected_categories": "array of base categories/options with similarity 0-100",
+          "corrected_text": "text after likely spelling correction",
+          "keywords": "keywords extracted after stopword filtering",
+          "contextual_terms": "meaningful terms outside the base categories/options",
+          "requires_manual_selection": "true when the answer is incomplete, ambiguous, low-confidence, or outside the expected pattern; the UI must open the supplemental selection screen instead of showing a text fallback"
+        },
+        "fallback_text_disabled": true,
+        "supplemental_screen": {
+          "type": "multi_choice",
+          "behavior": "full_screen",
+          "lock_validated_categories": true,
+          "open_when": [
+            "fewer_than_5_items_detected",
+            "ambiguous_similarity",
+            "low_confidence",
+            "no_semantic_match",
+            "text_outside_expected_pattern"
+          ],
+          "min_select": 5,
+          "max_select": 5
+        },
+        "min_select": 5,
+        "max_select": 5,
+        "min_values": 5,
+        "max_values": 5
+      },
+      "min_select": 5,
+      "supplemental_screen": {
+        "type": "multi_choice",
+        "behavior": "full_screen",
+        "min_select": 5,
+        "max_select": 5,
+        "lock_validated_categories": true
+      },
+      "placeholder": {
+        "en": "Example: family, health, purpose, education and spirituality...",
+        "pt": "Exemplo: família, saúde, propósito, educação e espiritualidade...",
+        "es": "Ejemplo: familia, salud, propósito, educación y espiritualidad...",
+        "fr": "Exemple : famille, santé, objectif, éducation et spiritualité...",
+        "de": "Beispiel: Familie, Gesundheit, Sinn, Bildung und Spiritualität..."
+      },
+      "unit_label": {
+        "en": "pillars required",
+        "pt": "pilares obrigatórios",
+        "es": "pilares requeridos",
+        "fr": "piliers requis",
+        "de": "erforderliche Säulen"
+      },
+      "max_chars": 240,
+      "min_chars": 2,
+      "min_values": 5,
+      "max_values": 5,
+      "input_layout": "five_boxes",
+      "free_text_slots": 5,
+      "slot_placeholders": {
+        "en": [
+          "Pillar 1",
+          "Pillar 2",
+          "Pillar 3",
+          "Pillar 4",
+          "Pillar 5"
+        ],
+        "pt": [
+          "Pilar 1",
+          "Pilar 2",
+          "Pilar 3",
+          "Pilar 4",
+          "Pilar 5"
+        ],
+        "es": [
+          "Pilar 1",
+          "Pilar 2",
+          "Pilar 3",
+          "Pilar 4",
+          "Pilar 5"
+        ],
+        "fr": [
+          "Pilier 1",
+          "Pilier 2",
+          "Pilier 3",
+          "Pilier 4",
+          "Pilier 5"
+        ],
+        "de": [
+          "Säule 1",
+          "Säule 2",
+          "Säule 3",
+          "Säule 4",
+          "Säule 5"
+        ]
+      },
+      "manual_selection_enabled": true,
+      "manual_selection_label": {
+        "en": "Choose from a list",
+        "pt": "Escolher em uma lista",
+        "es": "Elegir de una lista",
+        "fr": "Choisir dans une liste",
+        "de": "Aus einer Liste auswählen"
+      },
+      "manual_selection_help": {
+        "en": "Not sure what to write or unable to complete every field? Continue or choose from the list of available options.",
+        "pt": "Não sabe o que escrever ou não consegue preencher todos os campos? Continue ou escolha na lista de opções disponíveis.",
+        "es": "¿No sabe qué escribir o no puede completar todos los campos? Continúe o elija de la lista de opciones disponibles.",
+        "fr": "Vous ne savez pas quoi écrire ou ne pouvez pas remplir tous les champs ? Continuez ou choisissez dans la liste des options disponibles.",
+        "de": "Sie wissen nicht, was Sie schreiben sollen, oder können nicht alle Felder ausfüllen? Fahren Sie fort oder wählen Sie aus der Liste der verfügbaren Optionen."
+      }
     },
     {
       "id": "Qt7_reason",
@@ -745,282 +4309,1584 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt7_reason_text",
       "text": {
         "en": "How do these foundations support you daily?",
         "pt": "Como essas bases sustentam você no dia a dia?",
-        "es": "¿Cómo te sostienen estas bases a diario?",
-        "fr": "Comment ces fondements vous soutiennent-ils au quotidien ?",
-        "de": "Wie unterstützen Sie diese Grundlagen täglich?"
+        "es": "¿Cómo lo sostienen estas bases en el día a día?",
+        "fr": "Comment ces bases vous soutiennent-elles au quotidien ?",
+        "de": "Wie unterstützen Sie diese Grundlagen im Alltag?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "Qt8"
     },
     {
       "id": "Qt8",
-      "type": "single_choice",
-      "layout": "columns",
+      "type": "free_text",
       "text": {
         "en": "If you could choose one guiding word for your worldview, what would it be?",
         "pt": "Se você pudesse escolher uma palavra-guia para sua visão de mundo, qual seria?",
-        "es": "Si pudieras elegir una palabra guía para tu visión del mundo, ¿cuál sería?",
-        "fr": "Si vous pouviez choisir un mot directeur pour votre vision du monde, quel serait-il ?",
-        "de": "Wenn Sie ein Leitwort für Ihre Weltanschauung wählen könnten, welches wäre das?"
+        "es": "Si pudiera elegir una palabra guía para su visión del mundo, ¿cuál sería?",
+        "fr": "Si vous pouviez choisir un mot-guide pour votre vision du monde, lequel serait-il ?",
+        "de": "Wenn Sie ein Leitwort für Ihre Weltanschauung wählen könnten, welches wäre es?"
       },
-      "options": [
-        {
-          "value": 1,
-          "label": {
-            "en": "Materialistic",
-            "pt": "Materialista",
-            "es": "Materialista",
-            "fr": "Matérialiste",
-            "de": "Materialistisch"
+      "placeholder": {
+        "en": "Example: rational, spiritual, realistic...",
+        "pt": "Exemplo: racional, espiritual, realista...",
+        "es": "Ejemplo: racional, espiritual, realista...",
+        "fr": "Exemple : rationnel, spirituel, réaliste...",
+        "de": "Beispiel: rational, spirituell, realistisch..."
+      },
+      "min_chars": 2,
+      "max_chars": 100,
+      "min_values": 1,
+      "max_values": 1,
+      "max_select": 1,
+      "std_next_question": "Qt8_reason",
+      "nlp": {
+        "mode": "worldview_association",
+        "association_threshold": 0.6,
+        "invalid_scope_threshold": 0.12,
+        "strong_lock_threshold": 0.72,
+        "ai_review_enabled": true,
+        "ai_provider": "openai",
+        "ai_review_below_score": 82,
+        "ai_association_threshold": 0.6,
+        "ai_lock_threshold": 0.72,
+        "min_values": 1,
+        "max_values": 1,
+        "min_select": 1,
+        "max_select": 1,
+        "store_raw_answer_as": "Qt8_text",
+        "store_score_as": "Qt8_score",
+        "categories": {
+          "1": {
+            "value": 1,
+            "label": {
+              "en": "Materialistic",
+              "pt": "Materialista",
+              "es": "Materialista",
+              "fr": "Matérialiste",
+              "de": "Materialistisch"
+            },
+            "base_terms": {
+              "en": [
+                "Materialistic",
+                "1"
+              ],
+              "pt": [
+                "Materialista",
+                "1"
+              ],
+              "es": [
+                "Materialista",
+                "1"
+              ],
+              "fr": [
+                "Matérialiste",
+                "1"
+              ],
+              "de": [
+                "Materialistisch",
+                "1"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Materialistic",
+                "materialistic",
+                "material",
+                "possessions",
+                "wealth focused"
+              ],
+              "pt": [
+                "Materialista",
+                "materialista",
+                "bens materiais",
+                "posses",
+                "riqueza"
+              ],
+              "es": [
+                "Materialista",
+                "materialista",
+                "bienes materiales",
+                "posesiones"
+              ],
+              "fr": [
+                "Matérialiste",
+                "matérialiste",
+                "materialiste",
+                "biens matériels"
+              ],
+              "de": [
+                "Materialistisch",
+                "materialistisch",
+                "materielle güter",
+                "materielle gueter"
+              ]
+            }
           },
-          "redirect": null
+          "2": {
+            "value": 2,
+            "label": {
+              "en": "Warrior",
+              "pt": "Guerreiro",
+              "es": "Guerrero",
+              "fr": "Guerrier",
+              "de": "Krieger"
+            },
+            "base_terms": {
+              "en": [
+                "Warrior",
+                "2"
+              ],
+              "pt": [
+                "Guerreiro",
+                "2"
+              ],
+              "es": [
+                "Guerrero",
+                "2"
+              ],
+              "fr": [
+                "Guerrier",
+                "2"
+              ],
+              "de": [
+                "Krieger",
+                "2"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Warrior",
+                "warrior",
+                "fighter",
+                "combatant",
+                "brave fighter"
+              ],
+              "pt": [
+                "Guerreiro",
+                "guerreiro",
+                "lutador",
+                "combatente"
+              ],
+              "es": [
+                "Guerrero",
+                "guerrero",
+                "luchador",
+                "combatiente"
+              ],
+              "fr": [
+                "Guerrier",
+                "guerrier",
+                "combattant"
+              ],
+              "de": [
+                "Krieger",
+                "krieger",
+                "kämpfer",
+                "kaempfer"
+              ]
+            }
+          },
+          "3": {
+            "value": 3,
+            "label": {
+              "en": "Survivor",
+              "pt": "Sobrevivente",
+              "es": "Sobreviviente",
+              "fr": "Survivant",
+              "de": "Überlebender"
+            },
+            "base_terms": {
+              "en": [
+                "Survivor",
+                "3"
+              ],
+              "pt": [
+                "Sobrevivente",
+                "3"
+              ],
+              "es": [
+                "Sobreviviente",
+                "3"
+              ],
+              "fr": [
+                "Survivant",
+                "3"
+              ],
+              "de": [
+                "Überlebender",
+                "3"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Survivor",
+                "survivor",
+                "enduring",
+                "having survived hardship"
+              ],
+              "pt": [
+                "Sobrevivente",
+                "sobrevivente",
+                "sobreviveu a dificuldades",
+                "venceu situações difíceis"
+              ],
+              "es": [
+                "Sobreviviente",
+                "sobreviviente",
+                "sobrevivió a dificultades",
+                "superó situaciones difíciles"
+              ],
+              "fr": [
+                "Survivant",
+                "survivant",
+                "a surmonté des difficultés",
+                "a traversé l’adversité"
+              ],
+              "de": [
+                "Überlebender",
+                "überlebender",
+                "ueberlebender",
+                "hat schwierigkeiten überstanden",
+                "hat widrigkeiten überlebt"
+              ]
+            }
+          },
+          "4": {
+            "value": 4,
+            "label": {
+              "en": "Spiritual",
+              "pt": "Espiritual",
+              "es": "Espiritual",
+              "fr": "Spirituel",
+              "de": "Spirituell"
+            },
+            "base_terms": {
+              "en": [
+                "Spiritual",
+                "4"
+              ],
+              "pt": [
+                "Espiritual",
+                "4"
+              ],
+              "es": [
+                "Espiritual",
+                "4"
+              ],
+              "fr": [
+                "Spirituel",
+                "4"
+              ],
+              "de": [
+                "Spirituell",
+                "4"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Spiritual",
+                "spiritual",
+                "faith",
+                "transcendent",
+                "sacred"
+              ],
+              "pt": [
+                "Espiritual",
+                "espiritual",
+                "fé",
+                "fe",
+                "transcendente",
+                "sagrado"
+              ],
+              "es": [
+                "Espiritual",
+                "espiritual",
+                "fe",
+                "trascendente"
+              ],
+              "fr": [
+                "Spirituel",
+                "spirituel",
+                "foi",
+                "transcendant"
+              ],
+              "de": [
+                "Spirituell",
+                "spirituell",
+                "glaube",
+                "transzendent"
+              ]
+            }
+          },
+          "5": {
+            "value": 5,
+            "label": {
+              "en": "Sensual",
+              "pt": "Sensual",
+              "es": "Sensual",
+              "fr": "Sensuel",
+              "de": "Sinnlich"
+            },
+            "base_terms": {
+              "en": [
+                "Sensual",
+                "5"
+              ],
+              "pt": [
+                "Sensual",
+                "5"
+              ],
+              "es": [
+                "Sensual",
+                "5"
+              ],
+              "fr": [
+                "Sensuel",
+                "5"
+              ],
+              "de": [
+                "Sinnlich",
+                "5"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Sensual",
+                "sensual",
+                "sensory",
+                "pleasure of senses"
+              ],
+              "pt": [
+                "Sensual",
+                "sensual",
+                "sensorial",
+                "prazer dos sentidos"
+              ],
+              "es": [
+                "Sensual",
+                "sensual",
+                "sensorial"
+              ],
+              "fr": [
+                "Sensuel",
+                "sensuel",
+                "sensoriel"
+              ],
+              "de": [
+                "Sinnlich",
+                "sinnlich",
+                "sensorisch"
+              ]
+            }
+          },
+          "6": {
+            "value": 6,
+            "label": {
+              "en": "Erotic",
+              "pt": "Erótico",
+              "es": "Erótico",
+              "fr": "Érotique",
+              "de": "Erotisch"
+            },
+            "base_terms": {
+              "en": [
+                "Erotic",
+                "6"
+              ],
+              "pt": [
+                "Erótico",
+                "6"
+              ],
+              "es": [
+                "Erótico",
+                "6"
+              ],
+              "fr": [
+                "Érotique",
+                "6"
+              ],
+              "de": [
+                "Erotisch",
+                "6"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Erotic",
+                "erotic",
+                "eroticism",
+                "intimate desire"
+              ],
+              "pt": [
+                "Erótico",
+                "erótico",
+                "erotico",
+                "erotismo",
+                "desejo íntimo"
+              ],
+              "es": [
+                "Erótico",
+                "erótico",
+                "erotismo",
+                "deseo íntimo"
+              ],
+              "fr": [
+                "Érotique",
+                "érotique",
+                "erotique",
+                "érotisme"
+              ],
+              "de": [
+                "Erotisch",
+                "erotisch",
+                "erotik"
+              ]
+            }
+          },
+          "7": {
+            "value": 7,
+            "label": {
+              "en": "Pragmatic",
+              "pt": "Pragmático",
+              "es": "Pragmático",
+              "fr": "Pragmatique",
+              "de": "Pragmatisch"
+            },
+            "base_terms": {
+              "en": [
+                "Pragmatic",
+                "7"
+              ],
+              "pt": [
+                "Pragmático",
+                "7"
+              ],
+              "es": [
+                "Pragmático",
+                "7"
+              ],
+              "fr": [
+                "Pragmatique",
+                "7"
+              ],
+              "de": [
+                "Pragmatisch",
+                "7"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Pragmatic",
+                "pragmatic",
+                "practical",
+                "results oriented",
+                "useful"
+              ],
+              "pt": [
+                "Pragmático",
+                "pragmático",
+                "pragmatico",
+                "prático",
+                "pratico",
+                "orientado a resultados"
+              ],
+              "es": [
+                "Pragmático",
+                "pragmático",
+                "práctico",
+                "orientado a resultados"
+              ],
+              "fr": [
+                "Pragmatique",
+                "pragmatique",
+                "pratique",
+                "orienté résultats"
+              ],
+              "de": [
+                "Pragmatisch",
+                "pragmatisch",
+                "praktisch",
+                "ergebnisorientiert"
+              ]
+            }
+          },
+          "8": {
+            "value": 8,
+            "label": {
+              "en": "Holistic",
+              "pt": "Holístico",
+              "es": "Holístico",
+              "fr": "Holistique",
+              "de": "Ganzheitlich"
+            },
+            "base_terms": {
+              "en": [
+                "Holistic",
+                "8"
+              ],
+              "pt": [
+                "Holístico",
+                "8"
+              ],
+              "es": [
+                "Holístico",
+                "8"
+              ],
+              "fr": [
+                "Holistique",
+                "8"
+              ],
+              "de": [
+                "Ganzheitlich",
+                "8"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Holistic",
+                "holistic",
+                "integrated",
+                "whole person",
+                "interconnected"
+              ],
+              "pt": [
+                "Holístico",
+                "holístico",
+                "holistico",
+                "integral",
+                "interconectado"
+              ],
+              "es": [
+                "Holístico",
+                "holístico",
+                "integral",
+                "interconectado"
+              ],
+              "fr": [
+                "Holistique",
+                "holistique",
+                "global",
+                "interconnecté"
+              ],
+              "de": [
+                "Ganzheitlich",
+                "ganzheitlich",
+                "verbunden",
+                "integriert"
+              ]
+            }
+          },
+          "9": {
+            "value": 9,
+            "label": {
+              "en": "Idealistic",
+              "pt": "Idealista",
+              "es": "Idealista",
+              "fr": "Idéaliste",
+              "de": "Idealistisch"
+            },
+            "base_terms": {
+              "en": [
+                "Idealistic",
+                "9"
+              ],
+              "pt": [
+                "Idealista",
+                "9"
+              ],
+              "es": [
+                "Idealista",
+                "9"
+              ],
+              "fr": [
+                "Idéaliste",
+                "9"
+              ],
+              "de": [
+                "Idealistisch",
+                "9"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Idealistic",
+                "idealistic",
+                "idealist",
+                "guided by ideals"
+              ],
+              "pt": [
+                "Idealista",
+                "idealista",
+                "guiado por ideais"
+              ],
+              "es": [
+                "Idealista",
+                "idealista",
+                "guiado por ideales"
+              ],
+              "fr": [
+                "Idéaliste",
+                "idéaliste",
+                "idealiste",
+                "guidé par des idéaux"
+              ],
+              "de": [
+                "Idealistisch",
+                "idealistisch",
+                "von idealen geleitet"
+              ]
+            }
+          },
+          "10": {
+            "value": 10,
+            "label": {
+              "en": "Aesthetic",
+              "pt": "Estético",
+              "es": "Estético",
+              "fr": "Esthétique",
+              "de": "Ästhetisch"
+            },
+            "base_terms": {
+              "en": [
+                "Aesthetic",
+                "10"
+              ],
+              "pt": [
+                "Estético",
+                "10"
+              ],
+              "es": [
+                "Estético",
+                "10"
+              ],
+              "fr": [
+                "Esthétique",
+                "10"
+              ],
+              "de": [
+                "Ästhetisch",
+                "10"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Aesthetic",
+                "aesthetic",
+                "beauty",
+                "artistic",
+                "visual harmony"
+              ],
+              "pt": [
+                "Estético",
+                "estético",
+                "estetico",
+                "beleza",
+                "artístico",
+                "artistico"
+              ],
+              "es": [
+                "Estético",
+                "estético",
+                "belleza",
+                "artístico"
+              ],
+              "fr": [
+                "Esthétique",
+                "esthétique",
+                "esthetique",
+                "beauté",
+                "artistique"
+              ],
+              "de": [
+                "Ästhetisch",
+                "ästhetisch",
+                "aesthetisch",
+                "schönheit",
+                "schoenheit",
+                "künstlerisch"
+              ]
+            }
+          },
+          "11": {
+            "value": 11,
+            "label": {
+              "en": "Skeptical",
+              "pt": "Cético",
+              "es": "Escéptico",
+              "fr": "Sceptique",
+              "de": "Skeptisch"
+            },
+            "base_terms": {
+              "en": [
+                "Skeptical",
+                "11"
+              ],
+              "pt": [
+                "Cético",
+                "11"
+              ],
+              "es": [
+                "Escéptico",
+                "11"
+              ],
+              "fr": [
+                "Sceptique",
+                "11"
+              ],
+              "de": [
+                "Skeptisch",
+                "11"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Skeptical",
+                "skeptical",
+                "questioning",
+                "doubtful",
+                "critical"
+              ],
+              "pt": [
+                "Cético",
+                "cético",
+                "cetico",
+                "questionador",
+                "desconfiado",
+                "crítico"
+              ],
+              "es": [
+                "Escéptico",
+                "escéptico",
+                "cuestionador",
+                "crítico"
+              ],
+              "fr": [
+                "Sceptique",
+                "sceptique",
+                "critique",
+                "dubitatif"
+              ],
+              "de": [
+                "Skeptisch",
+                "skeptisch",
+                "kritisch",
+                "zweifelnd"
+              ]
+            }
+          },
+          "12": {
+            "value": 12,
+            "label": {
+              "en": "Humanistic",
+              "pt": "Humanista",
+              "es": "Humanista",
+              "fr": "Humaniste",
+              "de": "Humanistisch"
+            },
+            "base_terms": {
+              "en": [
+                "Humanistic",
+                "12"
+              ],
+              "pt": [
+                "Humanista",
+                "12"
+              ],
+              "es": [
+                "Humanista",
+                "12"
+              ],
+              "fr": [
+                "Humaniste",
+                "12"
+              ],
+              "de": [
+                "Humanistisch",
+                "12"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Humanistic",
+                "humanistic",
+                "human centered",
+                "human dignity",
+                "humanist"
+              ],
+              "pt": [
+                "Humanista",
+                "humanista",
+                "centrado no ser humano",
+                "dignidade humana"
+              ],
+              "es": [
+                "Humanista",
+                "humanista",
+                "centrado en el ser humano"
+              ],
+              "fr": [
+                "Humaniste",
+                "humaniste",
+                "centré sur humain"
+              ],
+              "de": [
+                "Humanistisch",
+                "humanistisch",
+                "menschenzentriert"
+              ]
+            }
+          },
+          "13": {
+            "value": 13,
+            "label": {
+              "en": "Anthropological",
+              "pt": "Antropológico",
+              "es": "Antropológico",
+              "fr": "Anthropologique",
+              "de": "Anthropologisch"
+            },
+            "base_terms": {
+              "en": [
+                "Anthropological",
+                "13"
+              ],
+              "pt": [
+                "Antropológico",
+                "13"
+              ],
+              "es": [
+                "Antropológico",
+                "13"
+              ],
+              "fr": [
+                "Anthropologique",
+                "13"
+              ],
+              "de": [
+                "Anthropologisch",
+                "13"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Anthropological",
+                "anthropological",
+                "culture focused",
+                "human cultures"
+              ],
+              "pt": [
+                "Antropológico",
+                "antropológico",
+                "antropologico",
+                "culturas humanas",
+                "cultura"
+              ],
+              "es": [
+                "Antropológico",
+                "antropológico",
+                "culturas humanas"
+              ],
+              "fr": [
+                "Anthropologique",
+                "anthropologique",
+                "cultures humaines"
+              ],
+              "de": [
+                "Anthropologisch",
+                "anthropologisch",
+                "menschliche kulturen"
+              ]
+            }
+          },
+          "14": {
+            "value": 14,
+            "label": {
+              "en": "Rational",
+              "pt": "Racional",
+              "es": "Racional",
+              "fr": "Rationnel",
+              "de": "Rational"
+            },
+            "base_terms": {
+              "en": [
+                "Rational",
+                "14"
+              ],
+              "pt": [
+                "Racional",
+                "14"
+              ],
+              "es": [
+                "Racional",
+                "14"
+              ],
+              "fr": [
+                "Rationnel",
+                "14"
+              ],
+              "de": [
+                "Rational",
+                "14"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Rational",
+                "rational",
+                "logical",
+                "reason based",
+                "analytical"
+              ],
+              "pt": [
+                "Racional",
+                "racional",
+                "lógico",
+                "logico",
+                "analítico",
+                "analitico"
+              ],
+              "es": [
+                "Racional",
+                "racional",
+                "lógico",
+                "analítico"
+              ],
+              "fr": [
+                "Rationnel",
+                "rationnel",
+                "logique",
+                "analytique"
+              ],
+              "de": [
+                "Rational",
+                "rational",
+                "logisch",
+                "analytisch"
+              ]
+            }
+          },
+          "15": {
+            "value": 15,
+            "label": {
+              "en": "Romantic",
+              "pt": "Romântico",
+              "es": "Romántico",
+              "fr": "Romantique",
+              "de": "Romantisch"
+            },
+            "base_terms": {
+              "en": [
+                "Romantic",
+                "15"
+              ],
+              "pt": [
+                "Romântico",
+                "15"
+              ],
+              "es": [
+                "Romántico",
+                "15"
+              ],
+              "fr": [
+                "Romantique",
+                "15"
+              ],
+              "de": [
+                "Romantisch",
+                "15"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Romantic",
+                "romantic",
+                "romance",
+                "emotionally idealized"
+              ],
+              "pt": [
+                "Romântico",
+                "romântico",
+                "romantico",
+                "romance",
+                "afetivo"
+              ],
+              "es": [
+                "Romántico",
+                "romántico",
+                "romance",
+                "afectivo"
+              ],
+              "fr": [
+                "Romantique",
+                "romantique",
+                "romance"
+              ],
+              "de": [
+                "Romantisch",
+                "romantisch",
+                "romantik"
+              ]
+            }
+          },
+          "16": {
+            "value": 16,
+            "label": {
+              "en": "Utopian",
+              "pt": "Utópico",
+              "es": "Utópico",
+              "fr": "Utopiste",
+              "de": "Utopisch"
+            },
+            "base_terms": {
+              "en": [
+                "Utopian",
+                "16"
+              ],
+              "pt": [
+                "Utópico",
+                "16"
+              ],
+              "es": [
+                "Utópico",
+                "16"
+              ],
+              "fr": [
+                "Utopiste",
+                "16"
+              ],
+              "de": [
+                "Utopisch",
+                "16"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Utopian",
+                "utopian",
+                "utopia",
+                "perfect society",
+                "ideal future"
+              ],
+              "pt": [
+                "Utópico",
+                "utópico",
+                "utopico",
+                "utopia",
+                "sociedade perfeita"
+              ],
+              "es": [
+                "Utópico",
+                "utópico",
+                "utopía",
+                "sociedad perfecta"
+              ],
+              "fr": [
+                "Utopiste",
+                "utopiste",
+                "utopie",
+                "société parfaite"
+              ],
+              "de": [
+                "Utopisch",
+                "utopisch",
+                "utopie",
+                "perfekte gesellschaft"
+              ]
+            }
+          },
+          "17": {
+            "value": 17,
+            "label": {
+              "en": "Realistic",
+              "pt": "Realista",
+              "es": "Realista",
+              "fr": "Réaliste",
+              "de": "Realistisch"
+            },
+            "base_terms": {
+              "en": [
+                "Realistic",
+                "17"
+              ],
+              "pt": [
+                "Realista",
+                "17"
+              ],
+              "es": [
+                "Realista",
+                "17"
+              ],
+              "fr": [
+                "Réaliste",
+                "17"
+              ],
+              "de": [
+                "Realistisch",
+                "17"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Realistic",
+                "realistic",
+                "realist",
+                "grounded",
+                "grounded in reality"
+              ],
+              "pt": [
+                "Realista",
+                "realista",
+                "pé no chão",
+                "pe no chao",
+                "realidade"
+              ],
+              "es": [
+                "Realista",
+                "realista",
+                "con los pies en la tierra"
+              ],
+              "fr": [
+                "Réaliste",
+                "réaliste",
+                "realiste",
+                "terre à terre"
+              ],
+              "de": [
+                "Realistisch",
+                "realistisch",
+                "bodenständig",
+                "bodenstaendig"
+              ]
+            }
+          },
+          "18": {
+            "value": 18,
+            "label": {
+              "en": "Egocentric",
+              "pt": "Egocêntrico",
+              "es": "Egocéntrico",
+              "fr": "Égocentrique",
+              "de": "Egozentrisch"
+            },
+            "base_terms": {
+              "en": [
+                "Egocentric",
+                "18"
+              ],
+              "pt": [
+                "Egocêntrico",
+                "18"
+              ],
+              "es": [
+                "Egocéntrico",
+                "18"
+              ],
+              "fr": [
+                "Égocentrique",
+                "18"
+              ],
+              "de": [
+                "Egozentrisch",
+                "18"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Egocentric",
+                "egocentric",
+                "self centered",
+                "self focused"
+              ],
+              "pt": [
+                "Egocêntrico",
+                "egocêntrico",
+                "egocentrico",
+                "centrado em si",
+                "individualista"
+              ],
+              "es": [
+                "Egocéntrico",
+                "egocéntrico",
+                "centrado en sí"
+              ],
+              "fr": [
+                "Égocentrique",
+                "égocentrique",
+                "egocentrique",
+                "centré sur soi"
+              ],
+              "de": [
+                "Egozentrisch",
+                "egozentrisch",
+                "selbstbezogen"
+              ]
+            }
+          },
+          "19": {
+            "value": 19,
+            "label": {
+              "en": "Altruistic",
+              "pt": "Altruísta",
+              "es": "Altruista",
+              "fr": "Altruiste",
+              "de": "Altruistisch"
+            },
+            "base_terms": {
+              "en": [
+                "Altruistic",
+                "19"
+              ],
+              "pt": [
+                "Altruísta",
+                "19"
+              ],
+              "es": [
+                "Altruista",
+                "19"
+              ],
+              "fr": [
+                "Altruiste",
+                "19"
+              ],
+              "de": [
+                "Altruistisch",
+                "19"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Altruistic",
+                "altruistic",
+                "selfless",
+                "helping others",
+                "generous"
+              ],
+              "pt": [
+                "Altruísta",
+                "altruísta",
+                "altruista",
+                "solidário",
+                "solidario",
+                "ajudar os outros",
+                "generoso"
+              ],
+              "es": [
+                "Altruista",
+                "altruista",
+                "solidario",
+                "ayudar a otros"
+              ],
+              "fr": [
+                "Altruiste",
+                "altruiste",
+                "désintéressé",
+                "aider les autres"
+              ],
+              "de": [
+                "Altruistisch",
+                "altruistisch",
+                "selbstlos",
+                "anderen helfen"
+              ]
+            }
+          },
+          "20": {
+            "value": 20,
+            "label": {
+              "en": "Forward-Looking",
+              "pt": "Visionário",
+              "es": "Visionario",
+              "fr": "Visionnaire",
+              "de": "Visionär"
+            },
+            "base_terms": {
+              "en": [
+                "Forward-Looking",
+                "20"
+              ],
+              "pt": [
+                "Visionário",
+                "20"
+              ],
+              "es": [
+                "Visionario",
+                "20"
+              ],
+              "fr": [
+                "Visionnaire",
+                "20"
+              ],
+              "de": [
+                "Visionär",
+                "20"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Forward-Looking",
+                "forward looking",
+                "visionary",
+                "future oriented",
+                "long term"
+              ],
+              "pt": [
+                "Visionário",
+                "visionário",
+                "visionario",
+                "orientado ao futuro",
+                "longo prazo"
+              ],
+              "es": [
+                "Visionario",
+                "visionario",
+                "orientado al futuro"
+              ],
+              "fr": [
+                "Visionnaire",
+                "visionnaire",
+                "tourné vers avenir"
+              ],
+              "de": [
+                "Visionär",
+                "visionär",
+                "visionaer",
+                "zukunftsorientiert"
+              ]
+            }
+          },
+          "21": {
+            "value": 21,
+            "label": {
+              "en": "Empathetic",
+              "pt": "Empático",
+              "es": "Empático",
+              "fr": "Empathique",
+              "de": "Empathisch"
+            },
+            "base_terms": {
+              "en": [
+                "Empathetic",
+                "21"
+              ],
+              "pt": [
+                "Empático",
+                "21"
+              ],
+              "es": [
+                "Empático",
+                "21"
+              ],
+              "fr": [
+                "Empathique",
+                "21"
+              ],
+              "de": [
+                "Empathisch",
+                "21"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Empathetic",
+                "empathetic",
+                "empathetic worldview",
+                "understanding others"
+              ],
+              "pt": [
+                "Empático",
+                "empático",
+                "empatico",
+                "compreender o outro",
+                "sensível"
+              ],
+              "es": [
+                "Empático",
+                "empático",
+                "comprender al otro"
+              ],
+              "fr": [
+                "Empathique",
+                "empathique",
+                "comprendre les autres"
+              ],
+              "de": [
+                "Empathisch",
+                "empathisch",
+                "andere verstehen"
+              ]
+            }
+          },
+          "22": {
+            "value": 22,
+            "label": {
+              "en": "Futuristic",
+              "pt": "Futurista",
+              "es": "Futurista",
+              "fr": "Futuriste",
+              "de": "Futuristisch"
+            },
+            "base_terms": {
+              "en": [
+                "Futuristic",
+                "22"
+              ],
+              "pt": [
+                "Futurista",
+                "22"
+              ],
+              "es": [
+                "Futurista",
+                "22"
+              ],
+              "fr": [
+                "Futuriste",
+                "22"
+              ],
+              "de": [
+                "Futuristisch",
+                "22"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Futuristic",
+                "futuristic",
+                "future technology",
+                "innovation future"
+              ],
+              "pt": [
+                "Futurista",
+                "futurista",
+                "tecnologia do futuro",
+                "inovação",
+                "inovacao"
+              ],
+              "es": [
+                "Futurista",
+                "futurista",
+                "tecnología del futuro",
+                "innovación"
+              ],
+              "fr": [
+                "Futuriste",
+                "futuriste",
+                "technologie future",
+                "innovation"
+              ],
+              "de": [
+                "Futuristisch",
+                "futuristisch",
+                "zukunftstechnologie",
+                "innovation"
+              ]
+            }
+          },
+          "23": {
+            "value": 23,
+            "label": {
+              "en": "Perfectionist",
+              "pt": "Perfeccionista",
+              "es": "Perfeccionista",
+              "fr": "Perfectionniste",
+              "de": "Perfektionist"
+            },
+            "base_terms": {
+              "en": [
+                "Perfectionist",
+                "23"
+              ],
+              "pt": [
+                "Perfeccionista",
+                "23"
+              ],
+              "es": [
+                "Perfeccionista",
+                "23"
+              ],
+              "fr": [
+                "Perfectionniste",
+                "23"
+              ],
+              "de": [
+                "Perfektionist",
+                "23"
+              ]
+            },
+            "synonyms": {
+              "en": [
+                "Perfectionist",
+                "perfectionist",
+                "high standards",
+                "meticulous",
+                "very high standards",
+                "error-free results"
+              ],
+              "pt": [
+                "Perfeccionista",
+                "perfeccionista",
+                "altos padrões",
+                "padroes",
+                "meticuloso",
+                "exigente consigo",
+                "busca de excelência"
+              ],
+              "es": [
+                "Perfeccionista",
+                "perfeccionista",
+                "altos estándares",
+                "meticuloso",
+                "exigente consigo mismo",
+                "búsqueda de excelencia"
+              ],
+              "fr": [
+                "Perfectionniste",
+                "perfectionniste",
+                "standards élevés",
+                "méticuleux",
+                "très exigeant envers soi",
+                "recherche de l’excellence"
+              ],
+              "de": [
+                "Perfektionist",
+                "perfektionistisch",
+                "hohe ansprüche",
+                "ansprueche",
+                "akribisch",
+                "sehr hohe ansprüche an sich selbst",
+                "streben nach fehlerfreiheit"
+              ]
+            }
+          }
         },
-        {
-          "value": 2,
-          "label": {
-            "en": "Warrior",
-            "pt": "Guerreiro",
-            "es": "Guerrero",
-            "fr": "Guerrier",
-            "de": "Krieger"
-          },
-          "redirect": null
-        },
-        {
-          "value": 3,
-          "label": {
-            "en": "Survivor",
-            "pt": "Sobrevivente",
-            "es": "Sobreviviente",
-            "fr": "Survivant",
-            "de": "Überlebender"
-          },
-          "redirect": null
-        },
-        {
-          "value": 4,
-          "label": {
-            "en": "Spiritual",
-            "pt": "Espiritual",
-            "es": "Espiritual",
-            "fr": "Spirituel",
-            "de": "Spirituell"
-          },
-          "redirect": null
-        },
-        {
-          "value": 5,
-          "label": {
-            "en": "Sensual",
-            "pt": "Sensual",
-            "es": "Sensual",
-            "fr": "Sensuel",
-            "de": "Sinnlich"
-          },
-          "redirect": null
-        },
-        {
-          "value": 6,
-          "label": {
-            "en": "Erotic",
-            "pt": "Erótico",
-            "es": "Erótico",
-            "fr": "Érotique",
-            "de": "Erotisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 7,
-          "label": {
-            "en": "Pragmatic",
-            "pt": "Pragmático",
-            "es": "Pragmático",
-            "fr": "Pragmatique",
-            "de": "Pragmatisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 8,
-          "label": {
-            "en": "Holistic",
-            "pt": "Holístico",
-            "es": "Holístico",
-            "fr": "Holistique",
-            "de": "Ganzheitlich"
-          },
-          "redirect": null
-        },
-        {
-          "value": 9,
-          "label": {
-            "en": "Idealistic",
-            "pt": "Idealista",
-            "es": "Idealista",
-            "fr": "Idéaliste",
-            "de": "Idealistisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 10,
-          "label": {
-            "en": "Aesthetic",
-            "pt": "Estético",
-            "es": "Estético",
-            "fr": "Esthétique",
-            "de": "Ästhetisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 11,
-          "label": {
-            "en": "Skeptical",
-            "pt": "Cético",
-            "es": "Escéptico",
-            "fr": "Sceptique",
-            "de": "Skeptisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 12,
-          "label": {
-            "en": "Humanistic",
-            "pt": "Humanista",
-            "es": "Humanista",
-            "fr": "Humaniste",
-            "de": "Humanistisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 13,
-          "label": {
-            "en": "Anthropological",
-            "pt": "Antropológico",
-            "es": "Antropológico",
-            "fr": "Anthropologique",
-            "de": "Anthropologisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 14,
-          "label": {
-            "en": "Rational",
-            "pt": "Racional",
-            "es": "Racional",
-            "fr": "Rationnel",
-            "de": "Rational"
-          },
-          "redirect": null
-        },
-        {
-          "value": 15,
-          "label": {
-            "en": "Romantic",
-            "pt": "Romântico",
-            "es": "Romántico",
-            "fr": "Romantique",
-            "de": "Romantisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 16,
-          "label": {
-            "en": "Utopian",
-            "pt": "Utópico",
-            "es": "Utópico",
-            "fr": "Utopiste",
-            "de": "Utopisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 17,
-          "label": {
-            "en": "Realistic",
-            "pt": "Realista",
-            "es": "Realista",
-            "fr": "Réaliste",
-            "de": "Realistisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 18,
-          "label": {
-            "en": "Egocentric",
-            "pt": "Egocêntrico",
-            "es": "Egocéntrico",
-            "fr": "Égocentrique",
-            "de": "Egozentrisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 19,
-          "label": {
-            "en": "Altruistic",
-            "pt": "Altruísta",
-            "es": "Altruista",
-            "fr": "Altruiste",
-            "de": "Altruistisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 20,
-          "label": {
-            "en": "Forward-Looking",
-            "pt": "Visionário",
-            "es": "Visionario",
-            "fr": "Visionnaire",
-            "de": "Visionär"
-          },
-          "redirect": null
-        },
-        {
-          "value": 21,
-          "label": {
-            "en": "Empathetic",
-            "pt": "Empático",
-            "es": "Empático",
-            "fr": "Empathique",
-            "de": "Empathisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 22,
-          "label": {
-            "en": "Futuristic",
-            "pt": "Futurista",
-            "es": "Futurista",
-            "fr": "Futuriste",
-            "de": "Futuristisch"
-          },
-          "redirect": null
-        },
-        {
-          "value": 23,
-          "label": {
-            "en": "Perfectionist",
-            "pt": "Perfeccionista",
-            "es": "Perfeccionista",
-            "fr": "Perfectionniste",
-            "de": "Perfektionist"
-          },
-          "redirect": null
-        }
-      ],
-      "std_next_question": "Qt8_reason"
+        "supplemental_screen": {}
+      },
+      "manual_selection_enabled": true,
+      "manual_selection_label": {
+        "en": "Choose from a list",
+        "pt": "Escolher em uma lista",
+        "es": "Elegir de una lista",
+        "fr": "Choisir dans une liste",
+        "de": "Aus einer Liste auswählen"
+      },
+      "manual_selection_help": {
+        "en": "Not sure what to write or unable to complete every field? Continue or choose from the list of available options.",
+        "pt": "Não sabe o que escrever ou não consegue preencher todos os campos? Continue ou escolha na lista de opções disponíveis.",
+        "es": "¿No sabe qué escribir o no puede completar todos los campos? Continúe o elija de la lista de opciones disponibles.",
+        "fr": "Vous ne savez pas quoi écrire ou ne pouvez pas remplir tous les champs ? Continuez ou choisissez dans la liste des options disponibles.",
+        "de": "Sie wissen nicht, was Sie schreiben sollen, oder können nicht alle Felder ausfüllen? Fahren Sie fort oder wählen Sie aus der Liste der verfügbaren Optionen."
+      }
     },
     {
       "id": "Qt8_reason",
@@ -1030,13 +5896,23 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt8_reason_text",
       "text": {
         "en": "Why does this word resonate as your guide?",
         "pt": "Por que essa palavra ressoa como seu guia?",
-        "es": "¿Por qué esta palabra resuena como tu guía?",
+        "es": "¿Por qué esta palabra resuena como su guía?",
         "fr": "Pourquoi ce mot résonne-t-il comme votre guide ?",
-        "de": "Warum resoniert dieses Wort als Ihr Leitfaden?"
+        "de": "Warum wirkt dieses Wort für Sie wie ein Leitwort?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "Qt9"
     },
     {
@@ -1105,14 +5981,25 @@
       "skippable": true,
       "computed": true,
       "formula_excluded": true,
+      "store_raw_answer_as": "Qt9_reason_text",
       "text": {
         "en": "Why do you think you respond that way?",
         "pt": "Por que você acha que responde dessa forma?",
-        "es": "¿Por qué crees que respondes de esa manera?",
+        "es": "¿Por qué cree que responde de esa manera?",
         "fr": "Pourquoi pensez-vous réagir de cette façon ?",
         "de": "Warum glauben Sie, dass Sie auf diese Weise reagieren?"
       },
+      "placeholder": {
+        "en": "Optional. Write a short reflection, or skip this step.",
+        "pt": "Opcional. Escreva uma breve reflexão ou pule esta etapa.",
+        "es": "Opcional. Escriba una breve reflexión o salte este paso.",
+        "fr": "Facultatif. Écrivez une courte réflexion ou passez cette étape.",
+        "de": "Optional. Schreiben Sie eine kurze Reflexion oder überspringen Sie diesen Schritt."
+      },
+      "max_chars": 420,
+      "min_chars": 0,
       "std_next_question": "finalize"
     }
-  ]
+  ],
+  "start_question": "Qt2"
 }
