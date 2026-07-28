@@ -1,4 +1,4 @@
-// Supabase REST client for Budhi Lite V1
+// Supabase REST client for CheckMatch Lite V1
 // Public browser configuration. The publishable key is safe to ship with the frontend
 // when Row Level Security (RLS) and policies are configured correctly in Supabase.
 // DO NOT put a service_role or secret key here.
@@ -101,7 +101,7 @@ async function supabaseFetchProfiles() {
 async function supabaseUpsertProfile(username, profile) {
   const replaceAI = profile.__replace_results_ai === true;
   let existing = null;
-  try{ existing = await supabaseFetchProfile(username); }catch(err){ console.warn('[Budhi Lite] Could not prefetch profile before upsert.', err); }
+  try{ existing = await supabaseFetchProfile(username); }catch(err){ console.warn('[CheckMatch Lite] Could not prefetch profile before upsert.', err); }
 
   const payload = {
     username,
@@ -148,7 +148,7 @@ async function supabaseUpsertMatch(match) {
   const matchId = match.match_id || makeMatchId(userA, userB);
   const replaceAI = match.__replace_results_ai === true;
   let existing = null;
-  try{ existing = await supabaseFetchMatch(matchId); }catch(err){ console.warn('[Budhi Lite] Could not prefetch match before upsert.', err); }
+  try{ existing = await supabaseFetchMatch(matchId); }catch(err){ console.warn('[CheckMatch Lite] Could not prefetch match before upsert.', err); }
 
   const payload = {
     match_id: matchId,

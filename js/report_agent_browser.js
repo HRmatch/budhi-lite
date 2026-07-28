@@ -1,4 +1,4 @@
-// Budhi Lite — Full report agent (browser-side)
+// CheckMatch Lite — Full report agent (browser-side)
 // Generates the personalized deep report in report.html
 // The user's OpenAI key is read from sessionStorage and never stored elsewhere.
 
@@ -309,7 +309,7 @@ async function generatePersonalizedReport({ scope, profile, match }) {
       match_challenges:  (app.challenges  || []).map(t => `${rptResolveLabel(t.title)}: ${rptResolveLabel(t.description)}`).filter(Boolean),
     };
 
-    system = `You are Budhi Lite's full match report writer. Return ONLY valid JSON following the schema below exactly.
+    system = `You are CheckMatch Lite's full match report writer. Return ONLY valid JSON following the schema below exactly.
 Language: ${language}. Write ALL text content in that language.
 Target language name: ${reportLanguageName(language)}.
 You are writing a full compatibility report for ${pairStr}.
@@ -399,7 +399,7 @@ Required JSON schema:
       overview: rptResolveLabel(app.overview),
     };
 
-    system = `You are Budhi Lite's full individual profile report writer. Return ONLY valid JSON following the schema below exactly.
+    system = `You are CheckMatch Lite's full individual profile report writer. Return ONLY valid JSON following the schema below exactly.
 Language: ${language}. Write ALL text content in that language.
 Target language name: ${reportLanguageName(language)}.
 You are writing a full personalized report for ${name}.
@@ -464,7 +464,7 @@ Required JSON schema:
     return { ...normalizeReport(parsed), _source: 'ai', _note: t('aiGenerated') };
 
   } catch(err) {
-    console.warn('[Budhi Lite] Personalized report generation failed.', err);
+    console.warn('[CheckMatch Lite] Personalized report generation failed.', err);
     return fallback;
   }
 }
@@ -584,7 +584,7 @@ async function translatePersonalizedReport({scope, sourceReport, sourceLanguage,
   const model = getOpenAIModel();
   const targetName = reportLanguageName(targetLanguage);
   const sourceName = reportLanguageName(sourceLanguage);
-  const system = `You are Budhi Lite's contextual translation/adaptation agent for full reports. Return ONLY valid JSON using the same report schema you receive: title, subtitle, description, strengths, challenges, cross_analysis, and result_sections.
+  const system = `You are CheckMatch Lite's contextual translation/adaptation agent for full reports. Return ONLY valid JSON using the same report schema you receive: title, subtitle, description, strengths, challenges, cross_analysis, and result_sections.
 Translate and adapt the source report from ${sourceName} to ${targetName}. Preserve the exact meaning, analytical claims, intensity, structure, field names, section keys, number of bullets, and order of sections. Do not reinterpret the match from scratch and do not add new analysis that is absent from the source report. All human-visible strings must be in ${targetName}.
 For MATCH reports, keep the wording neutral about the pair in third person. Do not address the viewer as "you" and do not shift the report toward only one participant.
 Never leave fields empty. Return valid JSON only.`;
@@ -609,7 +609,7 @@ Never leave fields empty. Return valid JSON only.`;
     if (!hasUsableReport(parsed)) return fallback;
     return {...normalizeReport(parsed), _source:'translation', _note:t('aiGenerated')};
   }catch(err){
-    console.warn('[Budhi Lite] Personalized report translation failed.', err);
+    console.warn('[CheckMatch Lite] Personalized report translation failed.', err);
     return fallback;
   }
 }
@@ -662,7 +662,7 @@ async function getOrCreatePersonalizedReport({scope, profile, match, force}){
       if(scope === 'match') await saveMatch(subject);
       else await saveProfile(subject.username, subject);
     }catch(err){
-      console.warn('[Budhi Lite] Full report generated but cache save failed.', err);
+      console.warn('[CheckMatch Lite] Full report generated but cache save failed.', err);
     }
   }
 

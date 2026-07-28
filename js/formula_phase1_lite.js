@@ -134,9 +134,10 @@ const PILLAR_LABELS = {
   Friendships: obj("Friendships", "Amizades", "Amistades", "Amitiés", "Freundschaften"),
   Health: obj("Health", "Saúde", "Salud", "Santé", "Gesundheit"),
   Money: obj("Money", "Dinheiro", "Dinero", "Argent", "Geld"),
-  Purpose: obj("Purpose", "Propósito", "Propósito", "Raison d’être", "Bestimmung"),
+  Purpose: obj("Purpose", "Propósito", "Propósito", "Raison d'être", "Bestimmung"),
   SocialContribution: obj("Social Contribution", "Contribuição Social", "Contribución Social", "Contribution Sociale", "Sozialer Beitrag"),
   SelfKnowledge: obj("Self-Knowledge", "Autoconhecimento", "Autoconocimiento", "Connaissance de soi", "Selbsterkenntnis"),
+  Resilience: obj("Resilience", "Resiliência", "Resiliencia", "Résilience", "Resilienz"),
   Recognition: obj("Recognition", "Reconhecimento", "Reconocimiento", "Reconnaissance", "Anerkennung"),
   Sustainability: obj("Sustainability", "Sustentabilidade", "Sostenibilidad", "Durabilité", "Nachhaltigkeit"),
   Entrepreneurship: obj("Entrepreneurship", "Empreendedorismo", "Emprendimiento", "Entrepreneuriat", "Unternehmertum"),
@@ -155,6 +156,1567 @@ function pillarLabel(key) {
 function valueLabel(key) {
   return VALUE_LABELS[key] || obj(key, key, key, key, key);
 }
+
+
+/* ─────────────────────────────────────────────
+   Qt6 — Free-text human value validation + NLP
+   The stored canonical value remains one of the
+   20 active value categories. Resilience belongs
+   exclusively to Qt7 (Life Pillars).
+───────────────────────────────────────────── */
+
+const QT6_VALUE_CATEGORIES = [
+  "Honesty",
+  "Respect",
+  "Empathy",
+  "Responsibility",
+  "Perseverance",
+  "Courage",
+  "Gratitude",
+  "Compassion",
+  "Integrity",
+  "Solidarity",
+  "Justice",
+  "Freedom",
+  "Tolerance",
+  "Joy",
+  "Discipline",
+  "Trust",
+  "Humility",
+  "Wisdom",
+  "Transparency",
+  "Creativity"
+];
+
+const QT7_PILLAR_CATEGORIES = [
+  "Work",
+  "Love",
+  "Family",
+  "Friendships",
+  "Health",
+  "Money",
+  "Purpose",
+  "Social Contribution",
+  "Self-Knowledge",
+  "Resilience",
+  "Recognition",
+  "Sustainability",
+  "Entrepreneurship",
+  "Volunteering",
+  "Ethics",
+  "Spirituality",
+  "Leisure",
+  "Education",
+  "Dreams",
+  "Hobbies"
+];
+
+const QT6_VALUE_LIBRARY = {
+  "Honesty": {
+    "label": {
+      "en": "Honesty",
+      "pt": "Honestidade",
+      "es": "Honestidad",
+      "fr": "Honnêteté",
+      "de": "Ehrlichkeit"
+    },
+    "synonyms": {
+      "en": [
+        "truth",
+        "truthfulness",
+        "sincerity",
+        "being honest",
+        "telling the truth",
+        "frankness",
+        "uprightness",
+        "candor"
+      ],
+      "pt": [
+        "verdade",
+        "veracidade",
+        "sinceridade",
+        "ser honesto",
+        "falar a verdade",
+        "franqueza",
+        "retidão",
+        "honesto"
+      ],
+      "es": [
+        "verdad",
+        "veracidad",
+        "sinceridad",
+        "ser honesto",
+        "decir la verdad",
+        "franqueza",
+        "rectitud"
+      ],
+      "fr": [
+        "vérité",
+        "sincérité",
+        "dire la vérité",
+        "franchise",
+        "droiture",
+        "honnête"
+      ],
+      "de": [
+        "wahrheit",
+        "aufrichtigkeit",
+        "ehrlich sein",
+        "die wahrheit sagen",
+        "rechtschaffenheit",
+        "ehrliche offenheit"
+      ]
+    }
+  },
+  "Respect": {
+    "label": {
+      "en": "Respect",
+      "pt": "Respeito",
+      "es": "Respeto",
+      "fr": "Respect",
+      "de": "Respekt"
+    },
+    "synonyms": {
+      "en": [
+        "consideration",
+        "regard",
+        "dignity",
+        "courtesy",
+        "politeness",
+        "recognition",
+        "boundaries",
+        "admiration",
+        "self-respect",
+        "self respect",
+        "self-worth",
+        "self worth",
+        "self-esteem",
+        "self esteem",
+        "self dignity",
+        "loving myself",
+        "love myself",
+        "love my self",
+        "self-love",
+        "self love"
+      ],
+      "pt": [
+        "consideração",
+        "dignidade",
+        "cortesia",
+        "educação",
+        "reconhecimento",
+        "limites",
+        "respeitar",
+        "admiração",
+        "amor-próprio",
+        "amor proprio",
+        "autoestima",
+        "auto-estima",
+        "respeito próprio",
+        "respeito proprio",
+        "dignidade própria",
+        "dignidade propria",
+        "valor próprio",
+        "valor proprio",
+        "me amar",
+        "amar a mim mesmo",
+        "amar a mim mesma"
+      ],
+      "es": [
+        "consideración",
+        "dignidad",
+        "cortesía",
+        "educación",
+        "reconocimiento",
+        "límites",
+        "respetar",
+        "amor propio",
+        "autoestima",
+        "respeto propio",
+        "dignidad propia",
+        "valor propio",
+        "amarme",
+        "amar a mí mismo",
+        "amar a mí misma"
+      ],
+      "fr": [
+        "considération",
+        "dignité",
+        "courtoisie",
+        "politesse",
+        "reconnaissance",
+        "limites",
+        "respecter",
+        "amour-propre",
+        "amour propre",
+        "estime de soi",
+        "respect de soi",
+        "dignité personnelle",
+        "s’aimer",
+        "s aimer"
+      ],
+      "de": [
+        "achtung",
+        "rücksicht",
+        "würde",
+        "höflichkeit",
+        "anerkennung",
+        "grenzen",
+        "respektieren",
+        "selbstachtung",
+        "selbstrespekt",
+        "selbstwert",
+        "selbstwertgefühl",
+        "sich selbst lieben"
+      ]
+    }
+  },
+  "Empathy": {
+    "label": {
+      "en": "Empathy",
+      "pt": "Empatia",
+      "es": "Empatía",
+      "fr": "Empathie",
+      "de": "Empathie"
+    },
+    "synonyms": {
+      "en": [
+        "understanding",
+        "putting myself in others shoes",
+        "sensitivity",
+        "listening",
+        "emotional understanding",
+        "perspective taking"
+      ],
+      "pt": [
+        "entender o outro",
+        "se colocar no lugar do outro",
+        "sensibilidade",
+        "escuta",
+        "compreensão emocional",
+        "acolhimento"
+      ],
+      "es": [
+        "entender al otro",
+        "ponerse en el lugar del otro",
+        "sensibilidad",
+        "escucha",
+        "comprensión emocional"
+      ],
+      "fr": [
+        "comprendre l'autre",
+        "se mettre à la place de l'autre",
+        "sensibilité",
+        "écoute",
+        "compréhension émotionnelle"
+      ],
+      "de": [
+        "verständnis",
+        "sich in andere hineinversetzen",
+        "sensibilität",
+        "zuhören",
+        "emotionales verständnis"
+      ]
+    }
+  },
+  "Responsibility": {
+    "label": {
+      "en": "Responsibility",
+      "pt": "Responsabilidade",
+      "es": "Responsabilidad",
+      "fr": "Responsabilité",
+      "de": "Verantwortung"
+    },
+    "synonyms": {
+      "en": [
+        "accountability",
+        "commitment",
+        "duty",
+        "obligation",
+        "ownership",
+        "reliability",
+        "being responsible",
+        "answerability"
+      ],
+      "pt": [
+        "compromisso",
+        "dever",
+        "obrigação",
+        "assumir consequências",
+        "confiabilidade",
+        "ser responsável",
+        "prestação de contas"
+      ],
+      "es": [
+        "compromiso",
+        "deber",
+        "obligación",
+        "asumir consecuencias",
+        "confiabilidad",
+        "ser responsable"
+      ],
+      "fr": [
+        "engagement",
+        "devoir",
+        "obligation",
+        "assumer les conséquences",
+        "fiabilité",
+        "être responsable"
+      ],
+      "de": [
+        "verantwortlichkeit",
+        "verpflichtung",
+        "pflicht",
+        "zuverlässigkeit",
+        "verantwortlich sein",
+        "rechenschaft"
+      ]
+    }
+  },
+  "Perseverance": {
+    "label": {
+      "en": "Perseverance",
+      "pt": "Perseverança",
+      "es": "Perseverancia",
+      "fr": "Persévérance",
+      "de": "Ausdauer"
+    },
+    "synonyms": {
+      "en": [
+        "persistence",
+        "determination",
+        "not giving up",
+        "tenacity",
+        "endurance",
+        "steadfastness",
+        "keep going"
+      ],
+      "pt": [
+        "persistência",
+        "determinação",
+        "não desistir",
+        "tenacidade",
+        "constância",
+        "seguir em frente",
+        "insistência"
+      ],
+      "es": [
+        "persistencia",
+        "determinación",
+        "no rendirse",
+        "tenacidad",
+        "constancia",
+        "seguir adelante"
+      ],
+      "fr": [
+        "persistance",
+        "détermination",
+        "ne pas abandonner",
+        "ténacité",
+        "constance",
+        "continuer"
+      ],
+      "de": [
+        "beharrlichkeit",
+        "entschlossenheit",
+        "nicht aufgeben",
+        "ausdauernd",
+        "standhaftigkeit",
+        "weitermachen"
+      ]
+    }
+  },
+  "Courage": {
+    "label": {
+      "en": "Courage",
+      "pt": "Coragem",
+      "es": "Coraje",
+      "fr": "Courage",
+      "de": "Mut"
+    },
+    "synonyms": {
+      "en": [
+        "bravery",
+        "boldness",
+        "facing fear",
+        "daring",
+        "nerve",
+        "initiative",
+        "taking risks"
+      ],
+      "pt": [
+        "bravura",
+        "ousadia",
+        "enfrentar o medo",
+        "atrevimento",
+        "iniciativa",
+        "arriscar",
+        "corajoso"
+      ],
+      "es": [
+        "valentía",
+        "osadía",
+        "enfrentar el miedo",
+        "atrevimiento",
+        "iniciativa",
+        "arriesgar"
+      ],
+      "fr": [
+        "bravoure",
+        "audace",
+        "affronter la peur",
+        "initiative",
+        "prendre des risques"
+      ],
+      "de": [
+        "tapferkeit",
+        "kühnheit",
+        "angst begegnen",
+        "wagemut",
+        "initiative",
+        "risiko eingehen"
+      ]
+    }
+  },
+  "Gratitude": {
+    "label": {
+      "en": "Gratitude",
+      "pt": "Gratidão",
+      "es": "Gratitud",
+      "fr": "Gratitude",
+      "de": "Dankbarkeit"
+    },
+    "synonyms": {
+      "en": [
+        "thankfulness",
+        "appreciation",
+        "being grateful",
+        "recognizing good",
+        "thank you",
+        "blessing"
+      ],
+      "pt": [
+        "agradecimento",
+        "apreciação",
+        "ser grato",
+        "reconhecer o bem",
+        "obrigado",
+        "bênção"
+      ],
+      "es": [
+        "agradecimiento",
+        "aprecio",
+        "ser agradecido",
+        "reconocer lo bueno",
+        "gracias"
+      ],
+      "fr": [
+        "remerciement",
+        "appréciation",
+        "être reconnaissant",
+        "reconnaître le bien",
+        "merci"
+      ],
+      "de": [
+        "dank",
+        "wertschätzung",
+        "dankbar sein",
+        "das gute erkennen",
+        "danke"
+      ]
+    }
+  },
+  "Compassion": {
+    "label": {
+      "en": "Compassion",
+      "pt": "Compaixão",
+      "es": "Compasión",
+      "fr": "Compassion",
+      "de": "Mitgefühl"
+    },
+    "synonyms": {
+      "en": [
+        "kindness",
+        "mercy",
+        "care",
+        "human warmth",
+        "helping those who suffer",
+        "tenderness",
+        "self-compassion",
+        "self compassion",
+        "self-kindness",
+        "self kindness",
+        "kindness to myself",
+        "being kind to myself"
+      ],
+      "pt": [
+        "bondade",
+        "misericórdia",
+        "cuidado",
+        "calor humano",
+        "ajudar quem sofre",
+        "ternura",
+        "autocompaixão",
+        "auto compaixão",
+        "compaixão por mim",
+        "gentileza comigo",
+        "ser gentil comigo"
+      ],
+      "es": [
+        "bondad",
+        "misericordia",
+        "cuidado",
+        "calidez humana",
+        "ayudar a quien sufre",
+        "ternura",
+        "autocompasión",
+        "auto compasión",
+        "compasión conmigo",
+        "ser amable conmigo"
+      ],
+      "fr": [
+        "bonté",
+        "miséricorde",
+        "soin",
+        "chaleur humaine",
+        "aider ceux qui souffrent",
+        "tendresse",
+        "autocompassion",
+        "auto compassion",
+        "compassion envers soi",
+        "être gentil avec soi"
+      ],
+      "de": [
+        "güte",
+        "barmherzigkeit",
+        "fürsorge",
+        "menschliche wärme",
+        "leidenden helfen",
+        "zärtlichkeit",
+        "selbstmitgefühl",
+        "selbst mitgefühl",
+        "mitgefühl mit mir selbst",
+        "freundlich zu mir selbst"
+      ]
+    }
+  },
+  "Integrity": {
+    "label": {
+      "en": "Integrity",
+      "pt": "Integridade",
+      "es": "Integridad",
+      "fr": "Intégrité",
+      "de": "Integrität"
+    },
+    "synonyms": {
+      "en": [
+        "ethics",
+        "moral coherence",
+        "principles",
+        "upright character",
+        "doing what is right",
+        "honor"
+      ],
+      "pt": [
+        "ética",
+        "coerência moral",
+        "princípios",
+        "caráter reto",
+        "fazer o certo",
+        "honra"
+      ],
+      "es": [
+        "ética",
+        "coherencia moral",
+        "principios",
+        "carácter recto",
+        "hacer lo correcto",
+        "honor"
+      ],
+      "fr": [
+        "éthique",
+        "cohérence morale",
+        "principes",
+        "caractère droit",
+        "faire ce qui est juste",
+        "honneur"
+      ],
+      "de": [
+        "ethik",
+        "moralische konsequenz",
+        "prinzipien",
+        "aufrichtiger charakter",
+        "das richtige tun",
+        "ehre"
+      ]
+    }
+  },
+  "Solidarity": {
+    "label": {
+      "en": "Solidarity",
+      "pt": "Solidariedade",
+      "es": "Solidaridad",
+      "fr": "Solidarité",
+      "de": "Solidarität"
+    },
+    "synonyms": {
+      "en": [
+        "mutual support",
+        "community",
+        "helping others",
+        "togetherness",
+        "cooperation",
+        "social support"
+      ],
+      "pt": [
+        "apoio mútuo",
+        "comunidade",
+        "ajudar os outros",
+        "união",
+        "cooperação",
+        "suporte social"
+      ],
+      "es": [
+        "apoyo mutuo",
+        "comunidad",
+        "ayudar a otros",
+        "unión",
+        "cooperación",
+        "apoyo social"
+      ],
+      "fr": [
+        "soutien mutuel",
+        "communauté",
+        "aider les autres",
+        "union",
+        "coopération",
+        "soutien social"
+      ],
+      "de": [
+        "gegenseitige unterstützung",
+        "gemeinschaft",
+        "anderen helfen",
+        "zusammenhalt",
+        "kooperation",
+        "soziale unterstützung"
+      ]
+    }
+  },
+  "Justice": {
+    "label": {
+      "en": "Justice",
+      "pt": "Justiça",
+      "es": "Justicia",
+      "fr": "Justice",
+      "de": "Gerechtigkeit"
+    },
+    "synonyms": {
+      "en": [
+        "fairness",
+        "equity",
+        "rights",
+        "what is fair",
+        "social justice",
+        "impartiality"
+      ],
+      "pt": [
+        "justo",
+        "equidade",
+        "direitos",
+        "o que é justo",
+        "justiça social",
+        "imparcialidade"
+      ],
+      "es": [
+        "justo",
+        "equidad",
+        "derechos",
+        "lo justo",
+        "justicia social",
+        "imparcialidad"
+      ],
+      "fr": [
+        "équité",
+        "droits",
+        "ce qui est juste",
+        "justice sociale",
+        "impartialité"
+      ],
+      "de": [
+        "gerechtigkeitssinn",
+        "fairness",
+        "rechte",
+        "was gerecht ist",
+        "soziale gerechtigkeit",
+        "unparteilichkeit"
+      ]
+    }
+  },
+  "Freedom": {
+    "label": {
+      "en": "Freedom",
+      "pt": "Liberdade",
+      "es": "Libertad",
+      "fr": "Liberté",
+      "de": "Freiheit"
+    },
+    "synonyms": {
+      "en": [
+        "autonomy",
+        "independence",
+        "free choice",
+        "self-direction",
+        "liberty",
+        "being free"
+      ],
+      "pt": [
+        "autonomia",
+        "independência",
+        "livre escolha",
+        "autodireção",
+        "ser livre",
+        "libertação"
+      ],
+      "es": [
+        "autonomía",
+        "independencia",
+        "libre elección",
+        "autodirección",
+        "ser libre"
+      ],
+      "fr": [
+        "autonomie",
+        "indépendance",
+        "libre choix",
+        "autodirection",
+        "être libre"
+      ],
+      "de": [
+        "autonomie",
+        "unabhängigkeit",
+        "freie wahl",
+        "selbstbestimmung",
+        "frei sein"
+      ]
+    }
+  },
+  "Tolerance": {
+    "label": {
+      "en": "Tolerance",
+      "pt": "Tolerância",
+      "es": "Tolerancia",
+      "fr": "Tolérance",
+      "de": "Toleranz"
+    },
+    "synonyms": {
+      "en": [
+        "acceptance",
+        "patience with differences",
+        "plurality",
+        "respect for difference",
+        "inclusion",
+        "open-mindedness",
+        "openness to differences"
+      ],
+      "pt": [
+        "aceitação",
+        "paciência com diferenças",
+        "pluralidade",
+        "respeito à diferença",
+        "inclusão",
+        "mente aberta",
+        "abertura às diferenças"
+      ],
+      "es": [
+        "aceptación",
+        "paciencia con diferencias",
+        "pluralidad",
+        "respeto a la diferencia",
+        "inclusión",
+        "mentalidad abierta",
+        "apertura a las diferencias"
+      ],
+      "fr": [
+        "acceptation",
+        "patience face aux différences",
+        "pluralité",
+        "respect de la différence",
+        "inclusion",
+        "ouverture d'esprit",
+        "ouverture aux différences"
+      ],
+      "de": [
+        "akzeptanz",
+        "geduld mit unterschieden",
+        "pluralität",
+        "respekt vor unterschieden",
+        "inklusion",
+        "aufgeschlossenheit",
+        "offenheit für unterschiede"
+      ]
+    }
+  },
+  "Joy": {
+    "label": {
+      "en": "Joy",
+      "pt": "Alegria",
+      "es": "Alegría",
+      "fr": "Joie",
+      "de": "Freude"
+    },
+    "synonyms": {
+      "en": [
+        "happiness",
+        "lightness",
+        "cheerfulness",
+        "good mood",
+        "pleasure",
+        "celebration",
+        "delight"
+      ],
+      "pt": [
+        "felicidade",
+        "leveza",
+        "bom humor",
+        "prazer",
+        "celebração",
+        "contentamento",
+        "alegre"
+      ],
+      "es": [
+        "felicidad",
+        "ligereza",
+        "buen humor",
+        "placer",
+        "celebración",
+        "alegrarse"
+      ],
+      "fr": [
+        "bonheur",
+        "légèreté",
+        "bonne humeur",
+        "plaisir",
+        "célébration",
+        "joie de vivre"
+      ],
+      "de": [
+        "glück",
+        "leichtigkeit",
+        "gute laune",
+        "freude",
+        "feier",
+        "vergnügen"
+      ]
+    }
+  },
+  "Discipline": {
+    "label": {
+      "en": "Discipline",
+      "pt": "Disciplina",
+      "es": "Disciplina",
+      "fr": "Discipline",
+      "de": "Disziplin"
+    },
+    "synonyms": {
+      "en": [
+        "self-control",
+        "organization",
+        "consistency",
+        "routine",
+        "focus",
+        "method",
+        "commitment to practice"
+      ],
+      "pt": [
+        "autocontrole",
+        "organização",
+        "consistência",
+        "rotina",
+        "foco",
+        "método",
+        "regularidade"
+      ],
+      "es": [
+        "autocontrol",
+        "organización",
+        "consistencia",
+        "rutina",
+        "enfoque",
+        "método",
+        "regularidad"
+      ],
+      "fr": [
+        "maîtrise de soi",
+        "organisation",
+        "cohérence",
+        "routine",
+        "concentration",
+        "méthode",
+        "régularité"
+      ],
+      "de": [
+        "selbstkontrolle",
+        "organisation",
+        "beständigkeit",
+        "routine",
+        "fokus",
+        "methode",
+        "regelmäßigkeit"
+      ]
+    }
+  },
+  "Trust": {
+    "label": {
+      "en": "Trust",
+      "pt": "Confiança",
+      "es": "Confianza",
+      "fr": "Confiance",
+      "de": "Vertrauen"
+    },
+    "synonyms": {
+      "en": [
+        "confidence",
+        "faith in others",
+        "reliance",
+        "credibility",
+        "safe bond",
+        "believing",
+        "self-confidence",
+        "self confidence",
+        "confidence in myself",
+        "trusting myself",
+        "trust myself"
+      ],
+      "pt": [
+        "crer",
+        "fé no outro",
+        "segurança",
+        "credibilidade",
+        "vínculo seguro",
+        "acreditar",
+        "autoconfiança",
+        "auto confiança",
+        "confiança em mim",
+        "confiar em mim",
+        "confiar em mim mesmo",
+        "confiar em mim mesma"
+      ],
+      "es": [
+        "confianza en otros",
+        "seguridad",
+        "credibilidad",
+        "vínculo seguro",
+        "creer",
+        "autoconfianza",
+        "auto confianza",
+        "confianza en mí",
+        "confiar en mí",
+        "confiar en mí mismo",
+        "confiar en mí misma"
+      ],
+      "fr": [
+        "foi en l'autre",
+        "sécurité",
+        "crédibilité",
+        "lien sûr",
+        "croire",
+        "confiance en soi",
+        "me faire confiance",
+        "se faire confiance"
+      ],
+      "de": [
+        "vertrauen in andere",
+        "sicherheit",
+        "glaubwürdigkeit",
+        "sichere bindung",
+        "glauben",
+        "selbstvertrauen",
+        "vertrauen in mich selbst",
+        "mir selbst vertrauen"
+      ]
+    }
+  },
+  "Humility": {
+    "label": {
+      "en": "Humility",
+      "pt": "Humildade",
+      "es": "Humildad",
+      "fr": "Humilité",
+      "de": "Demut"
+    },
+    "synonyms": {
+      "en": [
+        "modesty",
+        "simplicity",
+        "learning posture",
+        "low ego",
+        "recognizing limits",
+        "being humble"
+      ],
+      "pt": [
+        "modéstia",
+        "simplicidade",
+        "postura de aprendiz",
+        "baixo ego",
+        "reconhecer limites",
+        "ser humilde"
+      ],
+      "es": [
+        "modestia",
+        "simplicidad",
+        "actitud de aprendiz",
+        "poco ego",
+        "reconocer límites",
+        "ser humilde"
+      ],
+      "fr": [
+        "modestie",
+        "simplicité",
+        "posture d'apprentissage",
+        "peu d'ego",
+        "reconnaître ses limites",
+        "être humble"
+      ],
+      "de": [
+        "bescheidenheit",
+        "einfachheit",
+        "lernhaltung",
+        "wenig ego",
+        "grenzen erkennen",
+        "demütig sein"
+      ]
+    }
+  },
+  "Wisdom": {
+    "label": {
+      "en": "Wisdom",
+      "pt": "Sabedoria",
+      "es": "Sabiduría",
+      "fr": "Sagesse",
+      "de": "Weisheit"
+    },
+    "synonyms": {
+      "en": [
+        "discernment",
+        "good judgment",
+        "maturity",
+        "learning from experience",
+        "prudence",
+        "insight"
+      ],
+      "pt": [
+        "discernimento",
+        "bom julgamento",
+        "maturidade",
+        "aprender com a experiência",
+        "prudência",
+        "lucidez"
+      ],
+      "es": [
+        "discernimiento",
+        "buen juicio",
+        "madurez",
+        "aprender de la experiencia",
+        "prudencia",
+        "lucidez"
+      ],
+      "fr": [
+        "discernement",
+        "bon jugement",
+        "maturité",
+        "apprendre de l'expérience",
+        "prudence",
+        "lucidité"
+      ],
+      "de": [
+        "urteilskraft",
+        "gutes urteilsvermögen",
+        "reife",
+        "aus erfahrung lernen",
+        "klugheit",
+        "einsicht"
+      ]
+    }
+  },
+  "Transparency": {
+    "label": {
+      "en": "Transparency",
+      "pt": "Transparência",
+      "es": "Transparencia",
+      "fr": "Transparence",
+      "de": "Transparenz"
+    },
+    "synonyms": {
+      "en": [
+        "clarity",
+        "no hidden agenda",
+        "being clear",
+        "straightforwardness",
+        "openness in communication",
+        "transparent communication"
+      ],
+      "pt": [
+        "clareza",
+        "sem segundas intenções",
+        "ser claro",
+        "objetividade",
+        "comunicação aberta",
+        "transparência na comunicação"
+      ],
+      "es": [
+        "claridad",
+        "sin doble intención",
+        "ser claro",
+        "comunicación abierta",
+        "transparencia en la comunicación",
+        "comunicación directa"
+      ],
+      "fr": [
+        "clarté",
+        "sans arrière-pensée",
+        "être clair",
+        "communication ouverte",
+        "transparence dans la communication"
+      ],
+      "de": [
+        "klarheit",
+        "keine versteckte absicht",
+        "klar sein",
+        "direktheit",
+        "offene kommunikation",
+        "transparenz in der kommunikation"
+      ]
+    }
+  },
+  "Creativity": {
+    "label": {
+      "en": "Creativity",
+      "pt": "Criatividade",
+      "es": "Creatividad",
+      "fr": "Créativité",
+      "de": "Kreativität"
+    },
+    "synonyms": {
+      "en": [
+        "imagination",
+        "innovation",
+        "originality",
+        "inventiveness",
+        "creating",
+        "new ideas",
+        "creative thinking"
+      ],
+      "pt": [
+        "imaginação",
+        "inovação",
+        "originalidade",
+        "inventividade",
+        "criar",
+        "novas ideias",
+        "pensamento criativo"
+      ],
+      "es": [
+        "imaginación",
+        "innovación",
+        "originalidad",
+        "inventiva",
+        "crear",
+        "nuevas ideas",
+        "pensamiento creativo"
+      ],
+      "fr": [
+        "imagination",
+        "innovation",
+        "originalité",
+        "inventivité",
+        "créer",
+        "nouvelles idées",
+        "pensée créative"
+      ],
+      "de": [
+        "vorstellungskraft",
+        "innovation",
+        "originalität",
+        "erfindergeist",
+        "erschaffen",
+        "neue ideen",
+        "kreatives denken"
+      ]
+    }
+  }
+};
+const QT6_VALUE_MATCH_THRESHOLD = 0.60;
+const QT6_VALUE_STRONG_LOCK_THRESHOLD = 0.72;
+const QT6_VALUE_INVALID_SCOPE_THRESHOLD = 0.12;
+const QT6_MIN_VALUES = 5;
+const QT6_MAX_VALUES = 5;
+const QT6_MIN_INPUT_CHARS = 2;
+const QT6_MAX_INPUT_CHARS = 220;
+
+const QT6_BLOCKED_PATTERNS = [
+  /\b(fuck|shit|bitch|asshole|idiot|stupid|moron|trash|dumb)\b/i,
+  /\b(merda|porra|caralho|puta|idiota|burro|lixo|ot[aá]rio|babaca|imbecil|est[uú]pido)\b/i,
+  /\b(mierda|puta|idiota|est[uú]pido|imb[eé]cil|basura)\b/i,
+  /\b(merde|connard|idiot|imb[eé]cile|stupide)\b/i,
+  /\b(schei[sß]e|arschloch|idiot|dumm|m[üu]ll)\b/i
+];
+
+// Stopwords keep complete sentences readable while extracting only meaningful value words.
+// They are intentionally multilingual because the app can run in EN, PT, ES, FR and DE.
+const QT6_STOPWORDS = new Set([
+  // English
+  'i','me','my','mine','myself','self','own','you','your','yours','we','our','ours','us','they','them','their','theirs',
+  'a','an','the','and','or','but','if','then','because','of','to','for','from','with','without','in','on','at','by','as','is','are','am','be','being','been','was','were','do','does','did','have','has','had','that','this','these','those','it','its','into','about','right','now','today','value','values','guide','guides','guided','guiding','feel','feels','connected','strongly','most','important','more','very','really','such','like','would','should','could','can',
+  // Portuguese
+  'eu','me','meu','minha','meus','minhas','mim','mesmo','mesma','proprio','propria','auto','voce','você','seu','sua','seus','suas','nos','nós','nossos','nossas','eles','elas','deles','delas',
+  'o','a','os','as','um','uma','uns','umas','e','ou','mas','se','entao','então','porque','de','do','da','dos','das','para','por','com','sem','em','no','na','nos','nas','ao','aos','como','ser','sou','sao','são','estar','esta','está','estao','estão','foi','foram','ter','tem','têm','que','isso','isto','esses','essas','aqueles','aquelas','valor','valores','guia','guiam','guiar','guiado','guiada','sinto','sentir','conectado','conectada','fortemente','mais','muito','bem','vida','hoje','agora',
+  // Spanish
+  'yo','me','mi','mis','mio','mia','míos','mías','mismo','misma','propio','propia','tu','tus','usted','ustedes','nosotros','nosotras','nuestro','nuestra','ellos','ellas','sus','suyo','suya',
+  'el','la','los','las','un','una','unos','unas','y','o','pero','si','entonces','porque','de','del','para','por','con','sin','en','al','como','ser','soy','son','estar','esta','está','estan','están','fue','fueron','tener','tiene','tienen','que','eso','esto','estos','estas','valor','valores','guia','guía','guian','guían','guiar','siento','sentir','conectado','conectada','fuertemente','mas','más','muy','vida','hoy','ahora',
+  // French
+  'je','me','mon','ma','mes','moi','soi','meme','même','propre','tu','vous','votre','vos','nous','notre','nos','ils','elles','leur','leurs',
+  'le','la','les','un','une','des','et','ou','mais','si','alors','parce','que','de','du','pour','par','avec','sans','dans','sur','au','aux','comme','etre','être','suis','est','sont','ce','cet','cette','ces','valeur','valeurs','guide','guident','guider','sens','sentir','connecte','connecté','connectee','connectée','fortement','plus','tres','très','vie','aujourdhui','maintenant',
+  // German
+  'ich','mich','mir','mein','meine','meiner','meines','selbst','du','dich','dein','deine','sie','ihr','ihre','wir','uns','unser','unsere','der','die','das','ein','eine','und','oder','aber','wenn','dann','weil','von','zu','fur','für','mit','ohne','in','auf','an','als','ist','sind','bin','sein','war','waren','haben','hat','dass','dies','diese','dieser','wert','werte','leitet','leiten','fuhle','fühle','verbunden','stark','mehr','sehr','leben','heute','jetzt'
+].map(semanticNormalizeText));
+
+// Context terms may be meaningful in a sentence but are not one of the 20 canonical Qt6 values.
+// They can be shown in diagnostics and ignored for automatic storage.
+const QT6_CONTEXT_TERMS = [
+  'spirituality','spiritual life','espiritualidade','vida espiritual','espiritualidad','vie spirituelle','spiritualité','spiritualitat','spiritualität'
+];
+
+function semanticNormalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’']/g, ' ')
+    .replace(/[^a-z0-9À-ÿ\s-]/gi, ' ')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function semanticTokenize(value) {
+  return semanticNormalizeText(value)
+    .split(' ')
+    .map(x => x.trim())
+    .filter(x => x.length >= 2);
+}
+
+function semanticMeaningfulTokens(tokens) {
+  return (tokens || []).filter(t => t && t.length >= 2 && !QT6_STOPWORDS.has(semanticNormalizeText(t)));
+}
+
+function semanticExtractKeywords(value) {
+  return semanticMeaningfulTokens(semanticTokenize(value));
+}
+
+function semanticUnique(arr) {
+  return [...new Set((arr || []).filter(Boolean))];
+}
+
+function semanticClamp01(n) {
+  return Math.max(0, Math.min(1, Number(n) || 0));
+}
+
+function semanticLevenshtein(a, b) {
+  a = semanticNormalizeText(a);
+  b = semanticNormalizeText(b);
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+  const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = b.charAt(i - 1) === a.charAt(j - 1)
+        ? matrix[i - 1][j - 1]
+        : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function semanticSimilarity(a, b) {
+  a = semanticNormalizeText(a);
+  b = semanticNormalizeText(b);
+  const max = Math.max(a.length, b.length);
+  if (!max) return 1;
+  return 1 - (semanticLevenshtein(a, b) / max);
+}
+
+function semanticDynamicCategoryMap(opts = {}) {
+  return opts.categoryMap || opts.categoriesMap || opts.categories || opts.nlpCategories || null;
+}
+
+function semanticDynamicCategoryKeys(opts = {}) {
+  const map = semanticDynamicCategoryMap(opts);
+  if (map && typeof map === 'object') return Object.keys(map);
+  return typeof QT6_VALUE_CATEGORIES !== 'undefined' ? QT6_VALUE_CATEGORIES : [];
+}
+
+function semanticDynamicCategoryData(category, opts = {}) {
+  const map = semanticDynamicCategoryMap(opts);
+  if (map && typeof map === 'object' && map[category]) return map[category] || {};
+  return (typeof QT6_VALUE_LIBRARY !== 'undefined' && QT6_VALUE_LIBRARY[category]) || {};
+}
+
+function semanticCategoryTerms(category, opts = {}) {
+  const data = semanticDynamicCategoryData(category, opts);
+  const label = data.label || {};
+  const synonyms = data.synonyms || {};
+  const baseTerms = data.base_terms || data.baseTerms || [];
+  const contextTerms = data.context_terms || data.contextTerms || [];
+  return semanticUnique([
+    category,
+    ...Object.values(label),
+    ...(Array.isArray(baseTerms) ? baseTerms : []),
+    ...(Array.isArray(contextTerms) ? contextTerms : []),
+    ...Object.values(synonyms).flat()
+  ]).map(String).filter(Boolean);
+}
+
+function validateFreeTextInput(input, opts = {}) {
+  const raw = String(input || '');
+  const clean = raw.replace(/\s+/g, ' ').trim();
+  const minChars = Number(opts.minChars || QT6_MIN_INPUT_CHARS);
+  const maxChars = Number(opts.maxChars || QT6_MAX_INPUT_CHARS);
+
+  // Safety block must run before the semantic matcher accepts a high-confidence category.
+  // The IA resolver is loaded after this file, but this function is executed later,
+  // so detectBlockedSemanticInput is available at runtime when js/ia_resolver.js is present.
+  if (typeof detectBlockedSemanticInput === 'function') {
+    const blocked = detectBlockedSemanticInput(clean, opts);
+    if (blocked?.invalid) {
+      return {
+        valid: false,
+        reason: blocked.reason || 'blocked_language',
+        messageKey: blocked.messageKey || 'qt6InvalidContent',
+        sanitized: clean,
+        invalid: true,
+        requiresFallback: false,
+        safety: blocked.safety || null
+      };
+    }
+  }
+
+  if (!clean || clean.length < minChars) {
+    return { valid: false, reason: 'empty_or_too_short', messageKey: 'qt6InvalidTooShort', sanitized: clean };
+  }
+  if (clean.length > maxChars) {
+    return { valid: false, reason: 'too_long', messageKey: 'qt6InvalidTooLong', sanitized: clean };
+  }
+  if (/https?:\/\/|www\.|@/.test(clean)) {
+    return { valid: false, reason: 'external_or_contact', messageKey: 'qt6InvalidScope', sanitized: clean };
+  }
+  if (!/[a-zA-ZÀ-ÿ]/.test(clean) || /(.)\1{8,}/.test(clean)) {
+    return { valid: false, reason: 'noise', messageKey: 'qt6InvalidScope', sanitized: clean };
+  }
+  if (QT6_BLOCKED_PATTERNS.some(rx => rx.test(clean))) {
+    return { valid: false, reason: 'blocked_language', messageKey: 'qt6InvalidContent', sanitized: clean };
+  }
+  return { valid: true, reason: null, messageKey: null, sanitized: clean };
+}
+
+function semanticTermScore(inputNorm, inputTokens, term) {
+  const termNorm = semanticNormalizeText(term);
+  if (!termNorm) return { score: 0, corrections: [] };
+
+  const termTokens = semanticTokenize(termNorm);
+  const inputKeywords = semanticMeaningfulTokens(inputTokens);
+  const termKeywords = semanticMeaningfulTokens(termTokens);
+
+  if (inputNorm === termNorm) return { score: 1, corrections: [] };
+  if (inputNorm.includes(termNorm) && termNorm.length >= 3) return { score: 0.96, corrections: [] };
+
+  // Phrase-level check after stopword removal. This lets sentences like
+  // "os valores que me guiam são justiça e honestidade" resolve cleanly.
+  const inputKeywordText = inputKeywords.join(' ');
+  const termKeywordText = termKeywords.join(' ');
+  if (termKeywordText && inputKeywordText.includes(termKeywordText)) return { score: 0.92, corrections: [] };
+
+  const inputSet = new Set(inputKeywords);
+  const termSet = new Set(termKeywords);
+  const overlap = [...termSet].filter(t => inputSet.has(t)).length;
+  if (termKeywords.length && overlap === termKeywords.length) return { score: 0.88, corrections: [] };
+  if (overlap > 0) {
+    return { score: Math.max(0.50, overlap / Math.max(termKeywords.length, inputKeywords.length || 1)), corrections: [] };
+  }
+
+  let typoScore = 0;
+  const corrections = [];
+  for (const a of inputKeywords) {
+    if (a.length < 5) continue;
+    for (const b of termKeywords) {
+      if (b.length < 5) continue;
+      const sim = semanticSimilarity(a, b);
+      if (sim >= 0.84) {
+        const score = sim * 0.78;
+        if (score > typoScore) typoScore = score;
+        corrections.push({ original: a, corrected: b, confidence: Math.round(sim * 100) });
+      }
+    }
+  }
+  return { score: typoScore, corrections };
+}
+
+function semanticContextualTerms(inputNorm, inputTokens, opts = {}) {
+  const found = [];
+  const contextSource = Array.isArray(opts.contextTerms || opts.context_terms) && (opts.contextTerms || opts.context_terms).length ? (opts.contextTerms || opts.context_terms) : QT6_CONTEXT_TERMS;
+  for (const term of contextSource) {
+    const termNorm = semanticNormalizeText(term);
+    if (!termNorm) continue;
+    if (inputNorm.includes(termNorm)) found.push(termNorm);
+    else {
+      for (const token of semanticMeaningfulTokens(inputTokens)) {
+        if (token.length >= 5 && semanticSimilarity(token, termNorm) >= 0.80) found.push(termNorm);
+      }
+    }
+  }
+  return semanticUnique(found);
+}
+
+function calculateSemanticMatch(input, opts = {}) {
+  const threshold = Number(opts.threshold || QT6_VALUE_MATCH_THRESHOLD);
+  const strongLockThreshold = Number(opts.strongLockThreshold || opts.lockThreshold || QT6_VALUE_STRONG_LOCK_THRESHOLD);
+  const minValues = Number(opts.minValues || QT6_MIN_VALUES);
+  const maxValues = Number(opts.maxValues || QT6_MAX_VALUES);
+  const categoryKeys = semanticDynamicCategoryKeys(opts);
+  const inputNorm = semanticNormalizeText(input);
+  const inputTokens = semanticTokenize(inputNorm);
+  const keywords = semanticExtractKeywords(inputNorm);
+  const validation = validateFreeTextInput(input, opts);
+
+  if (!validation.valid) {
+    return {
+      category: null,
+      categories: [],
+      lockedCategories: [],
+      score: 0,
+      confidence: 0,
+      threshold,
+      minValues,
+      maxValues,
+      requiresFallback: false,
+      invalid: true,
+      reason: validation.reason,
+      messageKey: validation.messageKey,
+      keywords,
+      candidates: []
+    };
+  }
+
+  const candidates = categoryKeys.map(category => {
+    const terms = semanticCategoryTerms(category, opts);
+    let rawScore = 0;
+    let matchedTerm = '';
+    let corrections = [];
+    for (const term of terms) {
+      const res = semanticTermScore(inputNorm, inputTokens, term);
+      if (res.score > rawScore) {
+        rawScore = res.score;
+        matchedTerm = term;
+        corrections = res.corrections || [];
+      }
+    }
+    return { category, rawScore: semanticClamp01(rawScore), matchedTerm, corrections };
+  }).sort((a, b) => b.rawScore - a.rawScore);
+
+  const accepted = candidates
+    .filter(c => c.rawScore >= threshold)
+    .slice(0, maxValues + 2);
+
+  // Strong/validated categories are locked in the fallback screen. If the user typed
+  // only 1 or 2 clear values, those stay fixed and the user selects the remaining ones.
+  const lockedCategories = accepted
+    .filter(c => c.rawScore >= strongLockThreshold)
+    .slice(0, maxValues)
+    .map(c => c.category);
+
+  const categories = accepted.slice(0, maxValues).map(c => c.category);
+  const best = candidates[0] || { category: null, rawScore: 0 };
+  const confidenceBase = accepted.length
+    ? accepted.slice(0, Math.min(maxValues, accepted.length)).reduce((sum, c) => sum + c.rawScore, 0) / Math.min(maxValues, accepted.length)
+    : best.rawScore;
+  const confidence = semanticClamp01(confidenceBase || 0);
+  const score = Math.round(confidence * 100);
+
+  let reason = null;
+  if (!categories.length) reason = 'no_semantic_match';
+  else if (accepted.length < minValues) reason = 'needs_more_values';
+  else if (accepted.length > maxValues) reason = 'too_many_values_detected';
+
+  return {
+    category: categories[0] || best.category || null,
+    categories,
+    lockedCategories,
+    score,
+    confidence,
+    threshold,
+    strongLockThreshold,
+    minValues,
+    maxValues,
+    requiresFallback: Boolean(reason),
+    invalid: false,
+    reason,
+    messageKey: reason ? 'qt6NeedsManualFallback' : null,
+    keywords,
+    contextualTerms: semanticContextualTerms(inputNorm, inputTokens, opts),
+    correctedTerms: semanticUnique(accepted.flatMap(c => c.corrections || []).map(c => `${c.original}→${c.corrected}`))
+      .map(pair => {
+        const [original, corrected] = pair.split('→');
+        return { original, corrected };
+      }),
+    candidates: candidates.slice(0, 8).map(c => ({
+      category: c.category,
+      score: Math.round(semanticClamp01(c.rawScore) * 100),
+      matchedTerm: c.matchedTerm || ''
+    }))
+  };
+}
+
+function normalizeSemanticAnswer(value, opts = {}) {
+  const maxValues = Number(opts.maxValues || QT6_MAX_VALUES);
+  if (Array.isArray(value)) return semanticUnique(value.map(String).filter(Boolean)).slice(0, maxValues);
+  if (value && typeof value === 'object') {
+    if (Array.isArray(value.categories)) return normalizeSemanticAnswer(value.categories, opts);
+    if (value.category) return [String(value.category)];
+    if (value.value) return [String(value.value)];
+    if (value.text) return normalizeSemanticAnswer(value.text, opts);
+  }
+  const raw = String(value || '').trim();
+  if (!raw) return [];
+  if (semanticDynamicCategoryKeys(opts).map(String).includes(raw)) return [raw];
+  const match = calculateSemanticMatch(raw, opts);
+  return match.categories && !match.requiresFallback && !match.invalid ? match.categories.slice(0, maxValues) : [];
+}
+
+function semanticFallbackOptions(opts = {}) {
+  const map = semanticDynamicCategoryMap(opts);
+  if (map && typeof map === 'object') return Object.entries(map).map(([value, data]) => ({ value, label: data.label || obj(value, value, value, value, value) }));
+  return QT6_VALUE_CATEGORIES.map(value => ({ value, label: VALUE_LABELS[value] || obj(value, value, value, value, value) }));
+}
+
+function normalizeCanonicalSelection(value, allowedCategories, maxValues = 5) {
+  const source = Array.isArray(value)
+    ? value
+    : (value && typeof value === 'object' && Array.isArray(value.categories)
+      ? value.categories
+      : [value].filter(Boolean));
+
+  const allowedByKey = new Map(
+    (allowedCategories || []).map(category => [semanticNormalizeText(category), category])
+  );
+
+  return semanticUnique(
+    source
+      .map(item => allowedByKey.get(semanticNormalizeText(item)))
+      .filter(Boolean)
+  ).slice(0, maxValues);
+}
+
 function pct(n) {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
@@ -254,12 +1816,15 @@ function buildPhase1Profile({
       .filter(question => question && question.formula_excluded === true)
       .map(question => question.id)
   );
+  const isFormulaExcludedAnswerKey = answerKey => [...formulaExcludedIds].some(questionId =>
+    answerKey === questionId || answerKey.startsWith(`${questionId}_`)
+  );
   const formulaAnswers = Object.fromEntries(
-    Object.entries(persistedAnswers).filter(([questionId]) => !formulaExcludedIds.has(questionId))
+    Object.entries(persistedAnswers).filter(([answerKey]) => !isFormulaExcludedAnswerKey(answerKey))
   );
 
-  const values = (Array.isArray(formulaAnswers.Qt6) ? formulaAnswers.Qt6 : []).slice(0, 5);
-  const pillars = (Array.isArray(formulaAnswers.Qt7) ? formulaAnswers.Qt7 : []).slice(0, 5);
+  const values = normalizeCanonicalSelection(formulaAnswers.Qt6, QT6_VALUE_CATEGORIES, 5);
+  const pillars = normalizeCanonicalSelection(formulaAnswers.Qt7, QT7_PILLAR_CATEGORIES, 5);
   const worldview = Number(formulaAnswers.Qt8);
   
   // Utilizando a nova Qt9 para ações

@@ -1,53 +1,469 @@
 const VALUE_REL = {
-  honesty:     { conv: ['integrity','transparency','trust','responsibility','respect'], div: [] },
-  respect:     { conv: ['tolerance','empathy','compassion','humility','solidarity','trust'], div: ['autonomy','freedom'] },
-  empathy:     { conv: ['compassion','solidarity','tolerance','respect','humility'], div: [] },
-  responsibility: { conv: ['integrity','honesty','trust','discipline','perseverance'], div: ['joy','freedom'] },
-  perseverance: { conv: ['resilience','discipline','responsibility','courage'], div: ['joy','freedom'] },
-  courage:     { conv: ['autonomy','resilience','perseverance','creativity'], div: ['tolerance','humility'] },
-  gratitude:   { conv: ['humility','empathy','compassion'], div: [] },
-  autonomy:    { conv: ['freedom','courage','creativity','resilience'], div: ['solidarity','tolerance','humility'] },
-  compassion:  { conv: ['empathy','solidarity','tolerance','respect','humility'], div: ['discipline','autonomy','freedom'] },
-  integrity:   { conv: ['honesty','transparency','responsibility','justice','trust'], div: ['joy','creativity','freedom'] },
-  solidarity:  { conv: ['compassion','empathy','tolerance','justice','respect'], div: ['autonomy'] },
-  justice:     { conv: ['integrity','responsibility','honesty','solidarity','transparency','trust'], div: ['autonomy'] },
-  freedom:     { conv: ['autonomy','courage','creativity'], div: ['discipline'] },
-  tolerance:   { conv: ['respect','empathy','compassion','humility','solidarity'], div: ['discipline','autonomy'] },
-  joy:         { conv: ['gratitude','creativity','freedom'], div: ['discipline'] },
-  discipline:  { conv: ['perseverance','responsibility','resilience','integrity'], div: ['freedom','autonomy','joy'] },
-  trust:       { conv: ['honesty','integrity','transparency','responsibility','respect'], div: [] },
-  humility:    { conv: ['respect','solidarity','tolerance','empathy','compassion'], div: [] },
-  wisdom:      { conv: ['resilience','humility'], div: [] },
-  transparency: { conv: ['honesty','integrity','trust','responsibility','justice'], div: [] },
-  creativity:  { conv: ['freedom','autonomy','courage','joy'], div: [] }
-  };
+  "honesty": {
+    "conv": [
+      "integrity",
+      "transparency",
+      "trust",
+      "responsibility",
+      "respect"
+    ],
+    "div": []
+  },
+  "respect": {
+    "conv": [
+      "tolerance",
+      "empathy",
+      "compassion",
+      "humility",
+      "solidarity",
+      "trust"
+    ],
+    "div": [
+      "freedom"
+    ]
+  },
+  "empathy": {
+    "conv": [
+      "compassion",
+      "solidarity",
+      "tolerance",
+      "respect",
+      "humility"
+    ],
+    "div": []
+  },
+  "responsibility": {
+    "conv": [
+      "integrity",
+      "honesty",
+      "trust",
+      "discipline",
+      "perseverance"
+    ],
+    "div": [
+      "joy",
+      "freedom"
+    ]
+  },
+  "perseverance": {
+    "conv": [
+      "discipline",
+      "responsibility",
+      "courage",
+      "wisdom"
+    ],
+    "div": [
+      "joy",
+      "freedom"
+    ]
+  },
+  "courage": {
+    "conv": [
+      "freedom",
+      "perseverance",
+      "creativity"
+    ],
+    "div": [
+      "tolerance",
+      "humility"
+    ]
+  },
+  "gratitude": {
+    "conv": [
+      "humility",
+      "empathy",
+      "compassion",
+      "joy"
+    ],
+    "div": []
+  },
+  "compassion": {
+    "conv": [
+      "empathy",
+      "solidarity",
+      "tolerance",
+      "respect",
+      "humility"
+    ],
+    "div": [
+      "discipline",
+      "freedom"
+    ]
+  },
+  "integrity": {
+    "conv": [
+      "honesty",
+      "transparency",
+      "responsibility",
+      "justice",
+      "trust"
+    ],
+    "div": [
+      "joy",
+      "creativity",
+      "freedom"
+    ]
+  },
+  "solidarity": {
+    "conv": [
+      "compassion",
+      "empathy",
+      "tolerance",
+      "justice",
+      "respect"
+    ],
+    "div": []
+  },
+  "justice": {
+    "conv": [
+      "integrity",
+      "responsibility",
+      "honesty",
+      "solidarity",
+      "transparency",
+      "trust"
+    ],
+    "div": []
+  },
+  "freedom": {
+    "conv": [
+      "courage",
+      "creativity"
+    ],
+    "div": [
+      "discipline"
+    ]
+  },
+  "tolerance": {
+    "conv": [
+      "respect",
+      "empathy",
+      "compassion",
+      "humility",
+      "solidarity"
+    ],
+    "div": [
+      "discipline"
+    ]
+  },
+  "joy": {
+    "conv": [
+      "gratitude",
+      "creativity",
+      "freedom"
+    ],
+    "div": [
+      "discipline"
+    ]
+  },
+  "discipline": {
+    "conv": [
+      "perseverance",
+      "responsibility",
+      "integrity"
+    ],
+    "div": [
+      "freedom",
+      "joy"
+    ]
+  },
+  "trust": {
+    "conv": [
+      "honesty",
+      "integrity",
+      "transparency",
+      "responsibility",
+      "respect"
+    ],
+    "div": []
+  },
+  "humility": {
+    "conv": [
+      "respect",
+      "solidarity",
+      "tolerance",
+      "empathy",
+      "compassion",
+      "wisdom"
+    ],
+    "div": []
+  },
+  "wisdom": {
+    "conv": [
+      "humility",
+      "perseverance",
+      "gratitude"
+    ],
+    "div": []
+  },
+  "transparency": {
+    "conv": [
+      "honesty",
+      "integrity",
+      "trust",
+      "responsibility",
+      "justice"
+    ],
+    "div": []
+  },
+  "creativity": {
+    "conv": [
+      "freedom",
+      "courage",
+      "joy"
+    ],
+    "div": []
+  }
+};
 
 const PILLAR_REL = {
-  work:                { conv: ['money','recognition','entrepreneurship','purpose','education'], div: ['hobbies','leisure'] },
-  love:                { conv: ['family','friendships','dreams','self-knowledge','purpose','health'], div: [] },
-  family:              { conv: ['love','friendships','health','ethics','purpose'], div: [] },
-  friendships:         { conv: ['love','family','leisure','hobbies'], div: [] },
-  health:              { conv: ['self-knowledge','spirituality','love','resilience'], div: [] },
-  money:               { conv: ['work','entrepreneurship','recognition','purpose'], div: [] },
-  purpose:             { conv: ['social contribution','volunteering','sustainability','ethics','work','money','family'], div: [] },
-  'social contribution': { conv: ['volunteering','purpose','sustainability','ethics','spirituality'], div: ['recognition'] },
-  'self-knowledge':    { conv: ['spirituality','health','education','purpose','resilience'], div: [] },
-  recognition:         { conv: ['work','money','entrepreneurship','purpose','resilience'], div: ['social contribution','volunteering'] },
-  sustainability:      { conv: ['social contribution','ethics','volunteering'], div: ['leisure'] },
-  leisure:             { conv: ['hobbies','friendships','health','dreams'], div: ['work','recognition','entrepreneurship'] },
-  entrepreneurship:    { conv: ['work','money','recognition','dreams'], div: ['volunteering'] },
-  volunteering:        { conv: ['social contribution','purpose','ethics','sustainability','friendships'], div: ['recognition','money'] },
-  ethics:              { conv: ['social contribution','sustainability','purpose'], div: ['recognition'] },
-  spirituality:        { conv: ['self-knowledge','volunteering','purpose','ethics'], div: ['recognition','money','entrepreneurship'] },
-  education:           { conv: ['work','purpose','dreams','self-knowledge'], div: ['leisure','recognition'] },
-  resilience:          { conv: ['health','self-knowledge','purpose','education'], div: [] },
-  dreams:              { conv: ['purpose','love','leisure','hobbies','entrepreneurship'], div: [] },
-  hobbies:             { conv: ['leisure','friendships','health','dreams'], div: ['work','money'] }
+  "work": {
+    "conv": [
+      "money",
+      "recognition",
+      "entrepreneurship",
+      "purpose",
+      "education"
+    ],
+    "div": [
+      "hobbies",
+      "leisure"
+    ]
+  },
+  "love": {
+    "conv": [
+      "family",
+      "friendships",
+      "dreams",
+      "self knowledge",
+      "purpose",
+      "health"
+    ],
+    "div": []
+  },
+  "family": {
+    "conv": [
+      "love",
+      "friendships",
+      "health",
+      "ethics",
+      "purpose"
+    ],
+    "div": []
+  },
+  "friendships": {
+    "conv": [
+      "love",
+      "family",
+      "leisure",
+      "hobbies"
+    ],
+    "div": []
+  },
+  "health": {
+    "conv": [
+      "self knowledge",
+      "spirituality",
+      "love",
+      "resilience"
+    ],
+    "div": []
+  },
+  "money": {
+    "conv": [
+      "work",
+      "entrepreneurship",
+      "recognition",
+      "purpose"
+    ],
+    "div": []
+  },
+  "purpose": {
+    "conv": [
+      "social contribution",
+      "volunteering",
+      "sustainability",
+      "ethics",
+      "work",
+      "money",
+      "family",
+      "resilience"
+    ],
+    "div": []
+  },
+  "social contribution": {
+    "conv": [
+      "volunteering",
+      "purpose",
+      "sustainability",
+      "ethics",
+      "spirituality"
+    ],
+    "div": [
+      "recognition"
+    ]
+  },
+  "self knowledge": {
+    "conv": [
+      "spirituality",
+      "health",
+      "education",
+      "purpose",
+      "resilience"
+    ],
+    "div": []
+  },
+  "resilience": {
+    "conv": [
+      "health",
+      "self knowledge",
+      "purpose",
+      "education",
+      "spirituality"
+    ],
+    "div": []
+  },
+  "recognition": {
+    "conv": [
+      "work",
+      "money",
+      "entrepreneurship",
+      "purpose"
+    ],
+    "div": [
+      "social contribution",
+      "volunteering"
+    ]
+  },
+  "sustainability": {
+    "conv": [
+      "social contribution",
+      "ethics",
+      "volunteering"
+    ],
+    "div": [
+      "leisure"
+    ]
+  },
+  "entrepreneurship": {
+    "conv": [
+      "work",
+      "money",
+      "recognition",
+      "dreams"
+    ],
+    "div": [
+      "volunteering"
+    ]
+  },
+  "volunteering": {
+    "conv": [
+      "social contribution",
+      "purpose",
+      "ethics",
+      "sustainability",
+      "friendships"
+    ],
+    "div": [
+      "recognition",
+      "money"
+    ]
+  },
+  "ethics": {
+    "conv": [
+      "social contribution",
+      "sustainability",
+      "purpose"
+    ],
+    "div": [
+      "recognition"
+    ]
+  },
+  "spirituality": {
+    "conv": [
+      "self knowledge",
+      "volunteering",
+      "purpose",
+      "ethics",
+      "resilience"
+    ],
+    "div": [
+      "recognition",
+      "money",
+      "entrepreneurship"
+    ]
+  },
+  "leisure": {
+    "conv": [
+      "hobbies",
+      "friendships",
+      "health",
+      "dreams"
+    ],
+    "div": [
+      "work",
+      "recognition",
+      "entrepreneurship"
+    ]
+  },
+  "education": {
+    "conv": [
+      "work",
+      "purpose",
+      "dreams",
+      "self knowledge",
+      "resilience"
+    ],
+    "div": [
+      "leisure",
+      "recognition"
+    ]
+  },
+  "dreams": {
+    "conv": [
+      "purpose",
+      "love",
+      "leisure",
+      "hobbies",
+      "entrepreneurship"
+    ],
+    "div": []
+  },
+  "hobbies": {
+    "conv": [
+      "leisure",
+      "friendships",
+      "health",
+      "dreams"
+    ],
+    "div": [
+      "work",
+      "money"
+    ]
+  }
 };
 
 function nkey(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
+
+
+function normalizeRelationMap(source) {
+  const normalized = {};
+
+  Object.entries(source || {}).forEach(([rawKey, relation]) => {
+    const key = nkey(rawKey);
+    normalized[key] = {
+      conv: [...new Set((relation?.conv || []).map(nkey).filter(Boolean))],
+      div: [...new Set((relation?.div || []).map(nkey).filter(Boolean))]
+    };
+  });
+
+  return normalized;
+}
+
+const NORMALIZED_VALUE_REL = normalizeRelationMap(VALUE_REL);
+const NORMALIZED_PILLAR_REL = normalizeRelationMap(PILLAR_REL);
 
 function decisionPairScore(a, b) {
   a = Number(a);
@@ -179,8 +595,8 @@ function buildMatchLite(profileA, profileB) {
   // Atualizado: Utiliza apenas Qt9 para calcular o ritmo de decisão. 
   const d = decisionPairScore(profileA.answers.Qt9, profileB.answers.Qt9);
   
-  const v = setScore(a.values.selected, b.values.selected, VALUE_REL);
-  const p = setScore(a.pillars.selected, b.pillars.selected, PILLAR_REL);
+  const v = setScore(a.values.selected, b.values.selected, NORMALIZED_VALUE_REL);
+  const p = setScore(a.pillars.selected, b.pillars.selected, NORMALIZED_PILLAR_REL);
   const w = worldviewScore(profileA.answers.Qt8, profileB.answers.Qt8);
   
   const score = Math.round(d * 25 + v.score * 35 + p.score * 20 + w.score * 20);

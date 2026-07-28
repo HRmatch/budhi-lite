@@ -1,8 +1,8 @@
 const PROFILE_STORE_KEY = 'budhi_lite_profiles_v2';
 const MATCH_STORE_KEY = 'budhi_lite_matches_v1';
 
-let BUDHI_PROFILE_CACHE = null;
-let BUDHI_MATCH_CACHE = null;
+let CHECKMATCH_PROFILE_CACHE = null;
+let CHECKMATCH_MATCH_CACHE = null;
 
 function loadProfilesLocal(){
   try{return JSON.parse(localStorage.getItem(PROFILE_STORE_KEY)||'{}')}catch(e){return {}}
@@ -74,13 +74,13 @@ function mergeSyncedProfile(localProfile, cloudProfile){
 }
 
 function loadProfiles(){
-  if(!BUDHI_PROFILE_CACHE) BUDHI_PROFILE_CACHE = loadProfilesLocal();
-  return BUDHI_PROFILE_CACHE || {};
+  if(!CHECKMATCH_PROFILE_CACHE) CHECKMATCH_PROFILE_CACHE = loadProfilesLocal();
+  return CHECKMATCH_PROFILE_CACHE || {};
 }
 
 function saveProfiles(profiles){
-  BUDHI_PROFILE_CACHE = profiles || {};
-  saveProfilesLocal(BUDHI_PROFILE_CACHE);
+  CHECKMATCH_PROFILE_CACHE = profiles || {};
+  saveProfilesLocal(CHECKMATCH_PROFILE_CACHE);
 }
 
 function getProfile(username){
@@ -103,9 +103,9 @@ async function syncProfilesFromCloud(){
     saveProfiles(merged);
     return merged;
   }catch(err){
-    console.warn('[Budhi Lite] Supabase profile sync failed; using local cache.', err);
-    BUDHI_PROFILE_CACHE = loadProfilesLocal();
-    return BUDHI_PROFILE_CACHE;
+    console.warn('[CheckMatch Lite] Supabase profile sync failed; using local cache.', err);
+    CHECKMATCH_PROFILE_CACHE = loadProfilesLocal();
+    return CHECKMATCH_PROFILE_CACHE;
   }
 }
 
@@ -133,7 +133,7 @@ async function saveProfile(username, profile){
       await supabaseUpsertProfile(username, payload);
       await syncProfilesFromCloud();
     }catch(err){
-      console.warn('[Budhi Lite] Profile saved locally, but Supabase write failed.', err);
+      console.warn('[CheckMatch Lite] Profile saved locally, but Supabase write failed.', err);
       throw err;
     }
   }
@@ -150,13 +150,13 @@ function makeMatchId(a,b){
 }
 
 function loadMatches(){
-  if(!BUDHI_MATCH_CACHE) BUDHI_MATCH_CACHE = loadMatchesLocal();
-  return BUDHI_MATCH_CACHE || {};
+  if(!CHECKMATCH_MATCH_CACHE) CHECKMATCH_MATCH_CACHE = loadMatchesLocal();
+  return CHECKMATCH_MATCH_CACHE || {};
 }
 
 function saveMatches(matches){
-  BUDHI_MATCH_CACHE = matches || {};
-  saveMatchesLocal(BUDHI_MATCH_CACHE);
+  CHECKMATCH_MATCH_CACHE = matches || {};
+  saveMatchesLocal(CHECKMATCH_MATCH_CACHE);
 }
 
 function getMatch(matchId){
@@ -181,9 +181,9 @@ async function syncMatchesFromCloud(){
     saveMatches(merged);
     return merged;
   }catch(err){
-    console.warn('[Budhi Lite] Supabase match sync failed; using local cache.', err);
-    BUDHI_MATCH_CACHE = loadMatchesLocal();
-    return BUDHI_MATCH_CACHE;
+    console.warn('[CheckMatch Lite] Supabase match sync failed; using local cache.', err);
+    CHECKMATCH_MATCH_CACHE = loadMatchesLocal();
+    return CHECKMATCH_MATCH_CACHE;
   }
 }
 
@@ -217,7 +217,7 @@ async function saveMatch(match){
       await supabaseUpsertMatch(payload);
       await syncMatchesFromCloud();
     }catch(err){
-      console.warn('[Budhi Lite] Match saved locally, but Supabase write failed.', err);
+      console.warn('[CheckMatch Lite] Match saved locally, but Supabase write failed.', err);
       throw err;
     }
   }
@@ -225,5 +225,5 @@ async function saveMatch(match){
 }
 
 // Kept as a harmless no-op for compatibility with older pages/scripts.
-// Budhi Lite no longer auto-creates demo profiles because the form must start blank.
+// CheckMatch Lite no longer auto-creates demo profiles because the form must start blank.
 function ensureDemoProfiles(){return false}

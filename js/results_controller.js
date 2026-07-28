@@ -150,7 +150,7 @@ async function hydrateGoldenTip(scope, subject){
     });
     el.textContent = data?.text || t("ai_fallback_error");
   }catch(err){
-    console.warn("[Budhi Lite] Golden Tip generation failed.", err);
+    console.warn("[CheckMatch Lite] Golden Tip generation failed.", err);
     el.textContent = t("ai_fallback_error");
   }
 }
@@ -202,7 +202,7 @@ root.innerHTML = `
     <section class="hero">
       <div class="hero-top">
         <div>
-          <div class="eyebrow">✨ Budhi Lite · Phase 1 Snapshot</div>
+          <div class="eyebrow">✨ CheckMatch Lite · Phase 1 Snapshot</div>
           <h1>${ml(profile.results_app.title)}</h1>
           <p>${ml(profile.results_app.overview)}</p>
         </div>
@@ -414,7 +414,7 @@ async function openOrGenerateMatch(forceRegenerate) {
     try {
       await syncMatchesFromCloud();
     } catch (err) {
-      console.warn("[Budhi Lite] Could not refresh saved matches before opening.", err);
+      console.warn("[CheckMatch Lite] Could not refresh saved matches before opening.", err);
     }
   }
 
@@ -442,7 +442,7 @@ async function openOrGenerateMatch(forceRegenerate) {
     currentMatch = await saveMatch(fresh);
     currentMatch = hydrateSavedMatch(currentMatch, partner);
   } catch (err) {
-    console.warn("[Budhi Lite] Match cloud save failed.", err);
+    console.warn("[CheckMatch Lite] Match cloud save failed.", err);
     currentMatch = fresh;
   }
 
@@ -617,7 +617,7 @@ function renderList(items, color) {
 function renderMatch(match, root) {
   const app = match.results_app;
 
-  root.innerHTML = `<section class="hero"><div class="hero-top"><div><div class="eyebrow">✨ Budhi Lite · Match Lite</div><h1>${t(
+  root.innerHTML = `<section class="hero"><div class="hero-top"><div><div class="eyebrow">✨ CheckMatch Lite · Match Lite</div><h1>${t(
     "match"
   )}: ${match.users.join(" & ")}</h1><p>${ml(
     app.overview

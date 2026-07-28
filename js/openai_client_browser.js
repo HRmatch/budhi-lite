@@ -1,4 +1,4 @@
-// Budhi Lite — AI card details agent (browser-side)
+// CheckMatch Lite — AI card details agent (browser-side)
 // Handles the AI details modal in results.html
 // The user's OpenAI key is read from sessionStorage and never stored elsewhere.
 
@@ -449,7 +449,7 @@ After this opening, continue with a conversational, useful analysis of the "${ke
     return { ...normalizeAIDetails(parsed, fallback), _source: 'ai', _note: t('aiGenerated') };
 
   } catch(err) {
-    console.warn('[Budhi Lite] AI details generation failed.', err);
+    console.warn('[CheckMatch Lite] AI details generation failed.', err);
     return fallback;
   }
 }
@@ -580,7 +580,7 @@ Never leave fields empty.`;
     if (!hasUsableAIDetails(parsed)) return fallback;
     return {...normalizeAIDetails(parsed, fallback), _source:'translation', _note:t('aiGenerated')};
   }catch(err){
-    console.warn('[Budhi Lite] AI details translation failed.', err);
+    console.warn('[CheckMatch Lite] AI details translation failed.', err);
     return fallback;
   }
 }
@@ -627,7 +627,7 @@ async function getOrCreateAIDetails({scope, key, profile, match}){
       if(scope === 'match') await saveMatch(subject);
       else await saveProfile(subject.username, subject);
     }catch(err){
-      console.warn('[Budhi Lite] AI details generated but cache save failed.', err);
+      console.warn('[CheckMatch Lite] AI details generated but cache save failed.', err);
     }
   }
   return detail;
@@ -738,7 +738,7 @@ Never leave the field empty.`;
     if (!hasUsableGoldenTip(parsed)) return errorTip;
     return {...normalizeGoldenTip(parsed), _source:'ai', _note:t('aiGenerated')};
   }catch(err){
-    console.warn('[Budhi Lite] Golden Tip generation failed.', err);
+    console.warn('[CheckMatch Lite] Golden Tip generation failed.', err);
     return errorTip;
   }
 }
@@ -788,7 +788,7 @@ Never leave the field empty.`;
     if (!hasUsableGoldenTip(parsed)) return errorTip;
     return {...normalizeGoldenTip(parsed), _source:'translation', _note:t('aiGenerated')};
   }catch(err){
-    console.warn('[Budhi Lite] Golden Tip translation failed.', err);
+    console.warn('[CheckMatch Lite] Golden Tip translation failed.', err);
     return errorTip;
   }
 }
@@ -836,7 +836,7 @@ async function getOrCreateGoldenTip({scope, profile, match}){
       if(scope === 'match') await saveMatch(subject);
       else await saveProfile(subject.username, subject);
     }catch(err){
-      console.warn('[Budhi Lite] Golden Tip generated but cache save failed.', err);
+      console.warn('[CheckMatch Lite] Golden Tip generated but cache save failed.', err);
     }
   }
 
